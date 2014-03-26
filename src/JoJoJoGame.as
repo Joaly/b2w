@@ -1,6 +1,7 @@
 package
 {
 	/* 8===D~ */
+	//prepu
 	import flash.display.Sprite;
 	
 	import starling.core.Starling;
