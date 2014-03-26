@@ -2,7 +2,7 @@ package
 {
 	/* 8===D~ */
 	//hololo
-	//EHGFjf
+	//wulululwuwu
 	
 	import flash.display.Sprite;
 	
