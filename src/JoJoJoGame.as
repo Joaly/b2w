@@ -1,7 +1,7 @@
 package
 {
 	/* 8===D~ */
-	//penepati
+	
 	import flash.display.Sprite;
 	
 	import starling.core.Starling;
