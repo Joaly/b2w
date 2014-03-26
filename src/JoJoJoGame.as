@@ -1,5 +1,6 @@
 package
 {
+	/* ILLOOOO */
 	import flash.display.Sprite;
 	
 	import starling.core.Starling;
