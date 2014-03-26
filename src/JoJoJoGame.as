@@ -1,6 +1,6 @@
 package
 {
-	/* 8===D */
+	/* 8===D~ */
 	import flash.display.Sprite;
 	
 	import starling.core.Starling;
