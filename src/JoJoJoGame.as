@@ -1,13 +1,5 @@
 package
-{
-	/* 8===D~ */
-<<<<<<< HEAD
-	//hololo 
-=======
-	//hololo
-	//wulululwuwu
->>>>>>> 255dcb40ddf996eeede932c765dcd96f388815e0
-	
+{	
 	import flash.display.Sprite;
 	
 	import starling.core.Starling;
