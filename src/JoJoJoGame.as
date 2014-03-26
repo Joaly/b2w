@@ -1,6 +1,7 @@
 package
 {
 	/* 8===D~ */
+	//hololo
 	
 	import flash.display.Sprite;
 	
