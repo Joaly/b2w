@@ -22,6 +22,8 @@ package screens
 	import starling.events.TouchPhase;
 	import starling.utils.deg2rad;
 	
+	import enemies.Enemigo;
+	
 	public class Stage1 extends Sprite
 	{
 		// Stage background.
@@ -43,6 +45,8 @@ package screens
 		
 		// Physics.
 		private var physics:PhysInjector;
+		
+		private var enemigo:Enemigo;
 		
 		public function Stage1()
 		{
@@ -98,6 +102,10 @@ package screens
 			// Drawing the player.
 			player = new Player(0,0);
 			this.addChild(player);
+			
+			enemigo = new Enemigo(65, 0);
+			this.addChild(enemigo);
+			
 		}
 		
 		private function injectPhysics():void

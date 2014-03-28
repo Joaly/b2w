@@ -20,6 +20,9 @@ package
 		[Embed(source="../media/graphics/floor.png")]
 		public static const Floor:Class;
 		
+		[Embed(source = "../media/graphics/Huesitos.png")]
+		public static const Enemigo1:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		
 		public function Media()
