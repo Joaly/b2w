@@ -22,6 +22,8 @@ package screens
 	import starling.events.TouchPhase;
 	import starling.utils.deg2rad;
 	
+	import flash.utils.getTimer;
+	
 	import enemies.Enemigo;
 	
 	public class Stage1 extends Sprite
@@ -46,7 +48,14 @@ package screens
 		// Physics.
 		private var physics:PhysInjector;
 		
+		//Variable enemigo.
 		private var enemigo:Enemigo;
+		private var disparo:Image;
+		
+		private var tiempo:Number = 0;
+		
+		private var posicionX:Number;
+		private var posicionY:Number;
 		
 		public function Stage1()
 		{
@@ -72,7 +81,47 @@ package screens
 			injectPhysics();
 			
 			this.addEventListener(Event.ENTER_FRAME, loop);
+			this.addEventListener(Event.ENTER_FRAME, colision); //Comprueba todo el rato si hay colisión.
+			//this.addEventListener(Event.ENTER_FRAME, ataqueEnemigo); //Realizará el ataque del enemigo.
 		}
+		
+		private function colision(event:Event):void //Comprobamos que la colisión entre enemigo y jugador funciona correctamente.
+		{
+			
+			if (player.bounds.intersects(enemigo.bounds)) //Si colisionan, entonces el jugador muere.
+			{
+				trace("Has muerto");
+				this.removeChild(player);
+				removeEventListener(Event.ENTER_FRAME, colision);
+				removeEventListener(Event.ENTER_FRAME, loop);
+				//removeEventListener(Event.ENTER_FRAME, ataqueEnemigo);
+			}
+			
+		}
+		
+		/*private function ataqueEnemigo(event:Event):void //Función dedicada a realizar el ataque del enemigo.
+		{
+			
+			if (tiempo == 4) 
+			{
+				tiempo = 0;
+				disparo = new Image(Media.getTexture("Bala1")); //Se trata de la bala del enemigo.
+				disparo.x = enemigo.x
+				disparo.y = enemigo.y;
+				this.addChild(disparo);
+				posicionX = player.x;
+				posicionY = player.y;
+				
+				
+				while (disparo.x != posicionX && disparo.y != posicionY)
+				{
+					disparo.x += 1;
+					disparo.y += 1;
+					if (disparo.bounds.intersects(player.bounds)) removeChild(disparo);
+				}
+			}
+			else tiempo += 1;
+		}*/
 		
 		private function drawScreen():void
 		{
@@ -103,8 +152,10 @@ package screens
 			player = new Player(0,0);
 			this.addChild(player);
 			
-			enemigo = new Enemigo(65, 0);
+			//Creamos el enemigo.
+			enemigo = new Enemigo(65,200);
 			this.addChild(enemigo);
+			
 			
 		}
 		

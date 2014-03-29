@@ -23,6 +23,9 @@ package
 		[Embed(source = "../media/graphics/Huesitos.png")]
 		public static const Enemigo1:Class;
 		
+		[Embed(source = "../media/graphics/Bala.png")]
+		public static const Bala1:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		
 		public function Media()
