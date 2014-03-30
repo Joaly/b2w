@@ -4,6 +4,8 @@ package screens
 	import Box2D.Collision.Shapes.*;
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
+	import com.greensock.plugins.AutoAlphaPlugin;
+	import enemies.DisparoEnemigo;
 	
 	import characters.Player;
 	
@@ -46,17 +48,19 @@ package screens
 		private var player:Player;
 		private var playerObject:PhysicsObject;
 		
-		// Enemigo.
+		// Enemigo y disparo.
 		private var enemigo:Enemigo;
-		private var disparo:Image;
+		private var disparo:DisparoEnemigo;
 		
-		private var tiempo:Number = 0;
+		private var tiempo:Number;
 		
-		private var posicionX:Number;
-		private var posicionY:Number;
+		//Comprueba si existe el disparo.
+		private var existeDisparo:Boolean;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
+		
+		//public var arrayDisparos:Array;
 		
 		public function Stage1()
 		{
@@ -84,32 +88,8 @@ package screens
 			injectPhysics(); // Aplicación de físicas.
 			
 			this.addEventListener(Event.ENTER_FRAME, loop);
-			//this.addEventListener(Event.ENTER_FRAME, ataqueEnemigo); //Realizará el ataque del enemigo.
 		}
 		
-		/*private function ataqueEnemigo(event:Event):void //Función dedicada a realizar el ataque del enemigo.
-		{
-			
-			if (tiempo == 4) 
-			{
-				tiempo = 0;
-				disparo = new Image(Media.getTexture("Bala1")); //Se trata de la bala del enemigo.
-				disparo.x = enemigo.x
-				disparo.y = enemigo.y;
-				this.addChild(disparo);
-				posicionX = player.x;
-				posicionY = player.y;
-				
-				
-				while (disparo.x != posicionX && disparo.y != posicionY)
-				{
-					disparo.x += 1;
-					disparo.y += 1;
-					if (disparo.bounds.intersects(player.bounds)) removeChild(disparo);
-				}
-			}
-			else tiempo += 1;
-		}*/
 		
 		private function drawScreen():void
 		{
@@ -144,6 +124,11 @@ package screens
 			// Creación del enemigo.
 			enemigo = new Enemigo(65,200);
 			this.addChild(enemigo);
+			
+			//Asignamos valor al booleano.
+			existeDisparo = new Boolean(false);
+			
+			//arrayDisparos = new Array();
 			
 			
 		}
@@ -182,6 +167,8 @@ package screens
 			wallLeft.x = wallObjectLeft.x - (wallLeft.width/2);;
 			wallLeft.y = 0;
 			
+			ataqueEnemigo(); //Función que realiza el ataque del enemigo.
+			
 			if (player.touchPos)
 			{
 				//if (player.touchPos.x > playerObject.x) playerObject.x += 2;
@@ -189,12 +176,38 @@ package screens
 			}
 			
 			/* COMPROBAMOS COLISIONES */
-			if (player.bounds.intersects(enemigo.bounds)) // Si colisionan el jugador muere.
+			if (player.bounds.intersects(enemigo.bounds) || disparo.bounds.intersects(player.bounds)) // Si colisiona el jugador contra el enemigo o la bala muere.
 			{
-				trace("Has muerto.");
+				trace("Has muerto. :(");
 				this.removeChild(player);
 				removeEventListener(Event.ENTER_FRAME, loop);
-				//removeEventListener(Event.ENTER_FRAME, ataqueEnemigo);
+			}
+			
+		}
+		
+		private function ataqueEnemigo():void //Función dedicada a realizar el ataque del enemigo.
+		{
+			
+			if (!existeDisparo) //Esta condición la usamos para crear, de momento, una bala cuando no haya ninguna en pantalla.
+			{
+				disparo = new DisparoEnemigo(120,0);
+				this.addChild(disparo); 
+				//arrayDisparos.push(disparo);
+				existeDisparo = true;
+			}
+			
+			if(disparo.x < player.x) disparo.x += 1;
+			if(disparo.x > player.x) disparo.x -= 1;
+			if (disparo.y < player.y) disparo.y += 1;
+			if (disparo.y > player.y) disparo.y -= 1;
+				
+			trace(disparo.x, player.x);
+			
+			//Si el disparo choca contra alguna de las paredes entonces desaparece y se vuelve a crear otro disparo.
+			if (disparo.bounds.intersects(floor.bounds) || disparo.bounds.intersects(wallLeft.bounds) || disparo.bounds.intersects(wallRight.bounds)) 
+			{
+				removeChild(disparo);
+				existeDisparo = false;
 			}
 		}
 	}	
