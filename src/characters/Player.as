@@ -22,14 +22,14 @@ package characters
 	
 	public class Player extends Sprite
 	{
-		// Player attributes.
+		// Imagen jugador.
 		private var sprite:Image;
 		
-		// Start position of the player.
+		// Posición de inicio.
 		private var _startX:Number;
 		private var _startY:Number;
 		
-		// Position of touch.
+		// Posición del toque (VARIABLE PÚBLICA).
 		public var touchPos:Point;
 		
 		public function Player(startX:Number, startY:Number)
@@ -37,45 +37,25 @@ package characters
 			_startX = startX;
 			_startY = startY;
 			
-			this.addEventListener(Event.ADDED_TO_STAGE, initializePlayer);
+			this.addEventListener(Event.ADDED_TO_STAGE, initializePlayer); //Inicialización del jugador.
 		}
 
 		private function initializePlayer(event:Event):void
 		{
-			// Create sprite.
+			// Creamos el sprite.
 			sprite = new Image(Media.getTexture("Character"));
 			sprite.scaleX = 0.3;
 			sprite.scaleY = 0.3;
 			this.addChild(sprite);
-			
-			//stage.addEventListener(TouchEvent.TOUCH, onTouch); // Receiving touch events on the screen.
+
 			//this.addEventListener(Event.ENTER_FRAME, loop);
 		}
 		
-		//   PLAYER LOOP   //
+		//*   BUCLE JUGADOR   *//
 		private function loop():void
 		{
-			// Moving the player horizontaly.
-			/*if (touchPos)
-			{
-				if (touchPos.x > (x + sprite.width * 0.5)) sprite.x += 2;
-				if (touchPos.x < (x + sprite.width * 0.5)) sprite.x -= 2;
-			}*/
-		}
-		
-		//   ON TOUCH   //
-		/*private function onTouch(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(stage, TouchPhase.BEGAN);
-			if (touch)
-			{
-				if ((touch.getLocation(this).y >= sprite.y) && (touch.getLocation(this).y <= (sprite.y + sprite.height))) // Touch is in the horizontal line of the player.
-				{
-					touchPos = touch.getLocation(stage);
-				}
-			}
 			
-		}*/
+		}
 			
 	}
 }

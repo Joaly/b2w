@@ -28,27 +28,25 @@ package screens
 	
 	public class Stage1 extends Sprite
 	{
-		// Stage background.
+		// Fondo.
 		private var stageBg:Image;
 		
-		// Stage floor.
+		// Suelo.
 		private var floor:Image;
 		private var floorObject:PhysicsObject
 		
-		// Walls.
+		// Paredes.
 		private var wallObjectLeft:PhysicsObject;
-		private var wallObjectRight:PhysicsObject;
-		
-		// Player.
-		private var wallRight:Image;
 		private var wallLeft:Image;
+		
+		private var wallObjectRight:PhysicsObject;
+		private var wallRight:Image;
+		
+		// Jugador.
 		private var player:Player;
 		private var playerObject:PhysicsObject;
 		
-		// Physics.
-		private var physics:PhysInjector;
-		
-		//Variable enemigo.
+		// Enemigo.
 		private var enemigo:Enemigo;
 		private var disparo:Image;
 		
@@ -56,6 +54,9 @@ package screens
 		
 		private var posicionX:Number;
 		private var posicionY:Number;
+		
+		// Físicas del mundo.
+		private var physics:PhysInjector;
 		
 		public function Stage1()
 		{
@@ -65,38 +66,25 @@ package screens
 			this.addEventListener(TouchEvent.TOUCH, onTouch);
 		}
 		
+		//* CLICK / TOCAR PANTALLA *//
 		private function onTouch(event:TouchEvent):void
 		{
-			var touch:Touch = event.getTouch(stage, TouchPhase.BEGAN);
+			var touch:Touch = event.getTouch(stage, TouchPhase.BEGAN); // Variable que almacena los datos del toque en la pantalla.
 			if (touch)
 			{
-				var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2);
-				playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter());
+				var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
+				playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 			}
 		}
 		
+		//* CREACIÓN DE LA PANTALLA *//
 		private function initializeStage(event:Event):void
 		{
-			drawScreen();
-			injectPhysics();
+			drawScreen(); // Función que creará los elementos gráficos.
+			injectPhysics(); // Aplicación de físicas.
 			
 			this.addEventListener(Event.ENTER_FRAME, loop);
-			this.addEventListener(Event.ENTER_FRAME, colision); //Comprueba todo el rato si hay colisión.
 			//this.addEventListener(Event.ENTER_FRAME, ataqueEnemigo); //Realizará el ataque del enemigo.
-		}
-		
-		private function colision(event:Event):void //Comprobamos que la colisión entre enemigo y jugador funciona correctamente.
-		{
-			
-			if (player.bounds.intersects(enemigo.bounds)) //Si colisionan, entonces el jugador muere.
-			{
-				trace("Has muerto");
-				this.removeChild(player);
-				removeEventListener(Event.ENTER_FRAME, colision);
-				removeEventListener(Event.ENTER_FRAME, loop);
-				//removeEventListener(Event.ENTER_FRAME, ataqueEnemigo);
-			}
-			
 		}
 		
 		/*private function ataqueEnemigo(event:Event):void //Función dedicada a realizar el ataque del enemigo.
@@ -125,34 +113,35 @@ package screens
 		
 		private function drawScreen():void
 		{
-			// Drawing the background.
+			// Creación del fondo.
 			stageBg = new Image(Media.getTexture("Stage1Bg"));
 			stageBg.width /= 2; // REDIMENSION
 			stageBg.height /= 2; // REDIMENSION
 			stageBg.y = -stageBg.height/2;
 			this.addChild(stageBg);
 			
-			// Drawing the floor.
+			// Creación del suelo.
 			floor = new Image(Media.getTexture("Floor"));
 			floor.width = stage.stageWidth;
 			floor.alpha = 0.5;
 			this.addChild(floor);
 			
+			// Creación de las paredes
 			wallLeft = new Image(Media.getTexture("Floor"));
-			wallLeft.height = stage.stageHeight;
+			wallLeft.height = stage.stageHeight-floor.height;
 			wallLeft.width = 50;
 			this.addChild(wallLeft);
 			
 			wallRight = new Image(Media.getTexture("Floor"));
-			wallRight.height = stage.stageHeight;
+			wallRight.height = stage.stageHeight-floor.height;
 			wallRight.width = 50;
 			this.addChild(wallRight);
 			
-			// Drawing the player.
+			// Creación del jugador.
 			player = new Player(0,0);
 			this.addChild(player);
 			
-			//Creamos el enemigo.
+			// Creación del enemigo.
 			enemigo = new Enemigo(65,200);
 			this.addChild(enemigo);
 			
@@ -162,28 +151,30 @@ package screens
 		private function injectPhysics():void
 		{
 			PhysInjector.STARLING = true;
-			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 60), false);
+			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 60), false); // Creamos la gravedad del escenario.
 			
-			// Add physics to floor.
+			// Añadimos físicas al suelo.
 			floorObject = physics.injectPhysics(floor, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			floorObject.x = stage.stageWidth/2;
 			floorObject.y = stage.stageHeight - (floor.height/2);
 			
-			// Add physics to walls.
+			// Añadimos físicas a las paredes.
 			wallObjectRight = physics.injectPhysics(wallRight, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			wallObjectRight.x = stage.stageWidth - (wallRight.width/2);
 			
 			wallObjectLeft = physics.injectPhysics(wallLeft, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			wallObjectLeft.x = (wallLeft.width/2);
 			
-			// Add physics to player.
+			// Añadimos físicas al jugador.
 			playerObject = physics.injectPhysics(player, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			playerObject.x = 100;
 		}
 		
 		private function loop(event:Event):void
 		{
-			physics.update();
+			physics.update(); // Actualizamos las físicas a cada frame.
+			
+			// Actualizamos la posición de los objetos estáticos.
 			floor.x = floorObject.x - (floor.width/2);
 			floor.y = floorObject.y - (floor.height/2);
 			wallRight.x = wallObjectRight.x - (wallRight.width/2);;
@@ -196,6 +187,15 @@ package screens
 				//if (player.touchPos.x > playerObject.x) playerObject.x += 2;
 				//if (player.touchPos.x < playerObject.x) playerObject.x -= 2;
 			}
-	}
-}
+			
+			/* COMPROBAMOS COLISIONES */
+			if (player.bounds.intersects(enemigo.bounds)) // Si colisionan el jugador muere.
+			{
+				trace("Has muerto.");
+				this.removeChild(player);
+				removeEventListener(Event.ENTER_FRAME, loop);
+				//removeEventListener(Event.ENTER_FRAME, ataqueEnemigo);
+			}
+		}
+	}	
 }
