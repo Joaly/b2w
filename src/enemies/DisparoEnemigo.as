@@ -1,5 +1,6 @@
 package enemies 
 {
+	import characters.Player;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -15,13 +16,18 @@ package enemies
 		private var inicioX:Number;
 		private var inicioY:Number;
 		
+		private var enemigo:Enemigo;
 		
-		public function DisparoEnemigo(inicioX:Number, inicioY:Number) 
+		private var player:Player;
+		
+		public function DisparoEnemigo(inicioX:Number, inicioY:Number, enemigo:Enemigo, player:Player)
 		{
 			super();
-			
-			this.inicioX = inicioX; //Guardamos la posición de inicio del disparo.
+		
+			this.inicioX = inicioX;
 			this.inicioY = inicioY;
+			this.enemigo = enemigo;
+			this.player = player;
 
 			this.addEventListener(Event.ADDED_TO_STAGE, crearDisparo);
 		}
@@ -32,6 +38,8 @@ package enemies
 			this.removeEventListener(Event.ADDED_TO_STAGE, crearDisparo);
 			
 			disparo = new Image(Media.getTexture("Bala1")); //El disparo tendrá la imagen de la Bala.
+			
+			
 			disparo.x = inicioX; //Ponemos las coordenadas de inicio de la bala.
 			disparo.y = inicioY;
 			
@@ -40,6 +48,21 @@ package enemies
 			
 			this.addChild(disparo);
 			
+			this.addEventListener(Event.ENTER_FRAME, ataqueEnemigo);
+			
+		}
+		
+		private function ataqueEnemigo():void //Función dedicada a realizar el ataque del enemigo.
+		{
+
+			if(disparo.x < player.x) disparo.x += 1;
+			if(disparo.x > player.x) disparo.x -= 1;
+			if (disparo.y < player.y) disparo.y += 1;
+			if (disparo.y > player.y) disparo.y -= 1;
+				
+			trace(disparo.x, player.x);
+			
+			if (player.bounds.intersects(enemigo.bounds) || disparo.bounds.intersects(player.bounds)) this.removeEventListener(Event.ENTER_FRAME, ataqueEnemigo);
 		}
 	}
 

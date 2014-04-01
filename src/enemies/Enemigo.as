@@ -16,7 +16,6 @@ package enemies
 		
 		// Imagen enemigo.
 		private var enemigo:Image;
-		//private var disparo:Image;
 		
 		// Posición inicial.
 		private var inicioX:Number;
@@ -24,14 +23,18 @@ package enemies
 		
 		// Velocidad enemigo.
 		private var velocidad:Number;
+		
+		private var player:Player;
+		
 
 		
-		public function Enemigo(inicioX:Number, inicioY:Number) 
+		public function Enemigo(inicioX:Number, inicioY:Number, player:Player) 
 		{
 			super();
 			
 			this.inicioX = inicioX;
 			this.inicioY = inicioY;
+			this.player = player;
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, crearEnemigo); // Inicialización del enemigo.
 			
@@ -62,7 +65,9 @@ package enemies
 			
 			if (enemigo.x >= 265) velocidad *= -1; //Si llega al lateral derecho se cambiará el sentido del movimiento.
 			else if (enemigo.x <= 65) velocidad *= -1;
-
+			
+			if (player.bounds.intersects(enemigo.bounds)) this.removeEventListener(Event.ENTER_FRAME, movimientoEnemigo);
+			
 		}
 		
 	}

@@ -52,15 +52,12 @@ package screens
 		private var enemigo:Enemigo;
 		private var disparo:DisparoEnemigo;
 		
-		private var tiempo:Number;
-		
 		//Comprueba si existe el disparo.
 		private var existeDisparo:Boolean;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
 		
-		//public var arrayDisparos:Array;
 		
 		public function Stage1()
 		{
@@ -122,13 +119,12 @@ package screens
 			this.addChild(player);
 			
 			// Creación del enemigo.
-			enemigo = new Enemigo(65,200);
+			enemigo = new Enemigo(65,200,player);
 			this.addChild(enemigo);
 			
 			//Asignamos valor al booleano.
 			existeDisparo = new Boolean(false);
 			
-			//arrayDisparos = new Array();
 			
 			
 		}
@@ -168,6 +164,7 @@ package screens
 			wallLeft.y = 0;
 			
 			ataqueEnemigo(); //Función que realiza el ataque del enemigo.
+			colisiones();
 			
 			if (player.touchPos)
 			{
@@ -175,33 +172,35 @@ package screens
 				//if (player.touchPos.x < playerObject.x) playerObject.x -= 2;
 			}
 			
-			/* COMPROBAMOS COLISIONES */
+		}
+		
+		private function colisiones():void //Comprueba las colisiones del jugador y otros objetos.
+		{
+			//Si el disparo choca contra alguna de las paredes entonces desaparece y se vuelve a crear otro disparo.
+			if (disparo.bounds.intersects(floor.bounds) || disparo.bounds.intersects(wallLeft.bounds) || disparo.bounds.intersects(wallRight.bounds)) 
+			{
+				removeChild(disparo);
+				existeDisparo = false;
+			}
+			
 			if (player.bounds.intersects(enemigo.bounds) || disparo.bounds.intersects(player.bounds)) // Si colisiona el jugador contra el enemigo o la bala muere.
 			{
 				trace("Has muerto. :(");
 				this.removeChild(player);
 				removeEventListener(Event.ENTER_FRAME, loop);
 			}
-			
 		}
+		
 		
 		private function ataqueEnemigo():void //Función dedicada a realizar el ataque del enemigo.
 		{
 			
 			if (!existeDisparo) //Esta condición la usamos para crear, de momento, una bala cuando no haya ninguna en pantalla.
 			{
-				disparo = new DisparoEnemigo(120,0);
+				disparo = new DisparoEnemigo(120,0,enemigo, player);
 				this.addChild(disparo); 
-				//arrayDisparos.push(disparo);
 				existeDisparo = true;
 			}
-			
-			if(disparo.x < player.x) disparo.x += 1;
-			if(disparo.x > player.x) disparo.x -= 1;
-			if (disparo.y < player.y) disparo.y += 1;
-			if (disparo.y > player.y) disparo.y -= 1;
-				
-			trace(disparo.x, player.x);
 			
 			//Si el disparo choca contra alguna de las paredes entonces desaparece y se vuelve a crear otro disparo.
 			if (disparo.bounds.intersects(floor.bounds) || disparo.bounds.intersects(wallLeft.bounds) || disparo.bounds.intersects(wallRight.bounds)) 
