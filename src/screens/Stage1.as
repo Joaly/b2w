@@ -201,13 +201,7 @@ package screens
 				this.addChild(disparo); 
 				existeDisparo = true;
 			}
-			
-			//Si el disparo choca contra alguna de las paredes entonces desaparece y se vuelve a crear otro disparo.
-			if (disparo.bounds.intersects(floor.bounds) || disparo.bounds.intersects(wallLeft.bounds) || disparo.bounds.intersects(wallRight.bounds)) 
-			{
-				removeChild(disparo);
-				existeDisparo = false;
-			}
+	
 		}
 	}	
 }
