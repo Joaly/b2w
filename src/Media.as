@@ -20,6 +20,9 @@ package
 		[Embed(source="../media/graphics/floor.png")]
 		public static const Floor:Class;
 		
+		[Embed(source="../media/graphics/wall.png")]
+		public static const Wall:Class;
+		
 		[Embed(source = "../media/graphics/Huesitos.png")]
 		public static const Enemigo1:Class;
 		

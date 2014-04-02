@@ -1,68 +1,62 @@
 package enemies 
 {
 	import characters.Player;
+	
 	import starling.display.Image;
 	import starling.display.Sprite;
-	import starling.events.Event;
+	import starling.events.Event;	
+	import starling.utils.deg2rad;
 	
 	
 	public class DisparoEnemigo extends Sprite 
 	{
 		
 		//Imagen disparo.
-		private var disparo:Image;
+		private var bulletImage:Image;
+		private var bulletStartX:Number;
+		private var bulletStartY:Number;
+		private var bulletSpeed:Number;
+		private var playerObjective:Player;
 		
-		//Posicion de inicio del disparo.
-		private var inicioX:Number;
-		private var inicioY:Number;
-		
-		private var enemigo:Enemigo;
-		
-		private var player:Player;
-		
-		public function DisparoEnemigo(inicioX:Number, inicioY:Number, enemigo:Enemigo, player:Player)
+		public function DisparoEnemigo(player:Player, startX:Number, startY:Number)
 		{
-			super();
-		
-			this.inicioX = inicioX;
-			this.inicioY = inicioY;
-			this.enemigo = enemigo;
-			this.player = player;
+			playerObjective = player; // Objetivo de la bala.
+			bulletStartX = startX; // Posición origen de la bala.
+			bulletStartY = startY;
 
-			this.addEventListener(Event.ADDED_TO_STAGE, crearDisparo);
+			this.addEventListener(Event.ADDED_TO_STAGE, createBullet); // Creamos la bala.
 		}
 		
-		private function crearDisparo(event:Event):void
-		{
+		private function createBullet(event:Event):void
+		{			
+			this.removeEventListener(Event.ADDED_TO_STAGE, createBullet);
 			
-			this.removeEventListener(Event.ADDED_TO_STAGE, crearDisparo);
+			bulletImage = new Image(Media.getTexture("Bala1"));			
+			bulletImage.rotation = deg2rad(-90);
+			bulletImage.x = bulletStartX; // Ponemos las coordenadas de inicio de la bala.
+			bulletImage.y = bulletStartY;			
+			bulletImage.scaleX = 0.05;
+			bulletImage.scaleY = 0.05;			
+			this.addChild(bulletImage);
 			
-			disparo = new Image(Media.getTexture("Bala1")); //El disparo tendrá la imagen de la Bala.
+			bulletSpeed = new Number(3); // Inicializamos la velocidad.
 			
-			
-			disparo.x = inicioX; //Ponemos las coordenadas de inicio de la bala.
-			disparo.y = inicioY;
-			
-			disparo.scaleX = 0.05;
-			disparo.scaleY = 0.05;
-			
-			this.addChild(disparo);
-			
-			this.addEventListener(Event.ENTER_FRAME, ataqueEnemigo);
-			
+			this.addEventListener(Event.ENTER_FRAME, movement);	// Determinamos el movimiento de la bala.
 		}
 		
-		private function ataqueEnemigo():void //Función dedicada a realizar el ataque del enemigo.
+		private function movement():void
 		{
+			// La bala persigue al objetivo.
+			if(bulletImage.x < playerObjective.position.x) bulletImage.x += bulletSpeed;
+			if(bulletImage.x > playerObjective.position.x) bulletImage.x -= bulletSpeed;
+			if (bulletImage.y < playerObjective.position.y) bulletImage.y += bulletSpeed;
+			if (bulletImage.y > playerObjective.position.y) bulletImage.y -= bulletSpeed;
 
-			if(disparo.x < player.x) disparo.x += 1;
-			if(disparo.x > player.x) disparo.x -= 1;
-			if (disparo.y < player.y) disparo.y += 1;
-			if (disparo.y > player.y) disparo.y -= 1;
-				
-			trace(disparo.x, player.x);
-			
-			if (player.bounds.intersects(enemigo.bounds) || disparo.bounds.intersects(player.bounds)) this.removeEventListener(Event.ENTER_FRAME, ataqueEnemigo);
+			if (bulletImage.bounds.intersects(playerObjective.bounds)) // Si la bala toca al objetivo, ambos desaparecen.
+			{
+				this.removeFromParent();
+				playerObjective.visible = false;
+			}
 		}
 	}
 
