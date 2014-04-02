@@ -13,8 +13,7 @@ package screens
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
-	import enemies.DisparoEnemigo;
-	import enemies.Enemigo;
+	import enemies.Enemy;
 	
 	import objects.Floor;
 	import objects.Wall;
@@ -37,7 +36,7 @@ package screens
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
 		private var player:Player;
-		private var enemy:Enemigo;
+		private var enemy:Enemy;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;		
@@ -87,7 +86,7 @@ package screens
 			this.addChild(player);
 			
 			// Creamos un enemigo.
-			enemy = new Enemigo(player, 150, 100);
+			enemy = new Enemy(player, 150, 100);
 			this.addChild(enemy);
 		}
 		

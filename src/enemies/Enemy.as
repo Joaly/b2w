@@ -2,6 +2,8 @@ package enemies
 {
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
+	import flash.utils.Timer;
+	import projectiles.Bullet;
 	
 	import characters.Player;
 	
@@ -20,18 +22,29 @@ package enemies
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
+	import flash.utils.getTimer;
 	
-	public class Enemigo extends Sprite 
+	public class Enemy extends Sprite 
 	{
+		//Imagen del enemigo.
 		private var enemyImage:Image;
+		
+		//Posición de inicio del enemigo.
 		private var enemyStartX:Number;
 		private var enemyStartY:Number;
+		
+		//
 		private var enemySpeed:Number;
-		private var bullet:DisparoEnemigo;
+		
+		private var bullet:Bullet;
+		
 		private var playerObjective:Player;
+		
 		private var attacking:Boolean;
 		
-		public function Enemigo(player:Player, startX:Number, startY:Number) 
+		private var timer:Timer;
+		
+		public function Enemy(player:Player, startX:Number, startY:Number) 
 		{
 			playerObjective = player; // Jugador al que atacará el enemigo.
 			enemyStartX = startX; // Posición inicial del enemigo.
@@ -53,6 +66,8 @@ package enemies
 			enemyImage.y = enemyStartY;
 			this.addChild(enemyImage);
 			
+			timer = new Timer(1000, 0);
+			
 			enemySpeed = new Number(3); // Inicializamos la velocidad.
 			attacking = new Boolean(false); // Este booleano nos dirá si el enemigo está atacando.
 			
@@ -62,7 +77,7 @@ package enemies
 		private function enemyLoop(event:Event):void
 		{
 			movementPattern(); // Movimiento del enemigo.
-			//attack(); // Ataque del enemigo.
+			attack(); // Ataque del enemigo.
 		}
 		
 		private function movementPattern():void
@@ -76,13 +91,21 @@ package enemies
 		
 		private function attack():void
 		{
-			if (!this.contains(bullet)) attacking = false; // Si no hay ninguna bala en escena el enemigo no está atacando.
-			if (!attacking && playerObjective.visible) // Si el enemigo no está atacando, lanzamos una bala.
+			
+			timer.start();
+			
+			if (timer.currentCount == 2)
 			{
-				attacking = true;
-				bullet = new DisparoEnemigo(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
+				
+				bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
 				this.addChild(bullet);
+				timer.reset();
+				
+				
 			}
+			
+			trace(timer.currentCount);
+			
 		}
 	}
 }

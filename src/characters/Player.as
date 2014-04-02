@@ -87,7 +87,7 @@ package characters
 					playerObject.physicsProperties.isDynamic = true;
 					onJump = true;
 					var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
-					if (force.y < -300) force.y = -300;
+					if (force.y < -200) force.y = -200;
 					if (force.y > 0) 
 					{
 						force.y = 0;
