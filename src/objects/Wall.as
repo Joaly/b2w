@@ -39,7 +39,7 @@ package objects
 			// Creamos la imagen de la pared.
 			wallImage = new Image(Media.getTexture("Wall"));
 			wallImage.width = Stage1.OFFSET;
-			wallImage.height = stage.stageHeight-wallImage.height;
+			wallImage.height = stage.stageHeight;
 			this.addChild(wallImage);
 			
 			// Ajustamos la posición de la pared teniendo en cuenta que el pivote del objeto será diferente.

@@ -59,5 +59,4 @@ package enemies
 			}
 		}
 	}
-
 }

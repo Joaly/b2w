@@ -73,8 +73,8 @@ package screens
 			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 60), false); // Creamos la gravedad del escenario.
 			
 			// Creamos el suelo.
-			floor = new Floor(physics, 0, stage.stageHeight);
-			this.addChild(floor);
+			//floor = new Floor(physics, 0, stage.stageHeight);
+			//this.addChild(floor);
 			
 			// Creamos las paredes.
 			wallLeft = new Wall(physics, 0, 0, "Left");
@@ -83,7 +83,7 @@ package screens
 			this.addChild(wallRight);
 			
 			// Creamos el jugador.
-			player = new Player(physics, 150, 300, wallLeft, wallRight);
+			player = new Player(physics, stage.stageWidth/2, stage.stageHeight, wallLeft, wallRight);
 			this.addChild(player);
 			
 			// Creamos un enemigo.

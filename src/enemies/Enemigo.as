@@ -62,7 +62,7 @@ package enemies
 		private function enemyLoop(event:Event):void
 		{
 			movementPattern(); // Movimiento del enemigo.
-			attack(); // Ataque del enemigo.
+			//attack(); // Ataque del enemigo.
 		}
 		
 		private function movementPattern():void

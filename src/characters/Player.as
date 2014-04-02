@@ -37,6 +37,7 @@ package characters
 		public var position:Point;
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
+		private var onJump:Boolean;
 		
 		public function Player(physics:PhysInjector, x:Number, y:Number, wallL:Wall, wallR:Wall)
 		{
@@ -63,9 +64,11 @@ package characters
 			playerObject.x = playerX;
 			playerObject.y = playerY;
 			playerObject.name = "player";
-			//playerObject.physicsProperties.isDynamic = false;
 			
 			position = new Point(playerImage.x, playerImage.y);
+			onJump = new Boolean(false);
+			
+			playerObject.body.ApplyForce(new b2Vec2(100, -200), playerObject.body.GetWorldCenter());
 			
 			stage.addEventListener(TouchEvent.TOUCH, onTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
@@ -75,11 +78,26 @@ package characters
 		private function onTouch(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(stage, TouchPhase.BEGAN); // Variable que almacena los datos del toque en la pantalla.
-			if (touch)
+			if (touch && !onJump)
 			{
-				playerObject.physicsProperties.isDynamic = true;
-				var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
-				playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
+				if ((touch.globalY < playerObject.y) && 
+					((playerObject.x > stage.stageWidth/2 && (touch.globalX < Stage1.OFFSET)) || 
+						(playerObject.x < stage.stageWidth/2 && touch.globalX > stage.stageWidth-Stage1.OFFSET)))
+				{
+					playerObject.physicsProperties.isDynamic = true;
+					onJump = true;
+					var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
+					if (force.y < -300) force.y = -300;
+					if (force.y > 0) 
+					{
+						force.y = 0;
+						force.x = 0;
+					}
+					if (force.x < -200) force.x = -200;
+					if (force.x > 200) force.x = 200;
+					playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
+				}
+				
 			}
 		}
 		
@@ -94,6 +112,7 @@ package characters
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
 		{
 			playerObject.physicsProperties.isDynamic = false;
+			onJump = false;
 		}
 	}
 }
