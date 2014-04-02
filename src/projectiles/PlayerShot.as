@@ -15,7 +15,6 @@ package projectiles
 		private var touch:Touch;
 		private var tween:Tween;
 		
-		//Esto es una prueba.
 		
 		public function PlayerShot(x:Number, y:Number, touchPos:Touch)
 		{
