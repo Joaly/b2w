@@ -29,6 +29,9 @@ package
 		[Embed(source = "../media/graphics/Bala.png")]
 		public static const Bala1:Class;
 		
+		[Embed(source = "../media/graphics/shot.png")]
+		public static const PlayerShot:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		
 		public function Media()
