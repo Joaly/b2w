@@ -39,6 +39,8 @@ package characters
 		private var wallRight:Wall;
 		private var onJump:Boolean;
 		
+		public var isDead:Boolean;
+		
 		public function Player(physics:PhysInjector, x:Number, y:Number, wallL:Wall, wallR:Wall)
 		{
 			playerPhysics = physics;
@@ -67,6 +69,7 @@ package characters
 			
 			position = new Point(playerImage.x, playerImage.y);
 			onJump = new Boolean(false);
+			isDead = new Boolean(false);
 			
 			playerObject.body.ApplyForce(new b2Vec2(100, -200), playerObject.body.GetWorldCenter());
 			

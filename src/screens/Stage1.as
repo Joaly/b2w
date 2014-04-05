@@ -5,6 +5,8 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
+	import enemies.Butterfly;
+	import enemies.Jellyfish;
 	
 	import characters.Player;
 	
@@ -37,6 +39,8 @@ package screens
 		private var wallRight:Wall;
 		private var player:Player;
 		private var enemy:Enemy;
+		private var enemy2:Jellyfish;
+		private var enemy3:Butterfly;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;		
@@ -86,8 +90,17 @@ package screens
 			this.addChild(player);
 			
 			// Creamos un enemigo.
-			enemy = new Enemy(player, 150, 100);
-			this.addChild(enemy);
+			//enemy = new Enemy(player, 150, 100);
+			//this.addChild(enemy);
+			
+			//Creamos al enemigo Medusa.
+			enemy2 = new Jellyfish(player, 150, 150);
+			this.addChild(enemy2);
+			 
+			//Creamos al enemigo Mariposa.
+			enemy3 = new Butterfly(player, 150, 50);
+			this.addChild(enemy3);
+			
 		}
 		
 		private function loop(event:Event):void

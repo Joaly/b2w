@@ -27,22 +27,23 @@ package enemies
 	public class Enemy extends Sprite 
 	{
 		//Imagen del enemigo.
-		private var enemyImage:Image;
+		protected var enemyImage:Image;
 		
 		//Posición de inicio del enemigo.
-		private var enemyStartX:Number;
-		private var enemyStartY:Number;
+		protected var enemyStartX:Number;
+		protected var enemyStartY:Number;
 		
-		//
-		private var enemySpeed:Number;
+		//Velocidad del enemigo.
+		protected var enemySpeed:Number;
 		
-		private var bullet:Bullet;
+		//Variable bala.
+		protected var bullet:Bullet;
 		
-		private var playerObjective:Player;
+		//Variable jugador.
+		protected var playerObjective:Player;
 		
-		private var attacking:Boolean;
-		
-		private var timer:Timer;
+		//Variable Timer para realizar el ataque cada cierto tiempo.
+		protected var timer:Timer;
 		
 		public function Enemy(player:Player, startX:Number, startY:Number) 
 		{
@@ -53,7 +54,7 @@ package enemies
 			this.addEventListener(Event.ADDED_TO_STAGE, createEnemy); // Creamos el enemigo.			
 		}
 		
-		private function createEnemy(event:Event):void
+		protected function createEnemy(event:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, createEnemy);
 			
@@ -69,18 +70,22 @@ package enemies
 			timer = new Timer(1000, 0);
 			
 			enemySpeed = new Number(3); // Inicializamos la velocidad.
-			attacking = new Boolean(false); // Este booleano nos dirá si el enemigo está atacando.
-			
+
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
 		
-		private function enemyLoop(event:Event):void
+		protected function enemyLoop(event:Event):void
 		{
 			movementPattern(); // Movimiento del enemigo.
 			attack(); // Ataque del enemigo.
+			if (playerObjective.isDead) //Si el jugador está muerto, entonces se acaba el bucle del enemigo.
+			{
+				trace("Has muerto.");
+				removeEventListener(Event.ENTER_FRAME, enemyLoop);
+			}
 		}
 		
-		private function movementPattern():void
+		protected function movementPattern():void
 		{
 			enemyImage.x += enemySpeed; // Movemos el enemigo en horizontal.
 			
@@ -89,23 +94,16 @@ package enemies
 			if (enemyImage.x - (enemyImage.width/2) <= Stage1.OFFSET) enemySpeed *= -1;
 		}
 		
-		private function attack():void
+		private function attack():void //Función dedicada a realizar el ataque cada 2 segundos.
 		{
+			timer.start(); //Empieza el temporizador
 			
-			timer.start();
-			
-			if (timer.currentCount == 2)
+			if (timer.currentCount == 2) //Si llega a dos segundos, realizará un disparo.
 			{
-				
 				bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
 				this.addChild(bullet);
 				timer.reset();
-				
-				
 			}
-			
-			trace(timer.currentCount);
-			
 		}
 	}
 }
