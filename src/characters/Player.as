@@ -15,6 +15,8 @@ package characters
 	
 	import objects.Wall;
 	
+	import projectiles.PlayerShot;
+	
 	import screens.Stage1;
 	
 	import starling.core.Starling;
@@ -98,6 +100,11 @@ package characters
 					playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 				}
 				
+				else
+				{
+					shoot(touch);
+				}
+				
 			}
 		}
 		
@@ -113,6 +120,12 @@ package characters
 		{
 			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
+		}
+		
+		private function shoot(touchPos:Touch):void
+		{
+			var shot:PlayerShot = new PlayerShot(playerObject.x, playerObject.y, 3, touchPos);
+			this.addChild(shot);
 		}
 	}
 }

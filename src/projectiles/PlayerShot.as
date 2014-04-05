@@ -1,6 +1,9 @@
 package projectiles
 {
+	import flash.geom.Point;
+	
 	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -12,15 +15,16 @@ package projectiles
 		private var startX:Number;
 		private var startY:Number;
 		private var speed:Number;
-		private var touch:Touch;
+		private var target:Point;
 		private var tween:Tween;
 		
 		
-		public function PlayerShot(x:Number, y:Number, touchPos:Touch)
+		public function PlayerShot(x:Number, y:Number, shotSpeed:Number, touchPos:Touch)
 		{
 			startX = x;
 			startY = y;
-			touch = touchPos;
+			speed = shotSpeed;
+			target = new Point(touchPos.globalX, touchPos.globalY);
 			
 			this.addEventListener(starling.events.Event.ADDED_TO_STAGE, createShot);
 		}
@@ -32,6 +36,17 @@ package projectiles
 			shotImage.pivotY = shotImage.height/2;
 			shotImage.x = startX;
 			shotImage.y = startY;
+			this.addChild(shotImage);
+			
+			tween = new Tween(shotImage, speed);
+			Starling.juggler.add(tween);
+			
+			this.addEventListener(Event.ENTER_FRAME, movement);
+		}
+		
+		private function movement(event:Event):void
+		{
+			tween.moveTo(target.x, target.y);
 		}
 	}
 }
