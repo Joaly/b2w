@@ -6,6 +6,7 @@ package enemies
 	import projectiles.Bullet;
 	
 	import characters.Player;
+	import projectiles.PlayerShot;
 	
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager;
@@ -33,16 +34,15 @@ package enemies
 		protected var enemyStartX:Number;
 		protected var enemyStartY:Number;
 		
-		//Velocidad del enemigo.
+		//
 		protected var enemySpeed:Number;
 		
-		//Variable bala.
 		protected var bullet:Bullet;
 		
-		//Variable jugador.
 		protected var playerObjective:Player;
 		
-		//Variable Timer para realizar el ataque cada cierto tiempo.
+		protected var attacking:Boolean;
+		
 		protected var timer:Timer;
 		
 		public function Enemy(player:Player, startX:Number, startY:Number) 
@@ -70,7 +70,8 @@ package enemies
 			timer = new Timer(1000, 0);
 			
 			enemySpeed = new Number(3); // Inicializamos la velocidad.
-
+			attacking = new Boolean(false); // Este booleano nos dirá si el enemigo está atacando.
+			
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
 		
@@ -78,6 +79,7 @@ package enemies
 		{
 			movementPattern(); // Movimiento del enemigo.
 			attack(); // Ataque del enemigo.
+			
 			if (playerObjective.isDead) //Si el jugador está muerto, entonces se acaba el bucle del enemigo.
 			{
 				trace("Has muerto.");
@@ -90,20 +92,30 @@ package enemies
 			enemyImage.x += enemySpeed; // Movemos el enemigo en horizontal.
 			
 			// Cambiamos el sentido al llegar a la pared.
-			if (enemyImage.x + (enemyImage.width/2) >= (stage.stageWidth - Stage1.OFFSET)) enemySpeed *= -1;
-			if (enemyImage.x - (enemyImage.width/2) <= Stage1.OFFSET) enemySpeed *= -1;
+			if (enemyImage.x + (enemyImage.width/2) >= (stage.stageWidth - Stage1.OFFSET))
+			{
+				enemyImage.scaleX *= -1;
+				enemySpeed *= -1;
+			}
+			if (enemyImage.x - (enemyImage.width/2) <= Stage1.OFFSET)
+			{
+				enemyImage.scaleX *= -1;
+				enemySpeed *= -1;
+			}
 		}
 		
-		private function attack():void //Función dedicada a realizar el ataque cada 2 segundos.
+		protected function attack():void //Función dedicada a disparar hacia el jugador.
 		{
-			timer.start(); //Empieza el temporizador
 			
-			if (timer.currentCount == 2) //Si llega a dos segundos, realizará un disparo.
+			timer.start(); //El temporizador empieza.
+			
+			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
 			{
 				bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
 				this.addChild(bullet);
 				timer.reset();
 			}
+
 		}
 	}
 }

@@ -76,7 +76,7 @@ package projectiles
 				playerObjective.visible = false;
 			}
 			
-			if (Math.round(tween.currentTime) == 2) //Si la bala falla (pasará como 2-3 segundos) entonces es eliminada.
+			if (Math.round(tween.currentTime) == 3) //Si la bala falla (pasará como 2-3 segundos) entonces es eliminada.
 			{
 				this.removeFromParent();
 			}
