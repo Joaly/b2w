@@ -47,8 +47,8 @@ package projectiles
 			bulletImage.rotation = deg2rad(-90);
 			bulletImage.x = bulletStartX; // Ponemos las coordenadas de inicio de la bala.
 			bulletImage.y = bulletStartY;			
-			bulletImage.scaleX = 0.05;
-			bulletImage.scaleY = 0.05;	
+			bulletImage.scaleX = 0.04;
+			bulletImage.scaleY = 0.04;	
 			
 			positionX = new Number(playerObjective.position.x);
 			positionY = new Number(playerObjective.position.y);
@@ -71,8 +71,14 @@ package projectiles
 			
 			if (bulletImage.bounds.intersects(playerObjective.bounds)) // Si la bala toca al objetivo, ambos desaparecen.
 			{
+				playerObjective.isDead = true;
 				this.removeFromParent();
 				playerObjective.visible = false;
+			}
+			
+			if (Math.round(tween.currentTime) == 3) //Si la bala falla (pasará como 2-3 segundos) entonces es eliminada.
+			{
+				this.removeFromParent();
 			}
 		}
 	}

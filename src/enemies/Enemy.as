@@ -6,6 +6,7 @@ package enemies
 	import projectiles.Bullet;
 	
 	import characters.Player;
+	import projectiles.PlayerShot;
 	
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager;
@@ -27,22 +28,22 @@ package enemies
 	public class Enemy extends Sprite 
 	{
 		//Imagen del enemigo.
-		private var enemyImage:Image;
+		protected var enemyImage:Image;
 		
 		//Posición de inicio del enemigo.
-		private var enemyStartX:Number;
-		private var enemyStartY:Number;
+		protected var enemyStartX:Number;
+		protected var enemyStartY:Number;
 		
 		//
-		private var enemySpeed:Number;
+		protected var enemySpeed:Number;
 		
-		private var bullet:Bullet;
+		protected var bullet:Bullet;
 		
-		private var playerObjective:Player;
+		protected var playerObjective:Player;
 		
-		private var attacking:Boolean;
+		protected var attacking:Boolean;
 		
-		private var timer:Timer;
+		protected var timer:Timer;
 		
 		public function Enemy(player:Player, startX:Number, startY:Number) 
 		{
@@ -53,7 +54,7 @@ package enemies
 			this.addEventListener(Event.ADDED_TO_STAGE, createEnemy); // Creamos el enemigo.			
 		}
 		
-		private function createEnemy(event:Event):void
+		protected function createEnemy(event:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, createEnemy);
 			
@@ -74,38 +75,47 @@ package enemies
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
 		
-		private function enemyLoop(event:Event):void
+		protected function enemyLoop(event:Event):void
 		{
 			movementPattern(); // Movimiento del enemigo.
-			//attack(); // Ataque del enemigo.
+			attack(); // Ataque del enemigo.
+			
+			if (playerObjective.isDead) //Si el jugador está muerto, entonces se acaba el bucle del enemigo.
+			{
+				trace("Has muerto.");
+				removeEventListener(Event.ENTER_FRAME, enemyLoop);
+			}
 		}
 		
-		private function movementPattern():void
+		protected function movementPattern():void
 		{
 			enemyImage.x += enemySpeed; // Movemos el enemigo en horizontal.
 			
 			// Cambiamos el sentido al llegar a la pared.
-			if (enemyImage.x + (enemyImage.width/2) >= (stage.stageWidth - Stage1.OFFSET)) enemySpeed *= -1;
-			if (enemyImage.x - (enemyImage.width/2) <= Stage1.OFFSET) enemySpeed *= -1;
+			if (enemyImage.x + (enemyImage.width/2) >= (stage.stageWidth - Stage1.OFFSET))
+			{
+				enemyImage.scaleX *= -1;
+				enemySpeed *= -1;
+			}
+			if (enemyImage.x - (enemyImage.width/2) <= Stage1.OFFSET)
+			{
+				enemyImage.scaleX *= -1;
+				enemySpeed *= -1;
+			}
 		}
 		
-		private function attack():void
+		protected function attack():void //Función dedicada a disparar hacia el jugador.
 		{
 			
-			timer.start();
+			timer.start(); //El temporizador empieza.
 			
-			if (timer.currentCount == 2)
+			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
 			{
-				
 				bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
 				this.addChild(bullet);
 				timer.reset();
-				
-				
 			}
-			
-			trace(timer.currentCount);
-			
+
 		}
 	}
 }

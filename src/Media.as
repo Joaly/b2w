@@ -32,6 +32,12 @@ package
 		[Embed(source = "../media/graphics/shot.png")]
 		public static const PlayerShot:Class;
 		
+		[Embed(source = "../media/graphics/Medusa.png")]
+		public static const MedusaEnemigo:Class;
+		
+		[Embed(source = "../media/graphics/Mariposa.png")]
+		public static const MariposaEnemigo:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		
 		public function Media()
