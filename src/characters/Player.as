@@ -124,7 +124,7 @@ package characters
 		
 		private function shoot(touchPos:Touch):void
 		{
-			var shot:PlayerShot = new PlayerShot(playerObject.x, playerObject.y, 3, touchPos);
+			var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 3, touchPos);
 			this.addChild(shot);
 		}
 	}
