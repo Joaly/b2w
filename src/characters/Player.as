@@ -33,7 +33,7 @@ package characters
 		private var playerImage:Image;
 		private var playerX:Number;
 		private var playerY:Number;
-		private var playerObject:PhysicsObject;
+		public var playerObject:PhysicsObject;
 		private var playerPhysics:PhysInjector;
 		private var touchPos:Point;
 		public var position:Point;
@@ -107,7 +107,6 @@ package characters
 				{
 					shoot(touch);
 				}
-				
 			}
 		}
 		

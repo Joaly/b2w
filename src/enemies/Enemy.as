@@ -111,7 +111,7 @@ package enemies
 			
 			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
 			{
-				bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
+				//bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
 				this.addChild(bullet);
 				timer.reset();
 			}

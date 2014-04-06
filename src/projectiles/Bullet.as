@@ -1,13 +1,20 @@
 package projectiles
 {
-	import characters.Player;
-	import starling.animation.Tween;
+	import Box2D.Dynamics.Contacts.b2Contact;
 	
+	import characters.Player;
+	
+	import com.reyco1.physinjector.PhysInjector;
+	import com.reyco1.physinjector.contact.ContactManager;
+	import com.reyco1.physinjector.data.PhysicsObject;
+	import com.reyco1.physinjector.data.PhysicsProperties;
+	
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
-	import starling.events.Event;	
+	import starling.events.Event;
 	import starling.utils.deg2rad;
-	import starling.core.Starling;
 	
 	public class Bullet extends Sprite
 	{
@@ -30,8 +37,15 @@ package projectiles
 		
 		private var tween:Tween;
 		
-		public function Bullet(player:Player, startX:Number, startY:Number)
+		//Físicas de la bala.
+		private var bulletObject:PhysicsObject;
+		private var bulletPhysics:PhysInjector;
+		
+		
+		
+		public function Bullet(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
+			bulletPhysics = physics;
 			playerObjective = player; // Objetivo de la bala.
 			bulletStartX = startX; // Posición origen de la bala.
 			bulletStartY = startY;
@@ -48,18 +62,20 @@ package projectiles
 			bulletImage.x = bulletStartX; // Ponemos las coordenadas de inicio de la bala.
 			bulletImage.y = bulletStartY;			
 			bulletImage.scaleX = 0.04;
-			bulletImage.scaleY = 0.04;	
+			bulletImage.scaleY = 0.04;
+			this.addChild(bulletImage);
 			
 			positionX = new Number(playerObjective.position.x);
 			positionY = new Number(playerObjective.position.y);
 			
-			bulletSpeed = new Number(20); // Inicializamos la velocidad.
+			bulletSpeed = new Number(20); // Inicializamos la velocidad.			
 			
-			tween = new Tween(bulletImage,bulletSpeed);
+			bulletObject = bulletPhysics.injectPhysics(bulletImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
+			bulletObject.name = "bullet";
+			
+			tween = new Tween(bulletObject,bulletSpeed);
 			
 			Starling.juggler.add(tween);
-			
-			this.addChild(bulletImage);
 			
 			this.addEventListener(Event.ENTER_FRAME, movement);	// Determinamos el movimiento de la bala.
 		}
@@ -69,17 +85,22 @@ package projectiles
 			
 			tween.moveTo(positionX, positionY); //La bala irá hasta la posición donde el jugador estaba cuando el enemigo ataca.
 			
-			if (bulletImage.bounds.intersects(playerObjective.bounds)) // Si la bala toca al objetivo, ambos desaparecen.
-			{
-				playerObjective.isDead = true;
-				this.removeFromParent();
-				playerObjective.visible = false;
-			}
+			ContactManager.onContactBegin("bullet","player",playerContact);
 			
 			if (Math.round(tween.currentTime) == 3) //Si la bala falla (pasará como 2-3 segundos) entonces es eliminada.
 			{
-				this.removeFromParent();
+				this.removeEventListener(Event.ENTER_FRAME, movement);
+				bulletObject.physicsProperties.isDynamic = false;
+				//bulletObject.dispose();
+				this.removeChild(bulletImage);
 			}
+		}
+		
+		private function playerContact(bullet:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
+		{
+			playerObjective.isDead = true;
+			this.removeFromParent();
+			playerObjective.visible = false;
 		}
 	}
 }
