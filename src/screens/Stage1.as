@@ -98,7 +98,7 @@ package screens
 			this.addChild(enemy2);
 			 
 			//Creamos al enemigo Mariposa.
-			enemy3 = new Butterfly(player, 150, 50);
+			enemy3 = new Butterfly(physics, player, 150, 50);
 			this.addChild(enemy3);
 			
 		}

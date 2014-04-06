@@ -2,11 +2,8 @@ package enemies
 {
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import flash.utils.Timer;
-	import projectiles.Bullet;
 	
 	import characters.Player;
-	import projectiles.PlayerShot;
 	
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager;
@@ -14,6 +11,11 @@ package enemies
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
+	import flash.utils.getTimer;
+	
+	import projectiles.Bullet;
+	import projectiles.PlayerShot;
 	
 	import screens.Stage1;
 	
@@ -23,7 +25,6 @@ package enemies
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
-	import flash.utils.getTimer;
 	
 	public class Enemy extends Sprite 
 	{
@@ -45,7 +46,9 @@ package enemies
 		
 		protected var timer:Timer;
 		
-		public function Enemy(player:Player, startX:Number, startY:Number) 
+		protected var enemyPhysics:PhysInjector;
+		
+		public function Enemy(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
 		{
 			playerObjective = player; // Jugador al que atacará el enemigo.
 			enemyStartX = startX; // Posición inicial del enemigo.

@@ -1,17 +1,22 @@
 package enemies 
 {
 	import characters.Player;
+	
+	import com.reyco1.physinjector.PhysInjector;
+	
 	import flash.utils.Timer;
+	
 	import projectiles.Bullet;
+	import projectiles.PlayerShot;
+	
+	import screens.Stage1;
+	
+	import starling.animation.Transitions;
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.core.Starling;
-	import starling.animation.Tween;
-	import screens.Stage1;
-	import projectiles.Bullet;
-	import starling.animation.Transitions;
-	import projectiles.PlayerShot;
 	
 
 	public class Butterfly extends Enemy
@@ -19,9 +24,9 @@ package enemies
 
 		private var tween:Tween;
 			
-		public function Butterfly(player:Player, startX:Number, startY:Number) 
+		public function Butterfly(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
 		{
-			super(playerObjective,startX,startY);
+			super(enemyPhysics, playerObjective,startX,startY);
 			
 			playerObjective = player; // Jugador al que atacará el enemigo.
 			enemyStartX = startX; // Posición inicial del enemigo.

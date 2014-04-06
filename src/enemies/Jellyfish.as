@@ -23,13 +23,12 @@ package enemies
 		
 		private var tween:Tween;
 		private var speedY:Number;
-		private var jellyPhysics:PhysInjector;
 
 		public function Jellyfish(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
 		{
-			super(playerObjective, startX, startY);
+			super(enemyPhysics, playerObjective, startX, startY);
 			
-			jellyPhysics = physics;
+			enemyPhysics = physics;
 			playerObjective = player; // Jugador al que atacará el enemigo.
 			enemyStartX = startX; // Posición inicial del enemigo.
 			enemyStartY = startY;
@@ -66,7 +65,7 @@ package enemies
 		override protected function movementPattern():void
 		{
 			enemyImage.x += enemySpeed; // Movemos el enemigo en horizontal.
-			enemyImage.y += Math.sin(enemyImage.x) * speedY;
+			//enemyImage.y += Math.sin(enemyImage.x) * speedY;
 			
 			//Hacemos un movimiento de subida-bajada del enemigo.
 			//if (enemyImage.y <= 140) speedY *= -1;
@@ -92,12 +91,10 @@ package enemies
 			
 			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
 			{
-				bullet = new Bullet(jellyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
+				bullet = new Bullet(enemyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
 				this.addChild(bullet);
 				timer.reset();
-			}
-			
+			}			
 		}
 	}
-
 }

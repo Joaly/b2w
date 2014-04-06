@@ -57,7 +57,6 @@ package projectiles
 		private function movement(event:Event):void
 		{
 			shotObject.body.SetLinearVelocity(new b2Vec2((target.x-startX)/10, (target.y-startY)/10));
-			trace(shotObject.body.GetLinearVelocity().x, shotObject.body.GetLinearVelocity().y);
 			if (shotObject.x < 0 || shotObject.x > stage.stageWidth || shotObject.y < 0 || shotObject.y > stage.stageHeight)
 			{
 				this.removeEventListener(Event.ENTER_FRAME, movement);

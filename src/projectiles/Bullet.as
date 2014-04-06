@@ -1,5 +1,6 @@
 package projectiles
 {
+	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	
 	import characters.Player;
@@ -21,27 +22,19 @@ package projectiles
 		//Imagen disparo.
 		private var bulletImage:Image;
 		
-		//Posición de inició del disparo.
-		private var bulletStartX:Number;
-		private var bulletStartY:Number;
-		
-		//Velocidad del disparo.
-		private var bulletSpeed:Number;
-		
-		//Variable jugador.
-		private var playerObjective:Player;
-		
-		//Posición donde el disparo debe ir.
-		private var positionX:Number;
-		private var positionY:Number;
-		
-		private var tween:Tween;
-		
 		//Físicas de la bala.
 		private var bulletObject:PhysicsObject;
 		private var bulletPhysics:PhysInjector;
 		
+		//Posición de inicio del disparo.
+		private var bulletStartX:Number;
+		private var bulletStartY:Number;
 		
+		//Velocidad del disparo.
+		private var bulletSpeed:b2Vec2;
+		
+		//Variable jugador.
+		private var playerObjective:Player;		
 		
 		public function Bullet(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -57,43 +50,31 @@ package projectiles
 		{			
 			this.removeEventListener(Event.ADDED_TO_STAGE, createBullet);
 			
+			// Creamos la imagen de la bala.
 			bulletImage = new Image(Media.getTexture("Bala1"));			
-			bulletImage.rotation = deg2rad(-90);
-			bulletImage.x = bulletStartX; // Ponemos las coordenadas de inicio de la bala.
-			bulletImage.y = bulletStartY;			
 			bulletImage.scaleX = 0.04;
 			bulletImage.scaleY = 0.04;
+			bulletImage.pivotX = bulletImage.width/2;
+			bulletImage.pivotY = bulletImage.height/2;
 			this.addChild(bulletImage);
 			
-			positionX = new Number(playerObjective.position.x);
-			positionY = new Number(playerObjective.position.y);
-			
-			bulletSpeed = new Number(20); // Inicializamos la velocidad.			
-			
+			// Creamos el objeto de la bala.
 			bulletObject = bulletPhysics.injectPhysics(bulletImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
-			bulletObject.name = "bullet";
+			bulletObject.name = "bullet"+new String(Math.round(bulletStartX));
+			bulletObject.x = bulletStartX;
+			bulletObject.y = bulletStartY;			
 			
-			tween = new Tween(bulletObject,bulletSpeed);
-			
-			Starling.juggler.add(tween);
+			// Inicializamos la posición de la bala.
+			bulletSpeed = new b2Vec2((playerObjective.position.x-bulletStartX)/50, 3);
 			
 			this.addEventListener(Event.ENTER_FRAME, movement);	// Determinamos el movimiento de la bala.
 		}
 		
 		private function movement():void
 		{
+			bulletObject.body.SetLinearVelocity(bulletSpeed); // Actualizamos la posición de la bala según la velocidad.
 			
-			tween.moveTo(positionX, positionY); //La bala irá hasta la posición donde el jugador estaba cuando el enemigo ataca.
-			
-			ContactManager.onContactBegin("bullet","player",playerContact);
-			
-			if (Math.round(tween.currentTime) == 3) //Si la bala falla (pasará como 2-3 segundos) entonces es eliminada.
-			{
-				this.removeEventListener(Event.ENTER_FRAME, movement);
-				bulletObject.physicsProperties.isDynamic = false;
-				//bulletObject.dispose();
-				this.removeChild(bulletImage);
-			}
+			ContactManager.onContactBegin(bulletObject.name,"player",playerContact); // Comprobamos si la bala colisiona con el jugador.
 		}
 		
 		private function playerContact(bullet:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
