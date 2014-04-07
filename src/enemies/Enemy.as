@@ -28,97 +28,104 @@ package enemies
 	
 	public class Enemy extends Sprite 
 	{
-		//Imagen del enemigo.
+		// Objeto enemigo.
 		protected var enemyImage:Image;
+		protected var enemyObject:PhysicsObject;
+		protected var enemyPhysics:PhysInjector;
 		
-		//Posición de inicio del enemigo.
+		// Parámetros enemigo.
 		protected var enemyStartX:Number;
 		protected var enemyStartY:Number;
-		
-		//
-		protected var enemySpeed:Number;
+		protected var enemySpeed:b2Vec2;
 		
 		protected var bullet:Bullet;
-		
-		protected var playerObjective:Player;
-		
-		protected var attacking:Boolean;
-		
+		protected var playerObjective:Player;		
 		protected var timer:Timer;
-		
-		protected var enemyPhysics:PhysInjector;
 		
 		public function Enemy(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
 		{
-			playerObjective = player; // Jugador al que atacará el enemigo.
-			enemyStartX = startX; // Posición inicial del enemigo.
+			enemyPhysics = physics;
+			playerObjective = player;
+			enemyStartX = startX;
 			enemyStartY = startY;
 			
-			this.addEventListener(Event.ADDED_TO_STAGE, createEnemy); // Creamos el enemigo.			
+			this.addEventListener(Event.ADDED_TO_STAGE, initEnemy); // Creamos el enemigo.			
 		}
 		
-		protected function createEnemy(event:Event):void
+		protected function initEnemy(event:Event):void
 		{
-			this.removeEventListener(Event.ADDED_TO_STAGE, createEnemy);
+			createEnemy("Player", 3, -1, "general"); // Esta función aplica los parámetros de imagen, velocidad en X e Y y el nombre del objeto.
+		}
+		
+		protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String):void
+		{
+			// La creación y posicionamiento de la imagen y objetos del enemigo será idéntica para todos los tipos.
+			enemyImage = new Image(Media.getTexture(image));
+			enemySpeed = new b2Vec2(speedX, speedY);
 			
-			enemyImage = new Image(Media.getTexture("Enemigo1"));			
 			enemyImage.pivotX = enemyImage.width/2; // Centramos el punto de ancla de la imagen.
 			enemyImage.pivotY = enemyImage.height/2;
-			enemyImage.scaleX = 0.15;
-			enemyImage.scaleY = 0.15;
-			enemyImage.x = enemyStartX; // Inicializamos la posición del enemigo.
-			enemyImage.y = enemyStartY;
+			enemyImage.scaleX = 0.5;
+			enemyImage.scaleY = 0.5;
 			this.addChild(enemyImage);
 			
-			timer = new Timer(1000, 0);
+			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
+			enemyObject.x = enemyStartX;
+			enemyObject.y = enemyStartY;
+			enemyObject.name = name;
 			
-			enemySpeed = new Number(3); // Inicializamos la velocidad.
-			attacking = new Boolean(false); // Este booleano nos dirá si el enemigo está atacando.
+			timer = new Timer(1000, 0);
 			
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
 		
 		protected function enemyLoop(event:Event):void
 		{
-			movementPattern(); // Movimiento del enemigo.
+			movementPatternX(); // Movimiento en x del enemigo.
+			movementPatternY(); // Movimiento en y del enemigo.
 			attack(); // Ataque del enemigo.
+			checkDead(); // Comprobamos si el enemigo muere.
+		}
+		
+		protected function movementPatternX():void
+		{
+			enemyObject.body.SetLinearVelocity(enemySpeed); // Aplicamos la velocidad al enemigo.
 			
-			if (playerObjective.isDead) //Si el jugador está muerto, entonces se acaba el bucle del enemigo.
+			// Cambiamos el sentido al llegar a la pared.
+			if (enemyObject.x >= stage.stageWidth-Stage1.OFFSET-enemyImage.width/2-1) 
 			{
-				trace("Has muerto.");
-				removeEventListener(Event.ENTER_FRAME, enemyLoop);
+				enemyObject.x -= enemyImage.width/5;
+				enemyImage.scaleX *= -1;
+				enemySpeed.x *= -1;
+			}
+			
+			if (enemyObject.x <= Stage1.OFFSET+enemyImage.width/2+1) 
+			{
+				enemyObject.x += enemyImage.width/5;
+				enemyImage.scaleX *= -1;
+				enemySpeed.x *= -1;
 			}
 		}
 		
-		protected function movementPattern():void
+		protected function movementPatternY():void
 		{
-			enemyImage.x += enemySpeed; // Movemos el enemigo en horizontal.
 			
-			// Cambiamos el sentido al llegar a la pared.
-			if (enemyImage.x + (enemyImage.width/2) >= (stage.stageWidth - Stage1.OFFSET))
-			{
-				enemyImage.scaleX *= -1;
-				enemySpeed *= -1;
-			}
-			if (enemyImage.x - (enemyImage.width/2) <= Stage1.OFFSET)
-			{
-				enemyImage.scaleX *= -1;
-				enemySpeed *= -1;
-			}
 		}
 		
 		protected function attack():void //Función dedicada a disparar hacia el jugador.
 		{
 			
-			timer.start(); //El temporizador empieza.
-			
-			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
+		}
+		
+		protected function checkDead():void
+		{
+			if (enemyObject.physicsProperties.name == "dead") // Cuando un enemigo muera su nombre cambiará a "dead". Cuando esto pase lo eliminamos.
 			{
-				//bullet = new Bullet(playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
-				this.addChild(bullet);
-				timer.reset();
+				this.removeEventListener(Event.ENTER_FRAME, enemyLoop);
+				enemyObject.physicsProperties.isDynamic = false;
+				enemyObject.body.GetWorld().DestroyBody(enemyObject.body);
+				this.removeChild(enemyImage);
 			}
-
 		}
 	}
 }

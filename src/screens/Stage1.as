@@ -38,9 +38,8 @@ package screens
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
 		private var player:Player;
-		private var enemy:Enemy;
-		private var enemy2:Jellyfish;
-		private var enemy3:Butterfly;
+		private var enemy1:Jellyfish;
+		private var enemy2:Butterfly;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;		
@@ -89,17 +88,13 @@ package screens
 			player = new Player(physics, stage.stageWidth/2, stage.stageHeight, wallLeft, wallRight);
 			this.addChild(player);
 			
-			// Creamos un enemigo.
-			//enemy = new Enemy(player, 150, 100);
-			//this.addChild(enemy);
-			
 			//Creamos al enemigo Medusa.
-			enemy2 = new Jellyfish(physics, player, 150, 150);
-			this.addChild(enemy2);
+			enemy1 = new Jellyfish(physics, player, 150, 150);
+			this.addChild(enemy1);
 			 
 			//Creamos al enemigo Mariposa.
-			enemy3 = new Butterfly(physics, player, 150, 50);
-			this.addChild(enemy3);
+			enemy2 = new Butterfly(physics, player, 150, 50);
+			this.addChild(enemy2);
 			
 		}
 		

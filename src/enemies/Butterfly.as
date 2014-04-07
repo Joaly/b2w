@@ -1,5 +1,7 @@
 package enemies 
 {
+	import Box2D.Common.Math.b2Vec2;
+	
 	import characters.Player;
 	
 	import com.reyco1.physinjector.PhysInjector;
@@ -24,51 +26,32 @@ package enemies
 
 		private var tween:Tween;
 			
-		public function Butterfly(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
+		public function Butterfly(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
-			super(enemyPhysics, playerObjective,startX,startY);
-			
-			playerObjective = player; // Jugador al que atacará el enemigo.
-			enemyStartX = startX; // Posición inicial del enemigo.
-			enemyStartY = startY;
-			
-			this.addEventListener(Event.ADDED_TO_STAGE, createEnemy);
+			super(physics, player, startX, startY);
 		}
 		
-		override protected function createEnemy(event:Event):void 
+		override protected function initEnemy(event:Event):void
 		{
-			
-			this.removeEventListener(Event.ADDED_TO_STAGE, createEnemy);
-			
-			enemyImage = new Image(Media.getTexture("MariposaEnemigo"));			
-			enemyImage.pivotX = enemyImage.width/2; // Centramos el punto de ancla de la imagen.
-			enemyImage.pivotY = enemyImage.height/2;
-			enemyImage.scaleX = 0.17;
-			enemyImage.scaleY = 0.17;
-			enemyImage.x = enemyStartX; // Inicializamos la posición del enemigo.
-			enemyImage.y = enemyStartY;
-			this.addChild(enemyImage);
-			
-			timer = new Timer(1000, 0);
-			
-			enemySpeed = new Number(2); // Inicializamos la velocidad.
-			
-			tween = new Tween(enemyImage,enemySpeed);
-			
-			Starling.juggler.add(tween);
-			
-			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
+			createEnemy("MariposaEnemigo", 1, -1, "shotWeak");
 		}
 		
-		override protected function enemyLoop(event:Event):void
+		override protected function movementPatternY():void
 		{
-			movementPattern(); // Movimiento del enemigo.
 			
-			if (playerObjective.isDead) //Si el jugador está muerto, entonces se acaba el bucle del enemigo.
+		}
+		
+		override protected function attack():void //Función dedicada a disparar hacia el jugador.
+		{
+			
+			timer.start(); //El temporizador empieza.
+			
+			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
 			{
-				removeEventListener(Event.ENTER_FRAME, enemyLoop);
-			}
+				bullet = new Bullet(enemyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
+				this.addChild(bullet);
+				timer.reset();
+			}			
 		}
 	}
-
 }
