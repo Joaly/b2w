@@ -61,6 +61,7 @@ package projectiles
 			// Creamos el objeto de la bala.
 			bulletObject = bulletPhysics.injectPhysics(bulletImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			bulletObject.name = "bullet"+new String(Math.round(bulletStartX));
+			bulletObject.physicsProperties.isSensor = true;
 			bulletObject.x = bulletStartX;
 			bulletObject.y = bulletStartY;			
 			

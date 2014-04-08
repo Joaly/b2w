@@ -5,8 +5,6 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import enemies.Butterfly;
-	import enemies.Jellyfish;
 	
 	import characters.Player;
 	
@@ -15,7 +13,9 @@ package screens
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
+	import enemies.Butterfly;
 	import enemies.Enemy;
+	import enemies.Jellyfish;
 	
 	import objects.Floor;
 	import objects.Wall;
@@ -42,7 +42,10 @@ package screens
 		private var enemy2:Butterfly;
 		
 		// Físicas del mundo.
-		private var physics:PhysInjector;		
+		private var physics:PhysInjector;
+		
+		// Array de enemigos.
+		public static var enemies:Vector.<PhysicsObject>;
 		
 		public function Stage1()
 		{
@@ -88,14 +91,15 @@ package screens
 			player = new Player(physics, stage.stageWidth/2, stage.stageHeight, wallLeft, wallRight);
 			this.addChild(player);
 			
+			enemies = new Vector.<PhysicsObject>;
+			
 			//Creamos al enemigo Medusa.
 			enemy1 = new Jellyfish(physics, player, 150, 150);
 			this.addChild(enemy1);
 			 
 			//Creamos al enemigo Mariposa.
 			enemy2 = new Butterfly(physics, player, 150, 50);
-			this.addChild(enemy2);
-			
+			this.addChild(enemy2);			
 		}
 		
 		private function loop(event:Event):void

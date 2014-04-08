@@ -12,6 +12,7 @@ package characters
 	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 	
 	import objects.Wall;
 	
@@ -40,6 +41,9 @@ package characters
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
 		private var onJump:Boolean;
+		private var timer:Timer;
+		private var shotsFired:Number;
+		private var coolDown:Boolean;
 		
 		public var isDead:Boolean;
 		
@@ -72,6 +76,9 @@ package characters
 			position = new Point(playerImage.x, playerImage.y);
 			onJump = new Boolean(false);
 			isDead = new Boolean(false);
+			coolDown = new Boolean(false);
+			shotsFired = new Number(0);
+			timer = new Timer(1000, 0);
 			
 			playerObject.body.ApplyForce(new b2Vec2(100, -200), playerObject.body.GetWorldCenter());
 			
@@ -103,10 +110,7 @@ package characters
 					playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 				}
 				
-				else
-				{
-					shoot(touch);
-				}
+				else shoot(touch);
 			}
 		}
 		
@@ -116,6 +120,14 @@ package characters
 			position.y = playerImage.y;
 			ContactManager.onContactBegin("player", wallLeft.wallObject.name, wallContact);
 			ContactManager.onContactBegin("player", wallRight.wallObject.name, wallContact);
+			
+			if (coolDown && timer.currentCount >= 2)
+			{
+				timer.reset();
+				timer.stop();
+				coolDown = false;
+				shotsFired = 0;
+			}
 		}
 		
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
@@ -126,8 +138,19 @@ package characters
 		
 		private function shoot(touchPos:Touch):void
 		{
-			var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 3, touchPos);
-			this.addChild(shot);
+			if (!coolDown)
+			{
+				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, touchPos);
+				this.addChild(shot);
+				if (timer.currentCount <= 1) shotsFired++;
+				timer.reset();
+				timer.start();
+				if (shotsFired >= 5)
+				{
+					coolDown = true;
+					timer.start();
+				}
+			}
 		}
 	}
 }

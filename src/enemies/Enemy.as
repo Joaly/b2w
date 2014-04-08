@@ -72,7 +72,8 @@ package enemies
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			enemyObject.x = enemyStartX;
 			enemyObject.y = enemyStartY;
-			enemyObject.name = name;
+			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
+			Stage1.enemies.push(enemyObject);
 			
 			timer = new Timer(1000, 0);
 			
@@ -83,7 +84,7 @@ package enemies
 		{
 			movementPatternX(); // Movimiento en x del enemigo.
 			movementPatternY(); // Movimiento en y del enemigo.
-			attack(); // Ataque del enemigo.
+			//attack(); // Ataque del enemigo.
 			checkDead(); // Comprobamos si el enemigo muere.
 		}
 		

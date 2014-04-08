@@ -10,6 +10,8 @@ package projectiles
 	
 	import flash.geom.Point;
 	
+	import screens.Stage1;
+	
 	import starling.animation.Tween;
 	import starling.core.Starling;
 	import starling.display.Image;
@@ -25,6 +27,7 @@ package projectiles
 		private var startX:Number;
 		private var startY:Number;
 		private var speed:Number;
+		private var direction:b2Vec2;
 		private var target:Point;
 		
 		
@@ -50,16 +53,20 @@ package projectiles
 			// Creamos el objeto del disparo.
 			shotObject = shotPhysics.injectPhysics(shotImage, PhysInjector.CIRCLE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			shotObject.physicsProperties.isSensor = true;
-			shotObject.name = "shot" + new String(Math.round(target.x*target.y));
+			shotObject.name = "shot" + new String(Math.round(target.x*target.y*Math.random()));
 			shotObject.x = startX;
 			shotObject.y = startY;
+			
+			// Calculamos la velocidad del disparo.
+			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
+			direction = new b2Vec2((target.x-startX)/speedModule*speed, (target.y-startY)/speedModule*speed);
 			
 			this.addEventListener(Event.ENTER_FRAME, movement);
 		}
 		
 		private function movement(event:Event):void
 		{
-			shotObject.body.SetLinearVelocity(new b2Vec2((target.x-startX)/10, (target.y-startY)/10)); // Aplicamos la velocidad al objeto.
+			shotObject.body.SetLinearVelocity(direction); // Aplicamos la velocidad al objeto.
 			
 			if (shotObject.x < 0 || shotObject.x > stage.stageWidth || shotObject.y < 0 || shotObject.y > stage.stageHeight) // Eliminamos el disparo cuando salga de pantalla.
 			{
@@ -70,12 +77,16 @@ package projectiles
 				this.removeChild(shotImage);
 			}
 			
-			ContactManager.onContactBegin(shotObject.name, "shotWeak", shotContact); // Si colisiona con un enemigo débil a los disparos lo eliminamos.
+			//ContactManager.onContactBegin(shotObject.name, "shotWeak", shotContact); // Si colisiona con un enemigo débil a los disparos lo eliminamos.
+			for (var i:int; i < Stage1.enemies.length; i++)
+			{
+				ContactManager.onContactBegin(shotObject.name, Stage1.enemies[i].name, shotContact);
+			}
 		}
 		
-		private function shotContact(shot:PhysicsObject, jelly:PhysicsObject, contact:b2Contact):void
+		private function shotContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			jelly.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
+			enemy.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
 			this.removeEventListener(Event.ENTER_FRAME, movement);
 			shot.physicsProperties.isDynamic = false;
 			shot.body.GetWorld().DestroyBody(shot.body);
