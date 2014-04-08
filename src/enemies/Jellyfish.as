@@ -24,6 +24,7 @@ package enemies
 
 	public class Jellyfish extends Enemy
 	{
+		private var speedY:Number;
 		
 		public function Jellyfish(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -33,11 +34,15 @@ package enemies
 		override protected function initEnemy(event:Event):void
 		{
 			createEnemy("MedusaEnemigo", 2, -1, "shotWeak");
+			speedY = new Number(0);
 		}
 		
 		override protected function movementPatternY():void
 		{
 			
+			enemyObject.y += ( 3 * (Math.sin((2 * Math.PI * speedY) /50))); //Movimiento armónico simple deseado para el enemigo.
+			speedY += 1;
+
 		}
 		
 		override protected function attack():void //Función dedicada a disparar hacia el jugador.
