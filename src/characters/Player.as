@@ -44,6 +44,10 @@ package characters
 		private var timer:Timer;
 		private var shotsFired:Number;
 		private var coolDown:Boolean;
+		private var jumpForce:b2Vec2;
+		private var touchBegin:Touch;
+		private var touchEnd:Touch;
+		private var sliding:Boolean;
 		
 		public var isDead:Boolean;
 		
@@ -78,39 +82,79 @@ package characters
 			isDead = new Boolean(false);
 			coolDown = new Boolean(false);
 			shotsFired = new Number(0);
-			timer = new Timer(1000, 0);
+			timer = new Timer(100, 0);
+			jumpForce = new b2Vec2(0,0);
 			
 			playerObject.body.ApplyForce(new b2Vec2(100, -200), playerObject.body.GetWorldCenter());
 			
-			stage.addEventListener(TouchEvent.TOUCH, onTouch);
+			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
+			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
 		}
 		
 		//* CLICK / TOCAR PANTALLA *//
-		private function onTouch(event:TouchEvent):void
+		/*private function onTouch(event:TouchEvent):void
 		{
 			var touch:Touch = event.getTouch(stage, TouchPhase.BEGAN); // Variable que almacena los datos del toque en la pantalla.
-			if (touch && !onJump)
+			if (touch && !onJump) // Cuando tocamos la pantalla y el jugador no está saltando.
 			{
-				if ((touch.globalY < playerObject.y) && 
-					((playerObject.x > stage.stageWidth/2 && (touch.globalX < Stage1.OFFSET)) || 
-						(playerObject.x < stage.stageWidth/2 && touch.globalX > stage.stageWidth-Stage1.OFFSET)))
+				if ((touch.globalY < playerObject.y) && ((playerObject.x > stage.stageWidth/2 && (touch.globalX < Stage1.OFFSET))
+					|| (playerObject.x < stage.stageWidth/2 && touch.globalX > stage.stageWidth-Stage1.OFFSET)))
+				// Si tocamos en la pared contraria saltamos.
+				jump(touch);
+				
+				// En caso contrario disparamos.
+				else shoot(touch);
+			}
+		}*/
+		
+		private function playerTouch(event:TouchEvent):void
+		{
+			if (event.getTouch(stage, TouchPhase.BEGAN))
+			{
+				// Si tocamos cerca del jugador almacenamos las coordenadas.
+				if ((event.getTouch(stage, TouchPhase.BEGAN).globalX >= playerObject.x-playerImage.width)
+					&& (event.getTouch(stage, TouchPhase.BEGAN).globalX <= playerObject.x+playerImage.width)
+					&& (event.getTouch(stage, TouchPhase.BEGAN).globalY >= playerObject.y-playerImage.height)
+					&& (event.getTouch(stage, TouchPhase.BEGAN).globalY <= playerObject.y+playerImage.height))
 				{
-					playerObject.physicsProperties.isDynamic = true;
-					onJump = true;
-					var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
-					if (force.y < -200) force.y = -200;
-					if (force.y > 0) 
-					{
-						force.y = 0;
-						force.x = 0;
-					}
-					if (force.x < -200) force.x = -200;
-					if (force.x > 200) force.x = 200;
-					playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
+					touchBegin = event.getTouch(stage, TouchPhase.BEGAN);
+					jumpForce.x = new Number(touchBegin.globalX);
+					jumpForce.y = new Number(touchBegin.globalY);
 				}
 				
-				else shoot(touch);
+				// En caso contario, realizamos un disparo.
+				else shoot(event.getTouch(stage, TouchPhase.BEGAN));
+			}
+			
+			if (event.getTouch(stage, TouchPhase.ENDED)) 
+			{
+				// Si hemos tocado cerca del jugador, al finalizar el toque realizamos un salto.
+				if (touchBegin && event.getTouch(stage, TouchPhase.ENDED).globalY < playerObject.y-playerImage.height
+					&& ((playerObject.x < stage.stageWidth/2
+					&& event.getTouch(stage, TouchPhase.ENDED).globalX > Stage1.OFFSET)
+					|| (playerObject.x > stage.stageWidth/2
+					&& event.getTouch(stage, TouchPhase.ENDED).globalX < stage.stageWidth-Stage1.OFFSET)))
+				{
+					touchEnd = event.getTouch(stage, TouchPhase.ENDED);
+					jumpForce.x = (touchEnd.globalX - jumpForce.x) * 1.5;
+					jumpForce.y = (touchEnd.globalY - jumpForce.y) * 1.5;
+					touchBegin = null;
+					touchEnd = null;
+					jump(jumpForce);
+				}
+				
+				else if (event.getTouch(stage, TouchPhase.ENDED).globalY > playerObject.y+playerImage.height && touchBegin)
+				{
+					jumpForce.x = 0;
+					timer.reset();
+					sliding = true;
+					playerObject.physicsProperties.isDynamic = true;
+					jumpForce.y = event.getTouch(stage, TouchPhase.ENDED).globalY * 15;
+					touchBegin = null;
+					jump(jumpForce);
+					this.addEventListener(Event.ENTER_FRAME, slideDown);
+				}
 			}
 		}
 		
@@ -120,20 +164,28 @@ package characters
 			position.y = playerImage.y;
 			ContactManager.onContactBegin("player", wallLeft.wallObject.name, wallContact);
 			ContactManager.onContactBegin("player", wallRight.wallObject.name, wallContact);
-			
-			if (coolDown && timer.currentCount >= 2)
-			{
-				timer.reset();
-				timer.stop();
-				coolDown = false;
-				shotsFired = 0;
-			}
 		}
 		
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
 		{
-			playerObject.physicsProperties.isDynamic = false;
+			if (!sliding) playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
+		}
+		
+		private function jump(force:b2Vec2):void
+		{
+			playerObject.physicsProperties.isDynamic = true;
+			onJump = true;
+			//var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
+			if (force.y < -200) force.y = -200;
+			if (force.y > 0) 
+			{
+				force.y = 0;
+				force.x = 0;
+			}
+			if (force.x < -200) force.x = -200;
+			if (force.x > 200) force.x = 200;
+			playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 		}
 		
 		private function shoot(touchPos:Touch):void
@@ -142,15 +194,39 @@ package characters
 			{
 				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, touchPos);
 				this.addChild(shot);
-				if (timer.currentCount <= 1) shotsFired++;
+				
+				if (timer.currentCount <= 5) shotsFired++;				
+				else if (timer.currentCount >= 30) shotsFired = 0;				
 				timer.reset();
 				timer.start();
+				
 				if (shotsFired >= 5)
 				{
 					coolDown = true;
+					timer.reset();
 					timer.start();
 				}
+			}			
+			
+			if (coolDown && timer.currentCount >= 20)
+			{
+				timer.reset();
+				timer.stop();
+				coolDown = false;
+				shotsFired = 0;
+				shoot(touchPos);
 			}
+		}
+		
+		private function slideDown():void
+		{
+			if (timer.currentCount > 1)
+			{
+				sliding = false;
+				playerObject.physicsProperties.isDynamic = false;
+				this.removeEventListener(Event.ENTER_FRAME, slideDown);
+			}
+			trace(timer.currentCount);
 		}
 	}
 }

@@ -73,6 +73,7 @@ package enemies
 			enemyObject.x = enemyStartX;
 			enemyObject.y = enemyStartY;
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
+			enemyObject.physicsProperties.isSensor = true;
 			Stage1.enemies.push(enemyObject);
 			
 			timer = new Timer(1000, 0);
