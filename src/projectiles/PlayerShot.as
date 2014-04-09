@@ -27,7 +27,7 @@ package projectiles
 		private var startX:Number;
 		private var startY:Number;
 		private var speed:Number;
-		private var direction:b2Vec2;
+		public static var direction:b2Vec2;
 		private var target:Point;
 		
 		
@@ -56,16 +56,20 @@ package projectiles
 			shotObject.name = "shot" + new String(Math.round(target.x*target.y*Math.random()));
 			shotObject.x = startX;
 			shotObject.y = startY;
+			Stage1.Bounce = false;
 			
 			// Calculamos la velocidad del disparo.
 			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
-			direction = new b2Vec2((target.x-startX)/speedModule*speed, (target.y-startY)/speedModule*speed);
+			direction = new b2Vec2((target.x - startX) / speedModule * speed, (target.y - startY) / speedModule * speed);
+			
+			Stage1.shots.push(shotObject);
 			
 			this.addEventListener(Event.ENTER_FRAME, movement);
 		}
 		
 		private function movement(event:Event):void
 		{
+		
 			shotObject.body.SetLinearVelocity(direction); // Aplicamos la velocidad al objeto.
 			
 			if (shotObject.x < 0 || shotObject.x > stage.stageWidth || shotObject.y < 0 || shotObject.y > stage.stageHeight) // Eliminamos el disparo cuando salga de pantalla.
@@ -82,7 +86,16 @@ package projectiles
 			{
 				ContactManager.onContactBegin(shotObject.name, Stage1.enemies[i].name, shotContact);
 			}
+			
+			if (Stage1.Bounce) 
+			{
+				this.removeEventListener(Event.ENTER_FRAME, movement);
+				Stage1.shots.pop();
+				Stage1.Bounce = false;
+			}
+			
 		}
+		
 		
 		private function shotContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{

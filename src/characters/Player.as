@@ -144,7 +144,7 @@ package characters
 				this.addChild(shot);
 				if (timer.currentCount <= 1) shotsFired++;
 				timer.reset();
-				timer.start();
+				timer.start();	
 				if (shotsFired >= 5)
 				{
 					coolDown = true;

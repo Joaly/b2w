@@ -72,8 +72,9 @@ package enemies
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			enemyObject.x = enemyStartX;
 			enemyObject.y = enemyStartY;
-			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
-			Stage1.enemies.push(enemyObject);
+			enemyObject.name = name + new String(Math.round(enemyObject.x * Math.random()));
+			
+			if (name == "shotWeak") Stage1.enemies.push(enemyObject);
 			
 			timer = new Timer(1000, 0);
 			

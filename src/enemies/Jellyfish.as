@@ -33,15 +33,15 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("MedusaEnemigo", 2, -1, "shotWeak");
+			createEnemy("MedusaEnemigo", 0.5, -1, "shotWeak");
 			speedY = new Number(0);
 		}
 		
 		override protected function movementPatternY():void
 		{
 			
-			enemyObject.y += ( 3 * (Math.sin((2 * Math.PI * speedY) /50))); //Movimiento armónico simple deseado para el enemigo.
-			speedY += 1;
+			enemyObject.y += ( 1.5 * (Math.sin((2 * Math.PI * speedY) /10))); //Movimiento armónico simple deseado para el enemigo.
+			speedY += 0.1;
 
 		}
 		

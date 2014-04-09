@@ -1,10 +1,13 @@
 package enemies 
 {
 	import Box2D.Common.Math.b2Vec2;
+	import Box2D.Dynamics.Contacts.b2Contact;
+	import com.reyco1.physinjector.data.PhysicsObject;
 	
 	import characters.Player;
 	
 	import com.reyco1.physinjector.PhysInjector;
+	import com.reyco1.physinjector.contact.ContactManager;
 	
 	import flash.utils.Timer;
 	
@@ -33,7 +36,38 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("MariposaEnemigo", 1, -1, "shotWeak");
+			createEnemy("MariposaEnemigo", 1, -1, "contactWeak");
+		}
+		
+		override protected function movementPatternX():void
+		{
+			enemyObject.body.SetLinearVelocity(enemySpeed); // Aplicamos la velocidad al enemigo.
+			
+			// Cambiamos el sentido al llegar a la pared.
+			if (enemyObject.x >= stage.stageWidth-Stage1.OFFSET-enemyImage.width/2-1) 
+			{
+				enemyObject.x -= enemyImage.width/5;
+				enemyImage.scaleX *= -1;
+				enemySpeed.x *= -1;
+			}
+			
+			if (enemyObject.x <= Stage1.OFFSET+enemyImage.width/2+1) 
+			{
+				enemyObject.x += enemyImage.width/5;
+				enemyImage.scaleX *= -1;
+				enemySpeed.x *= -1;
+			}
+			
+			for (var i:int = 0; i < Stage1.shots.length; i++) 
+			{
+				ContactManager.onContactBegin(enemyObject.name, Stage1.shots[i].name, shotContact);
+			}
+		}
+		
+		private function shotContact(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
+		{
+			Stage1.Bounce = true;
+			shot.body.SetLinearVelocity(new b2Vec2( -shot.body.GetLinearVelocity().x, -shot.body.GetLinearVelocity().y));
 		}
 		
 		override protected function movementPatternY():void

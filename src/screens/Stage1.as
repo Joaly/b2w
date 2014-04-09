@@ -5,6 +5,7 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
+	import com.reyco1.physinjector.engines.sliceengine.SliceEngineUtils;
 	
 	import characters.Player;
 	
@@ -46,6 +47,10 @@ package screens
 		
 		// Array de enemigos.
 		public static var enemies:Vector.<PhysicsObject>;
+		public static var shots:Vector.<PhysicsObject>;
+		
+		//Variable usada para revertir balas del jugador sobre enemigos que puedan repelerlas.
+		public static var Bounce:Boolean;
 		
 		public function Stage1()
 		{
@@ -92,6 +97,8 @@ package screens
 			this.addChild(player);
 			
 			enemies = new Vector.<PhysicsObject>;
+			
+			shots = new Vector.<PhysicsObject>;
 			
 			//Creamos al enemigo Medusa.
 			enemy1 = new Jellyfish(physics, player, 150, 150);
