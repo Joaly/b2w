@@ -201,23 +201,7 @@ package characters
 				if (timer.currentCount <= 5) shotsFired++;				
 				else if (timer.currentCount >= 30) shotsFired = 0;				
 				timer.reset();
-<<<<<<< HEAD
 				timer.start();	
-=======
-				timer.start();
-<<<<<<< .mine
-				
-<<<<<<< HEAD
->>>>>>> 4a27fc6ca833d33940008594a0db2461acd93b0f
-=======
->>>>>>> 4a27fc6ca833d33940008594a0db2461acd93b0f
-=======
-				
-
-
-
-
->>>>>>> .theirs
 				if (shotsFired >= 5)
 				{
 					coolDown = true;
