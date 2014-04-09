@@ -47,7 +47,9 @@ package characters
 		private var jumpForce:b2Vec2;
 		private var touchBegin:Touch;
 		private var touchEnd:Touch;
-		private var sliding:Boolean;
+		private var slideAllowed:Boolean;
+		private var slideSpeed:Number;
+		private var slideDistance:Number;
 		
 		public var isDead:Boolean;
 		
@@ -124,7 +126,7 @@ package characters
 				}
 				
 				// En caso contario, realizamos un disparo.
-				else shoot(event.getTouch(stage, TouchPhase.BEGAN));
+				else if (!onJump) shoot(event.getTouch(stage, TouchPhase.BEGAN));
 			}
 			
 			if (event.getTouch(stage, TouchPhase.ENDED)) 
@@ -146,14 +148,14 @@ package characters
 				
 				else if (event.getTouch(stage, TouchPhase.ENDED).globalY > playerObject.y+playerImage.height && touchBegin)
 				{
-					jumpForce.x = 0;
-					timer.reset();
-					sliding = true;
-					playerObject.physicsProperties.isDynamic = true;
-					jumpForce.y = event.getTouch(stage, TouchPhase.ENDED).globalY * 15;
-					touchBegin = null;
-					jump(jumpForce);
-					this.addEventListener(Event.ENTER_FRAME, slideDown);
+					if (slideAllowed)
+					{
+						touchBegin = null;
+						slideSpeed = 5;
+						slideDistance = 0;
+						slideAllowed = false;
+						this.addEventListener(Event.ENTER_FRAME, slideDown);
+					}
 				}
 			}
 		}
@@ -168,8 +170,9 @@ package characters
 		
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
 		{
-			if (!sliding) playerObject.physicsProperties.isDynamic = false;
+			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
+			slideAllowed = true;
 		}
 		
 		private function jump(force:b2Vec2):void
@@ -220,13 +223,15 @@ package characters
 		
 		private function slideDown():void
 		{
-			if (timer.currentCount > 1)
+			if (slideDistance < 100)
 			{
-				sliding = false;
-				playerObject.physicsProperties.isDynamic = false;
-				this.removeEventListener(Event.ENTER_FRAME, slideDown);
+				playerObject.y += slideSpeed;
+				slideDistance += slideSpeed;
+				playerImage.y = playerObject.y;
+				slideSpeed += 1;
 			}
-			trace(timer.currentCount);
+			
+			else this.removeEventListener(Event.ENTER_FRAME, slideDown);
 		}
 	}
 }
