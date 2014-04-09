@@ -205,11 +205,19 @@ package characters
 				timer.start();	
 =======
 				timer.start();
+<<<<<<< .mine
 				
 <<<<<<< HEAD
 >>>>>>> 4a27fc6ca833d33940008594a0db2461acd93b0f
 =======
 >>>>>>> 4a27fc6ca833d33940008594a0db2461acd93b0f
+=======
+				
+
+
+
+
+>>>>>>> .theirs
 				if (shotsFired >= 5)
 				{
 					coolDown = true;
