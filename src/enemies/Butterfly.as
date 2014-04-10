@@ -2,13 +2,14 @@ package enemies
 {
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import com.reyco1.physinjector.data.PhysicsObject;
 	
 	import characters.Player;
 	
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager;
+	import com.reyco1.physinjector.data.PhysicsObject;
 	
+	import flash.geom.Point;
 	import flash.utils.Timer;
 	
 	import projectiles.Bullet;
@@ -28,6 +29,8 @@ package enemies
 	{
 
 		private var tween:Tween;
+		private var bounce:Boolean;
+		private var shotsToBounce:Vector.<PlayerShot>;
 			
 		public function Butterfly(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -36,7 +39,8 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("MariposaEnemigo", 1, -1, "contactWeak");
+			createEnemy("MariposaEnemigo", 1, 20/-60, "contactWeak");
+			shotsToBounce = new Vector.<PlayerShot>;
 		}
 		
 		override protected function movementPatternX():void
@@ -66,26 +70,20 @@ package enemies
 		
 		private function shotContact(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
 		{
-			Stage1.Bounce = true;
-			shot.body.SetLinearVelocity(new b2Vec2( -shot.body.GetLinearVelocity().x, -shot.body.GetLinearVelocity().y));
+			shot.physicsProperties.name = "bounced";
+			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 15, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y));
+			shotsToBounce.push(shotBounced);
 		}
 		
 		override protected function movementPatternY():void
 		{
-			
-		}
-		
-		override protected function attack():void //Función dedicada a disparar hacia el jugador.
-		{
-			
-			timer.start(); //El temporizador empieza.
-			
-			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
+			if (shotsToBounce.length > 0)
 			{
-				bullet = new Bullet(enemyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
-				this.addChild(bullet);
-				timer.reset();
-			}			
+				for (var i:int; i < shotsToBounce.length; i++)
+				{
+					this.addChild(shotsToBounce[i]);
+				}
+			}
 		}
 	}
 }

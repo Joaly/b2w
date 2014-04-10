@@ -7,16 +7,20 @@ package objects
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
+	import feathers.display.TiledImage;
+	
 	import screens.Stage1;
 	
 	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.textures.Texture;
 	
 	public class Wall extends Sprite
 	{
-		private var wallImage:Image;
+		private var wallTile:Texture;
+		private var wallImage:TiledImage;
 		public var wallObject:PhysicsObject;
 		private var wallPhysics:PhysInjector;
 		private var wallX:Number;
@@ -37,7 +41,8 @@ package objects
 		private function createWall(event:Event):void
 		{
 			// Creamos la imagen de la pared.
-			wallImage = new Image(Media.getTexture("Wall"));
+			wallTile = Media.getTexture("WallTile");
+			wallImage = new TiledImage(wallTile);
 			wallImage.width = Stage1.OFFSET;
 			wallImage.height = stage.stageHeight;
 			this.addChild(wallImage);

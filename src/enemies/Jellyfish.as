@@ -33,7 +33,7 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("MedusaEnemigo", 0.5, -1, "shotWeak");
+			createEnemy("MedusaEnemigo", 0.5, 20/-60, "shotWeak");
 			speedY = new Number(0);
 		}
 		

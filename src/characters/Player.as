@@ -31,6 +31,7 @@ package characters
 	
 	public class Player extends Sprite
 	{
+		private const forceLimit:Number = 120;
 		private var playerImage:Image;
 		private var playerX:Number;
 		private var playerY:Number;
@@ -87,7 +88,7 @@ package characters
 			timer = new Timer(100, 0);
 			jumpForce = new b2Vec2(0,0);
 			
-			playerObject.body.ApplyForce(new b2Vec2(100, -200), playerObject.body.GetWorldCenter());
+			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 			
 			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
 			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
@@ -180,14 +181,14 @@ package characters
 			playerObject.physicsProperties.isDynamic = true;
 			onJump = true;
 			//var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
-			if (force.y < -200) force.y = -200;
+			if (force.y < -forceLimit) force.y = -forceLimit;
 			if (force.y > 0) 
 			{
 				force.y = 0;
 				force.x = 0;
 			}
-			if (force.x < -200) force.x = -200;
-			if (force.x > 200) force.x = 200;
+			if (force.x < -forceLimit) force.x = -forceLimit;
+			if (force.x > forceLimit) force.x = forceLimit;
 			playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 		}
 		
@@ -195,7 +196,7 @@ package characters
 		{
 			if (!coolDown)
 			{
-				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, touchPos);
+				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY));
 				this.addChild(shot);
 				
 				if (timer.currentCount <= 5) shotsFired++;				

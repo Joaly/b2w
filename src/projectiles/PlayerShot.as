@@ -27,17 +27,17 @@ package projectiles
 		private var startX:Number;
 		private var startY:Number;
 		private var speed:Number;
-		public static var direction:b2Vec2;
+		private var direction:b2Vec2;
 		private var target:Point;
 		
 		
-		public function PlayerShot(physics:PhysInjector, x:Number, y:Number, shotSpeed:Number, touchPos:Touch)
+		public function PlayerShot(physics:PhysInjector, x:Number, y:Number, shotSpeed:Number, target:Point)
 		{
 			shotPhysics = physics;
 			startX = x;
 			startY = y;
 			speed = shotSpeed;
-			target = new Point(touchPos.globalX, touchPos.globalY); // Posición donde irá el disparo.
+			this.target = new Point(target.x, target.y); // Posición donde irá el disparo.
 			
 			this.addEventListener(starling.events.Event.ADDED_TO_STAGE, createShot);
 		}
@@ -56,7 +56,6 @@ package projectiles
 			shotObject.name = "shot" + new String(Math.round(target.x*target.y*Math.random()));
 			shotObject.x = startX;
 			shotObject.y = startY;
-			Stage1.Bounce = false;
 			
 			// Calculamos la velocidad del disparo.
 			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
@@ -69,10 +68,10 @@ package projectiles
 		
 		private function movement(event:Event):void
 		{
-		
+			
 			shotObject.body.SetLinearVelocity(direction); // Aplicamos la velocidad al objeto.
 			
-			if (shotObject.x < 0 || shotObject.x > stage.stageWidth || shotObject.y < 0 || shotObject.y > stage.stageHeight) // Eliminamos el disparo cuando salga de pantalla.
+			if (shotObject.x < 0 || shotObject.x > stage.stageWidth || shotObject.y < 0 || shotObject.y > stage.stageHeight || shotObject.physicsProperties.name == "bounced") // Eliminamos el disparo cuando salga de pantalla.
 			{
 				this.removeEventListener(Event.ENTER_FRAME, movement);
 				shotObject.physicsProperties.isDynamic = false;
@@ -85,13 +84,6 @@ package projectiles
 			for (var i:int; i < Stage1.enemies.length; i++)
 			{
 				ContactManager.onContactBegin(shotObject.name, Stage1.enemies[i].name, shotContact);
-			}
-			
-			if (Stage1.Bounce) 
-			{
-				this.removeEventListener(Event.ENTER_FRAME, movement);
-				Stage1.shots.pop();
-				Stage1.Bounce = false;
 			}
 			
 		}

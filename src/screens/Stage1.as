@@ -5,7 +5,6 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import com.reyco1.physinjector.engines.sliceengine.SliceEngineUtils;
 	
 	import characters.Player;
 	
@@ -13,10 +12,13 @@ package screens
 	import com.reyco1.physinjector.contact.ContactManager;
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
+	import com.reyco1.physinjector.engines.sliceengine.SliceEngineUtils;
 	
 	import enemies.Butterfly;
 	import enemies.Enemy;
 	import enemies.Jellyfish;
+	
+	import flash.utils.Timer;
 	
 	import objects.Floor;
 	import objects.Wall;
@@ -29,7 +31,7 @@ package screens
 	public class Stage1 extends Sprite
 	{
 		// Constante que proporciona la anchura de las paredes.
-		public static const OFFSET:Number = 62;
+		public static const OFFSET:Number = 50;
 		
 		// Fondo del escenario.
 		private var stageBg:Image;
@@ -41,6 +43,7 @@ package screens
 		private var player:Player;
 		private var enemy1:Jellyfish;
 		private var enemy2:Butterfly;
+		private var timer:Timer;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
@@ -48,9 +51,6 @@ package screens
 		// Array de enemigos.
 		public static var enemies:Vector.<PhysicsObject>;
 		public static var shots:Vector.<PhysicsObject>;
-		
-		//Variable usada para revertir balas del jugador sobre enemigos que puedan repelerlas.
-		public static var Bounce:Boolean;
 		
 		public function Stage1()
 		{
@@ -80,7 +80,7 @@ package screens
 		private function injectPhysics():void
 		{
 			PhysInjector.STARLING = true;
-			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 60), false); // Creamos la gravedad del escenario.
+			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 20), false); // Creamos la gravedad del escenario.
 			
 			// Creamos el suelo.
 			//floor = new Floor(physics, 0, stage.stageHeight);
