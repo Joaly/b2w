@@ -134,11 +134,14 @@ package projectiles
 		
 		private function shotParticleFade():void
 		{
-			if (timer.currentCount >= 5)
+			if (timer.currentCount >= 5) shotParticleSystem.stop(false);
+			
+			if (timer.currentCount >= 15)
 			{
-				shotParticleSystem.stop(false);
+				shotParticleSystem.dispose();
 				this.removeEventListener(Event.ENTER_FRAME, shotParticleFade);
 			}
+			
 		}
 	}
 }

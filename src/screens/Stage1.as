@@ -106,7 +106,7 @@ package screens
 			 
 			//Creamos al enemigo Mariposa.
 			enemy2 = new Butterfly(physics, player, 150, 50);
-			this.addChild(enemy2);			
+			this.addChild(enemy2);
 		}
 		
 		private function loop(event:Event):void
