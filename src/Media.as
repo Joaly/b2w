@@ -38,7 +38,14 @@ package
 		[Embed(source = "../media/graphics/Mariposa.png")]
 		public static const MariposaEnemigo:Class;
 		
+		[Embed(source="../media/graphics/particle.pex", mimeType="application/octet-stream")]
+		private static const ParticleConfig:Class;
+
+		[Embed(source = "../media/graphics/texture.png")]
+		private static const Particle:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
+		private static var _xmlFiles:Dictionary = new Dictionary();
 		
 		public function Media()
 		{
@@ -53,6 +60,16 @@ package
 				_textures[name] = Texture.fromBitmap(bitmap);
 			}
 			return _textures[name];
+		}
+		
+		public static function getXML(name:String):XML
+		{
+			if (_textures[name] == undefined)
+			{
+				var xml:XML = XML(new Media[name]());
+				_xmlFiles[name] = xml;
+			}
+			return _xmlFiles[name];
 		}
 	}
 }

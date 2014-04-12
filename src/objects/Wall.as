@@ -27,11 +27,9 @@ package objects
 		private var wallY:Number;
 		private var wallName:String;
 		
-		public function Wall(physics:PhysInjector, x:Number, y:Number, name:String) // Pasamos por parámetros las físicas y la posición donde irá la pared.
+		public function Wall(physics:PhysInjector, name:String) // Pasamos por parámetros las físicas y la posición donde irá la pared.
 		{
 			wallPhysics = physics;
-			wallX = x;
-			wallY = y;
 			wallName = name;
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, createWall);
@@ -45,20 +43,21 @@ package objects
 			wallImage = new TiledImage(wallTile);
 			wallImage.width = Stage1.OFFSET;
 			wallImage.height = stage.stageHeight;
+			wallImage.pivotX = wallImage.width/2;
+			wallImage.pivotY = wallImage.height/2;
+			if (wallName == "Right") wallImage.scaleX *= -1;
 			this.addChild(wallImage);
-			
-			// Ajustamos la posición de la pared teniendo en cuenta que el pivote del objeto será diferente.
-			wallX += wallImage.width/2;
-			wallY += wallImage.height/2;
-			if (wallX >= stage.stageWidth) wallX -= wallImage.width;
 			
 			// Añadimos físicas a la pared.
 			wallObject = wallPhysics.injectPhysics(this, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			wallObject.name = wallName;
 			wallObject.x = wallX; // Posicionamos el objeto.
 			wallObject.y = wallY;
-			wallImage.x = wallObject.x-wallImage.width/2; // Centramos la imagen en el objeto.
-			wallImage.y = wallObject.y-wallImage.height/2;
+			if (wallName == "Left") wallObject.x = wallImage.width/2;
+			if (wallName == "Right") wallObject.x = stage.stageWidth-wallImage.width/2;
+			wallObject.y = stage.stageHeight/2;
+			wallImage.x = wallObject.x; // Centramos la imagen en el objeto.
+			wallImage.y = wallObject.y;
 		}
 	}
 }

@@ -1,6 +1,5 @@
 package characters
 {
-	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	import Box2D.Dynamics.b2Body;
@@ -174,6 +173,10 @@ package characters
 			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
 			slideAllowed = true;
+			
+			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
+			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
+			playerImage.x = playerObject.x;
 		}
 		
 		private function jump(force:b2Vec2):void

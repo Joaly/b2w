@@ -87,9 +87,9 @@ package screens
 			//this.addChild(floor);
 			
 			// Creamos las paredes.
-			wallLeft = new Wall(physics, 0, 0, "Left");
+			wallLeft = new Wall(physics, "Left");
 			this.addChild(wallLeft);
-			wallRight = new Wall(physics, stage.stageWidth, 0, "Right");
+			wallRight = new Wall(physics, "Right");
 			this.addChild(wallRight);
 			
 			// Creamos el jugador.
