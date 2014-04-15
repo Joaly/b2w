@@ -44,6 +44,12 @@ package
 		[Embed(source = "../media/graphics/texture.png")]
 		private static const Particle:Class;
 		
+		[Embed(source = "../media/graphics/particuleBullet.pex", mimeType = "application/octet-stream")]
+		private static const ParticleConfigBullet:Class;
+		
+		[Embed(source = "../media/graphics/textureBullet.png")]
+		private static const ParticleBullet:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		

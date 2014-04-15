@@ -17,6 +17,10 @@ package projectiles
 	import starling.events.Event;
 	import starling.utils.deg2rad;
 	
+	import starling.extensions.ColorArgb;
+	import starling.extensions.PDParticleSystem;
+	import starling.textures.Texture;
+	
 	public class Bullet extends Sprite
 	{
 		//Imagen disparo.
@@ -35,6 +39,11 @@ package projectiles
 		
 		//Variable jugador.
 		private var playerObjective:Player;		
+		
+		//Variables para las partículas.
+		private var bulletParticleConfig:XML;
+		private var bulletParticle:Texture;
+		private var bulletParticleSystem:PDParticleSystem;
 		
 		public function Bullet(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
