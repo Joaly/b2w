@@ -48,9 +48,10 @@ package screens
 		// Físicas del mundo.
 		private var physics:PhysInjector;
 		
-		// Array de enemigos.
+		// Arrays.
 		public static var enemies:Vector.<PhysicsObject>;
 		public static var shots:Vector.<PhysicsObject>;
+		public static var shotsBounced:Vector.<PhysicsObject>;
 		
 		public function Stage1()
 		{
@@ -99,6 +100,8 @@ package screens
 			enemies = new Vector.<PhysicsObject>;
 			
 			shots = new Vector.<PhysicsObject>;
+			
+			shotsBounced = new Vector.<PhysicsObject>;
 			
 			//Creamos al enemigo Medusa.
 			enemy1 = new Jellyfish(physics, player, 150, 150);

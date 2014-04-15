@@ -27,6 +27,9 @@ package characters
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
+	import starling.extensions.ColorArgb;
+	import starling.extensions.PDParticleSystem;
+	import starling.textures.Texture;
 	
 	public class Player extends Sprite
 	{
@@ -50,6 +53,10 @@ package characters
 		private var slideAllowed:Boolean;
 		private var slideSpeed:Number;
 		private var slideDistance:Number;
+		private var particleConfig:XML;
+		private var particle:Texture;
+		private var particleSystem:PDParticleSystem;
+		private var particleTimer:Timer;
 		
 		public var isDead:Boolean;
 		
@@ -80,35 +87,19 @@ package characters
 			playerObject.name = "player";
 			
 			position = new Point(playerImage.x, playerImage.y);
-			onJump = new Boolean(false);
+			onJump = new Boolean(true);
 			isDead = new Boolean(false);
 			coolDown = new Boolean(false);
 			shotsFired = new Number(0);
 			timer = new Timer(100, 0);
+			particleTimer = new Timer(10, 0);
 			jumpForce = new b2Vec2(0,0);
 			
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 			
-			//stage.addEventListener(TouchEvent.TOUCH, onTouch);
 			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
 		}
-		
-		//* CLICK / TOCAR PANTALLA *//
-		/*private function onTouch(event:TouchEvent):void
-		{
-			var touch:Touch = event.getTouch(stage, TouchPhase.BEGAN); // Variable que almacena los datos del toque en la pantalla.
-			if (touch && !onJump) // Cuando tocamos la pantalla y el jugador no está saltando.
-			{
-				if ((touch.globalY < playerObject.y) && ((playerObject.x > stage.stageWidth/2 && (touch.globalX < Stage1.OFFSET))
-					|| (playerObject.x < stage.stageWidth/2 && touch.globalX > stage.stageWidth-Stage1.OFFSET)))
-				// Si tocamos en la pared contraria saltamos.
-				jump(touch);
-				
-				// En caso contrario disparamos.
-				else shoot(touch);
-			}
-		}*/
 		
 		private function playerTouch(event:TouchEvent):void
 		{
@@ -132,6 +123,8 @@ package characters
 			if (event.getTouch(stage, TouchPhase.ENDED)) 
 			{
 				// Si hemos tocado cerca del jugador, al finalizar el toque realizamos un salto.
+				if (jumpForce.x == event.getTouch(stage, TouchPhase.ENDED).globalX
+					&& jumpForce.y == event.getTouch(stage, TouchPhase.ENDED).globalY) touchBegin = null;
 				if (touchBegin && event.getTouch(stage, TouchPhase.ENDED).globalY < playerObject.y-playerImage.height
 					&& ((playerObject.x < stage.stageWidth/2
 					&& event.getTouch(stage, TouchPhase.ENDED).globalX > Stage1.OFFSET)
@@ -162,10 +155,24 @@ package characters
 		
 		private function update(event:Event):void
 		{
-			position.x = playerImage.x;
-			position.y = playerImage.y;
+			if (playerObject.name == "respawn") playerDeath();
 			ContactManager.onContactBegin("player", wallLeft.wallObject.name, wallContact);
 			ContactManager.onContactBegin("player", wallRight.wallObject.name, wallContact);
+			position.x = playerObject.x;
+			position.y = playerObject.y;
+			for (var i:int; i < Stage1.enemies.length; i++)
+			{
+				ContactManager.onContactBegin("player", Stage1.enemies[i].name, enemyContact);
+			}
+			
+			if (Stage1.shotsBounced.length > 0)
+			{
+				for (var j:int; j < Stage1.shotsBounced.length; j++)					
+				{
+					ContactManager.onContactBegin("player", Stage1.shotsBounced[j].name, enemyContact);
+					Stage1.shotsBounced.splice(0,1);
+				}
+			}
 		}
 		
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
@@ -177,6 +184,12 @@ package characters
 			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
 			playerImage.x = playerObject.x;
+		}
+		
+		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
+		{
+			playerObject.name = "respawn";
+			if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
 		}
 		
 		private function jump(force:b2Vec2):void
@@ -235,6 +248,49 @@ package characters
 			}
 			
 			else this.removeEventListener(Event.ENTER_FRAME, slideDown);
+		}
+		
+		private function playerDeath():void			
+		{
+			this.removeEventListener(Event.ENTER_FRAME, update);
+			onJump = true;
+			playerObject.name = "player";
+			playerImage.visible = false;
+			playerObject.physicsProperties.awake = false;
+			particleConfig = new XML(Media.getXML("ParticleConfig"));
+			particle = Media.getTexture("Particle");
+			particleSystem = new PDParticleSystem(particleConfig, particle);
+			this.addChild(particleSystem);
+			particleSystem.x = playerObject.x;
+			particleSystem.y = playerObject.y;
+			Starling.juggler.add(particleSystem);
+			particleSystem.startSize *= 2;
+			particleSystem.emitAngleVariance = 10;
+			particleSystem.startColor = new ColorArgb(0,0.5,2.5,2);
+			particleSystem.endColor = new ColorArgb(0,0,2.5,2);
+			particleSystem.lifespan *= 0.6;
+			particleSystem.start();		
+			this.addEventListener(Event.ENTER_FRAME, particleFade);
+			particleTimer.reset();
+			particleTimer.start();
+			playerObject.x = stage.stageWidth/2;
+			playerObject.y = stage.stageHeight;
+			playerImage.x = playerObject.x;
+			playerImage.y = playerObject.y;
+		}
+		
+		private function particleFade(event:Event):void
+		{
+			if (particleTimer.currentCount >= 10) particleSystem.stop(false);			
+			if (particleTimer.currentCount >= 50)
+			{
+				playerImage.visible = true;
+				playerObject.physicsProperties.isDynamic = true;
+				this.addEventListener(Event.ENTER_FRAME, update);
+				particleSystem.dispose();
+				playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
+				this.removeEventListener(Event.ENTER_FRAME, particleFade);
+			}
 		}
 	}
 }
