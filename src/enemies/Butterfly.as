@@ -72,7 +72,7 @@ package enemies
 		private function shotContact(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.
 		{
 			shot.physicsProperties.name = "bounced";
-			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 15, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y));
+			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 3, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y));
 			shotsToBounce.push(shotBounced);
 		}
 		
@@ -89,6 +89,8 @@ package enemies
 				for (var i:int; i < shotsToBounce.length; i++)
 				{
 					this.addChild(shotsToBounce[i]);
+					Stage1.shotsBounced.push(shotsToBounce[i].shotObject);
+					shotsToBounce.splice(0,1);
 				}
 			}
 		}

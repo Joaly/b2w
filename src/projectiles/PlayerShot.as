@@ -11,6 +11,8 @@ package projectiles
 	import flash.geom.Point;
 	import flash.utils.Timer;
 	
+	import mx.utils.StringUtil;
+	
 	import screens.Stage1;
 	
 	import starling.animation.Tween;
@@ -28,7 +30,7 @@ package projectiles
 	public class PlayerShot extends Sprite
 	{
 		private var shotImage:Image;
-		private var shotObject:PhysicsObject;
+		public var shotObject:PhysicsObject;
 		private var shotPhysics:PhysInjector;
 		private var shotParticleConfig:XML;
 		private var shotParticle:Texture;
@@ -118,27 +120,34 @@ package projectiles
 		
 		private function shotContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			enemy.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
-			this.removeEventListener(Event.ENTER_FRAME, movement);
-			shot.physicsProperties.isDynamic = false;
-			shot.body.GetWorld().DestroyBody(shot.body);
-			shot.dispose();
-			shotParticleSystem.startSize *= 2;
-			shotParticleSystem.emitAngleVariance = 10;
-			shotParticleSystem.endColor = new ColorArgb(2.5,0.5,0,5);
-			shotParticleSystem.lifespan *= 0.6;
-			timer.start();
-			this.addEventListener(Event.ENTER_FRAME, shotParticleFade);
-			this.removeChild(shotImage);
+			
+			if (enemy.name.substr(0,8) == "shotWeak") // Comprueba si el enemigo es débil al disparo según el inicio de la cadena, dado que el resto es aleatorio.
+			{
+				enemy.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
+				this.removeEventListener(Event.ENTER_FRAME, movement);
+				shot.physicsProperties.isDynamic = false;
+				shot.body.GetWorld().DestroyBody(shot.body);
+				shot.dispose();
+				shotParticleSystem.startSize *= 2;
+				shotParticleSystem.emitAngleVariance = 10;
+				shotParticleSystem.endColor = new ColorArgb(2.5,0.5,0,5);
+				shotParticleSystem.lifespan *= 0.6;
+				timer.start();
+				this.addEventListener(Event.ENTER_FRAME, shotParticleFade);
+				this.removeChild(shotImage);
+			}
 		}
 		
 		private function shotParticleFade():void
 		{
-			if (timer.currentCount >= 5)
+			if (timer.currentCount >= 5) shotParticleSystem.stop(false);
+			
+			if (timer.currentCount >= 20)
 			{
-				shotParticleSystem.stop(false);
+				shotParticleSystem.dispose();
 				this.removeEventListener(Event.ENTER_FRAME, shotParticleFade);
 			}
+			
 		}
 	}
 }

@@ -85,13 +85,21 @@ package projectiles
 			bulletObject.body.SetLinearVelocity(bulletSpeed); // Actualizamos la posición de la bala según la velocidad.
 			
 			ContactManager.onContactBegin(bulletObject.name,"player",playerContact); // Comprobamos si la bala colisiona con el jugador.
+			
+			if (bulletObject.name == "destroyed")
+			{
+				this.removeEventListener(Event.ENTER_FRAME, movement);
+				bulletObject.physicsProperties.isDynamic = false;
+				bulletObject.body.GetWorld().DestroyBody(bulletObject.body);
+				bulletObject.dispose();
+				this.removeChild(bulletImage);
+			}
 		}
 		
 		private function playerContact(bullet:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
 		{
-			playerObjective.isDead = true;
-			this.removeFromParent();
-			playerObjective.visible = false;
+			player.name = "respawn";
+			bullet.name = "destroyed";
 		}
 	}
 }

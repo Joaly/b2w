@@ -73,7 +73,7 @@ package enemies
 			enemyObject.x = enemyStartX;
 			enemyObject.y = enemyStartY;
 	
-			if (name == "shotWeak") Stage1.enemies.push(enemyObject);
+			Stage1.enemies.push(enemyObject);
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
@@ -87,7 +87,7 @@ package enemies
 		{
 			movementPatternX(); // Movimiento en x del enemigo.
 			movementPatternY(); // Movimiento en y del enemigo.
-			//attack(); // Ataque del enemigo.
+			attack(); // Ataque del enemigo.
 			checkDead(); // Comprobamos si el enemigo muere.
 		}
 		
