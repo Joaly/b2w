@@ -59,8 +59,13 @@ package projectiles
 		{			
 			this.removeEventListener(Event.ADDED_TO_STAGE, createBullet);
 			
+			bulletParticleConfig = new XML(Media.getXML("ParticleConfigBullet"));
+			bulletParticle = Media.getTexture("ParticleBullet");
+			bulletParticleSystem = new PDParticleSystem(bulletParticleConfig, bulletParticle);
+			this.addChild(bulletParticleSystem);
+			
 			// Creamos la imagen de la bala.
-			bulletImage = new Image(Media.getTexture("Bala1"));			
+			bulletImage = new Image(Media.getTexture("PlayerShot"));			
 			bulletImage.scaleX = 0.04;
 			bulletImage.scaleY = 0.04;
 			bulletImage.pivotX = bulletImage.width/2;
@@ -74,8 +79,18 @@ package projectiles
 			bulletObject.x = bulletStartX;
 			bulletObject.y = bulletStartY;			
 			
+			bulletParticleSystem.x = bulletObject.x;
+			bulletParticleSystem.y = bulletObject.y;
+			Starling.juggler.add(bulletParticleSystem);
+			bulletParticleSystem.emitAngleVariance = 0;
+			bulletParticleSystem.scaleX = 0.3;
+			bulletParticleSystem.scaleY = 0.3;
+			bulletParticleSystem.emitAngle = Math.atan(((bulletStartY-playerObjective.y)/(bulletStartX-playerObjective.x))) + deg2rad(180);
+			bulletParticleSystem.start();
+			
 			// Inicializamos la posición de la bala.
-			bulletSpeed = new b2Vec2((playerObjective.position.x-bulletStartX)/50, 3);
+			bulletSpeed = new b2Vec2((playerObjective.position.x-bulletStartX)/70, (playerObjective.position.y-bulletStartY)/70);
+			//bulletSpeed = new b2Vec2((playerObjective.position.x - bulletStartX) / 50, 3);
 			
 			this.addEventListener(Event.ENTER_FRAME, movement);	// Determinamos el movimiento de la bala.
 		}
@@ -86,12 +101,16 @@ package projectiles
 			
 			ContactManager.onContactBegin(bulletObject.name,"player",playerContact); // Comprobamos si la bala colisiona con el jugador.
 			
+			bulletParticleSystem.x = bulletObject.x;				
+			bulletParticleSystem.y = bulletObject.y;
+			
 			if (bulletObject.name == "destroyed")
 			{
 				this.removeEventListener(Event.ENTER_FRAME, movement);
 				bulletObject.physicsProperties.isDynamic = false;
 				bulletObject.body.GetWorld().DestroyBody(bulletObject.body);
 				bulletObject.dispose();
+				bulletParticleSystem.stop(true);
 				this.removeChild(bulletImage);
 			}
 		}

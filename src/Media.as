@@ -44,7 +44,7 @@ package
 		[Embed(source = "../media/graphics/texture.png")]
 		private static const Particle:Class;
 		
-		[Embed(source = "../media/graphics/particuleBullet.pex", mimeType = "application/octet-stream")]
+		[Embed(source = "../media/graphics/particleBullet.pex", mimeType = "application/octet-stream")]
 		private static const ParticleConfigBullet:Class;
 		
 		[Embed(source = "../media/graphics/textureBullet.png")]
