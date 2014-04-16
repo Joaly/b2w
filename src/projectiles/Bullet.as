@@ -10,16 +10,17 @@ package projectiles
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
+	import flash.geom.Point;
+	
 	import starling.animation.Tween;
 	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.utils.deg2rad;
-	
 	import starling.extensions.ColorArgb;
 	import starling.extensions.PDParticleSystem;
 	import starling.textures.Texture;
+	import starling.utils.deg2rad;
 	
 	public class Bullet extends Sprite
 	{
@@ -35,22 +36,24 @@ package projectiles
 		private var bulletStartY:Number;
 		
 		//Velocidad del disparo.
-		private var bulletSpeed:b2Vec2;
+		private var direction:b2Vec2;
+		private var speed:Number;
 		
 		//Variable jugador.
-		private var playerObjective:Player;		
+		private var playerObjective:Player;
 		
 		//Variables para las partículas.
 		private var bulletParticleConfig:XML;
 		private var bulletParticle:Texture;
 		private var bulletParticleSystem:PDParticleSystem;
 		
-		public function Bullet(physics:PhysInjector, player:Player, startX:Number, startY:Number)
+		public function Bullet(physics:PhysInjector, player:Player, startX:Number, startY:Number, speed:Number)
 		{
 			bulletPhysics = physics;
 			playerObjective = player; // Objetivo de la bala.
 			bulletStartX = startX; // Posición origen de la bala.
 			bulletStartY = startY;
+			this.speed = speed;
 			
 			this.addEventListener(Event.ADDED_TO_STAGE, createBullet); // Creamos la bala.
 		}
@@ -83,28 +86,32 @@ package projectiles
 			bulletParticleSystem.y = bulletObject.y;
 			Starling.juggler.add(bulletParticleSystem);
 			bulletParticleSystem.emitAngleVariance = 0;
-			bulletParticleSystem.scaleX = 0.3;
-			bulletParticleSystem.scaleY = 0.3;
-			bulletParticleSystem.emitAngle = Math.atan(((bulletStartY-playerObjective.y)/(bulletStartX-playerObjective.x))) + deg2rad(180);
+			bulletParticleSystem.maxNumParticles = 150;
+			bulletParticleSystem.scaleX = 0.6;
+			bulletParticleSystem.scaleY = 0.6;
+			bulletParticleSystem.speed = 1;
+			bulletParticleSystem.startSize *= 0.1;
+			bulletParticleSystem.emitAngle = Math.atan((bulletStartY-playerObjective.position.y)/(bulletStartX-playerObjective.position.x));
+			if (bulletStartX-playerObjective.position.x < 0) bulletParticleSystem.emitAngle = Math.atan((bulletStartY-playerObjective.position.y)/(bulletStartX-playerObjective.position.x))-deg2rad(180);
 			bulletParticleSystem.start();
 			
-			// Inicializamos la posición de la bala.
-			bulletSpeed = new b2Vec2((playerObjective.position.x-bulletStartX)/70, (playerObjective.position.y-bulletStartY)/70);
-			//bulletSpeed = new b2Vec2((playerObjective.position.x - bulletStartX) / 50, 3);
+			// Inicializamos la posición de la bala.			
+			var speedModule:Number = new Number(Math.sqrt(Math.pow(playerObjective.position.x-bulletStartX,2)+Math.pow(playerObjective.position.y-bulletStartY,2)));
+			direction = new b2Vec2((playerObjective.position.x - bulletStartX) / speedModule * speed, (playerObjective.position.y - bulletStartY) / speedModule * speed);
 			
 			this.addEventListener(Event.ENTER_FRAME, movement);	// Determinamos el movimiento de la bala.
 		}
 		
 		private function movement():void
 		{
-			bulletObject.body.SetLinearVelocity(bulletSpeed); // Actualizamos la posición de la bala según la velocidad.
+			bulletObject.body.SetLinearVelocity(direction); // Actualizamos la posición de la bala según la velocidad.
 			
 			ContactManager.onContactBegin(bulletObject.name,"player",playerContact); // Comprobamos si la bala colisiona con el jugador.
 			
 			bulletParticleSystem.x = bulletObject.x;				
 			bulletParticleSystem.y = bulletObject.y;
 			
-			if (bulletObject.name == "destroyed")
+			if (bulletObject.name == "destroyed" || bulletObject.x < -100 || bulletObject.x > stage.stageWidth+100 || bulletObject.y < -100 || bulletObject.y > stage.stageHeight+100)
 			{
 				this.removeEventListener(Event.ENTER_FRAME, movement);
 				bulletObject.physicsProperties.isDynamic = false;

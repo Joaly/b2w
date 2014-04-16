@@ -156,6 +156,7 @@ package characters
 		private function update(event:Event):void
 		{
 			if (playerObject.name == "respawn") playerDeath();
+			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
 			ContactManager.onContactBegin("player", wallLeft.wallObject.name, wallContact);
 			ContactManager.onContactBegin("player", wallRight.wallObject.name, wallContact);
 			position.x = playerObject.x;

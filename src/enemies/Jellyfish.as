@@ -39,7 +39,6 @@ package enemies
 		
 		override protected function movementPatternY():void
 		{
-			
 			enemyObject.y += ( 1.5 * (Math.sin((2 * Math.PI * speedY) /10))); //Movimiento armónico simple deseado para el enemigo.
 			speedY += 0.1;
 
@@ -52,7 +51,7 @@ package enemies
 			
 			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
 			{
-				bullet = new Bullet(enemyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height);
+				bullet = new Bullet(enemyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height/2, 2);
 				this.addChild(bullet);
 				timer.reset();
 			}			
