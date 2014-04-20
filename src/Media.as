@@ -50,6 +50,21 @@ package
 		[Embed(source = "../media/graphics/textureBullet.png")]
 		private static const ParticleBullet:Class;
 		
+		[Embed(source = "../media/graphics/ObstaculoBarreraEncendido.png")]
+		private static const BarreraEncendido:Class;
+		
+		[Embed(source = "../media/graphics/ObstaculoBarreraApagado.png")]
+		private static const BarreraApagado:Class;
+		
+		[Embed(source = "../media/graphics/RayoObstaculo.png")]
+		private static const BarreraRayo:Class;
+		
+		[Embed(source = "../media/graphics/BarrierTexture.png")]
+		private static const ParticleBarrier:Class;
+		
+		[Embed(source = "../media/graphics/BarrierTexture.pex", mimeType = "application/octet-stream")]
+		private static const ParticleConfigBarrier:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		

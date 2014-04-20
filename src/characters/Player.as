@@ -3,22 +3,22 @@ package characters
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	import Box2D.Dynamics.b2Body;
-	
+
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager;
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
-	
+
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
-	
+
 	import objects.Wall;
-	
+
 	import projectiles.PlayerShot;
-	
+
 	import screens.Stage1;
-	
+
 	import starling.core.Starling;
 	import starling.core.starling_internal;
 	import starling.display.Image;
@@ -30,7 +30,7 @@ package characters
 	import starling.extensions.ColorArgb;
 	import starling.extensions.PDParticleSystem;
 	import starling.textures.Texture;
-	
+
 	public class Player extends Sprite
 	{
 		private const forceLimit:Number = 120;
@@ -57,9 +57,9 @@ package characters
 		private var particle:Texture;
 		private var particleSystem:PDParticleSystem;
 		private var particleTimer:Timer;
-		
+
 		public var isDead:Boolean;
-		
+
 		public function Player(physics:PhysInjector, x:Number, y:Number, wallL:Wall, wallR:Wall)
 		{
 			playerPhysics = physics;
@@ -67,7 +67,7 @@ package characters
 			playerY = y;
 			wallLeft = wallL;
 			wallRight = wallR;
-			
+
 			this.addEventListener(Event.ADDED_TO_STAGE, createPlayer);
 		}
 
@@ -80,12 +80,12 @@ package characters
 			playerImage.scaleX = 0.3;
 			playerImage.scaleY = 0.3;
 			this.addChild(playerImage);
-			
+
 			playerObject = playerPhysics.injectPhysics(playerImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			playerObject.x = playerX;
 			playerObject.y = playerY;
 			playerObject.name = "player";
-			
+
 			position = new Point(playerImage.x, playerImage.y);
 			onJump = new Boolean(true);
 			isDead = new Boolean(false);
@@ -94,13 +94,13 @@ package characters
 			timer = new Timer(100, 0);
 			particleTimer = new Timer(10, 0);
 			jumpForce = new b2Vec2(0,0);
-			
+
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
-			
+
 			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
 		}
-		
+
 		private function playerTouch(event:TouchEvent):void
 		{
 			if (event.getTouch(stage, TouchPhase.BEGAN))
@@ -115,11 +115,11 @@ package characters
 					jumpForce.x = new Number(touchBegin.globalX);
 					jumpForce.y = new Number(touchBegin.globalY);
 				}
-				
+
 				// En caso contario, realizamos un disparo.
 				else if (!onJump) shoot(event.getTouch(stage, TouchPhase.BEGAN));
 			}
-			
+
 			if (event.getTouch(stage, TouchPhase.ENDED)) 
 			{
 				// Si hemos tocado cerca del jugador, al finalizar el toque realizamos un salto.
@@ -138,7 +138,7 @@ package characters
 					touchEnd = null;
 					jump(jumpForce);
 				}
-				
+
 				else if (event.getTouch(stage, TouchPhase.ENDED).globalY > playerObject.y+playerImage.height && touchBegin)
 				{
 					if (slideAllowed)
@@ -152,7 +152,7 @@ package characters
 				}
 			}
 		}
-		
+
 		private function update(event:Event):void
 		{
 			if (playerObject.name == "respawn") playerDeath();
@@ -165,7 +165,7 @@ package characters
 			{
 				ContactManager.onContactBegin("player", Stage1.enemies[i].name, enemyContact);
 			}
-			
+
 			if (Stage1.shotsBounced.length > 0)
 			{
 				for (var j:int; j < Stage1.shotsBounced.length; j++)					
@@ -175,24 +175,24 @@ package characters
 				}
 			}
 		}
-		
+
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
 		{
 			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
 			slideAllowed = true;
-			
+
 			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
 			playerImage.x = playerObject.x;
 		}
-		
+
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
 			playerObject.name = "respawn";
 			if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
 		}
-		
+
 		private function jump(force:b2Vec2):void
 		{
 			playerObject.physicsProperties.isDynamic = true;
@@ -208,14 +208,14 @@ package characters
 			if (force.x > forceLimit) force.x = forceLimit;
 			playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 		}
-		
+
 		private function shoot(touchPos:Touch):void
 		{
 			if (!coolDown)
 			{
 				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY));
 				this.addChild(shot);
-				
+
 				if (timer.currentCount <= 5) shotsFired++;				
 				else if (timer.currentCount >= 30) shotsFired = 0;				
 				timer.reset();
@@ -227,7 +227,7 @@ package characters
 					timer.start();
 				}
 			}			
-			
+
 			if (coolDown && timer.currentCount >= 20)
 			{
 				timer.reset();
@@ -237,7 +237,7 @@ package characters
 				shoot(touchPos);
 			}
 		}
-		
+
 		private function slideDown():void
 		{
 			if (slideDistance < 100)
@@ -247,10 +247,10 @@ package characters
 				playerImage.y = playerObject.y;
 				slideSpeed += 1;
 			}
-			
+
 			else this.removeEventListener(Event.ENTER_FRAME, slideDown);
 		}
-		
+
 		private function playerDeath():void			
 		{
 			this.removeEventListener(Event.ENTER_FRAME, update);
@@ -279,7 +279,7 @@ package characters
 			playerImage.x = playerObject.x;
 			playerImage.y = playerObject.y;
 		}
-		
+
 		private function particleFade(event:Event):void
 		{
 			if (particleTimer.currentCount >= 10) particleSystem.stop(false);			
