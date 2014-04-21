@@ -18,6 +18,8 @@ package screens
 	import enemies.Enemy;
 	import enemies.Jellyfish;
 	
+	import obstacles.Barrier;
+	
 	import flash.utils.Timer;
 	
 	import objects.Floor;
@@ -44,6 +46,7 @@ package screens
 		private var enemy1:Jellyfish;
 		private var enemy2:Butterfly;
 		private var timer:Timer;
+		private var barrier:Barrier;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
@@ -110,6 +113,10 @@ package screens
 			//Creamos al enemigo Mariposa.
 			enemy2 = new Butterfly(physics, player, 150, 50);
 			this.addChild(enemy2);
+			
+			//Creamos una barrerra.
+			barrier = new Barrier(physics, player, 150, 250);
+			this.addChild(barrier);
 		}
 		
 		private function loop(event:Event):void
