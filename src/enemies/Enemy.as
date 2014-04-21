@@ -19,6 +19,7 @@ package enemies
 	
 	import screens.Stage1;
 	
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.EnterFrameEvent;
@@ -78,7 +79,7 @@ package enemies
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
 	
-			timer = new Timer(1000, 0);
+			timer = new Timer(100, 0);
 			
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
@@ -130,6 +131,28 @@ package enemies
 				enemyObject.body.GetWorld().DestroyBody(enemyObject.body);
 				this.removeChild(enemyImage);
 			}
+			
+			if (enemyObject.physicsProperties.name == "slashed")
+			{
+				this.removeEventListener(Event.ENTER_FRAME, enemyLoop);
+				enemyObject.physicsProperties.isDynamic = false;
+				enemyObject.body.GetWorld().DestroyBody(enemyObject.body);
+				timer.reset();
+				timer.start();
+				this.addEventListener(Event.ENTER_FRAME, enemyDeath);
+			}
+		}
+		
+		private function enemyDeath():void
+		{
+			if (enemyImage.alpha > 0) 
+			{
+				enemyImage.alpha -= 0.03;
+				if (Math.round(timer.currentCount)%2 == 0) enemyImage.blendMode = BlendMode.NORMAL;
+				else enemyImage.blendMode = BlendMode.SCREEN;
+			}
+			else this.removeEventListener(Event.ENTER_FRAME, enemyDeath);
+			trace(timer.currentCount);
 		}
 	}
 }

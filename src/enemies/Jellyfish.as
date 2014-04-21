@@ -49,7 +49,7 @@ package enemies
 			
 			timer.start(); //El temporizador empieza.
 			
-			if (timer.currentCount == 2) //Cada dos segundos se creará un disparo.
+			if (timer.currentCount == 20) //Cada dos segundos se creará un disparo.
 			{
 				bullet = new Bullet(enemyPhysics, playerObjective, enemyImage.x, enemyImage.y+enemyImage.height/2, 2);
 				this.addChild(bullet);

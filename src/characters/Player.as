@@ -57,6 +57,7 @@ package characters
 		private var particle:Texture;
 		private var particleSystem:PDParticleSystem;
 		private var particleTimer:Timer;
+		private var attacking:Boolean;
 		
 		public var isDead:Boolean;
 		
@@ -94,6 +95,7 @@ package characters
 			timer = new Timer(100, 0);
 			particleTimer = new Timer(10, 0);
 			jumpForce = new b2Vec2(0,0);
+			attacking = false;
 			
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 			
@@ -118,6 +120,11 @@ package characters
 				
 				// En caso contario, realizamos un disparo.
 				else if (!onJump) shoot(event.getTouch(stage, TouchPhase.BEGAN));
+				else 
+				{
+					attack();
+					this.addEventListener(Event.ENTER_FRAME, attackAnimation);
+				}
 			}
 			
 			if (event.getTouch(stage, TouchPhase.ENDED)) 
@@ -136,7 +143,7 @@ package characters
 					jumpForce.y = (touchEnd.globalY - jumpForce.y) * 1.5;
 					touchBegin = null;
 					touchEnd = null;
-					jump(jumpForce);
+					if (!onJump) jump(jumpForce);
 				}
 				
 				else if (event.getTouch(stage, TouchPhase.ENDED).globalY > playerObject.y+playerImage.height && touchBegin)
@@ -161,6 +168,7 @@ package characters
 			ContactManager.onContactBegin("player", wallRight.wallObject.name, wallContact);
 			position.x = playerObject.x;
 			position.y = playerObject.y;
+			playerImage.rotation = playerObject.rotation;
 			for (var i:int; i < Stage1.enemies.length; i++)
 			{
 				ContactManager.onContactBegin("player", Stage1.enemies[i].name, enemyContact);
@@ -181,6 +189,8 @@ package characters
 			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
 			slideAllowed = true;
+			attacking = false;
+			this.removeEventListener(Event.ENTER_FRAME, attackAnimation);
 			
 			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
@@ -189,8 +199,12 @@ package characters
 		
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			playerObject.name = "respawn";
-			if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
+			if (!attacking)
+			{
+				playerObject.name = "respawn";
+				if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
+			}
+			else enemy.physicsProperties.name = "slashed";
 		}
 		
 		private function jump(force:b2Vec2):void
@@ -198,7 +212,7 @@ package characters
 			playerObject.physicsProperties.isDynamic = true;
 			onJump = true;
 			//var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
-			if (force.y < -forceLimit) force.y = -forceLimit;
+			if (force.y < -forceLimit*1.2) force.y = -forceLimit*1.2;
 			if (force.y > 0) 
 			{
 				force.y = 0;
@@ -292,6 +306,17 @@ package characters
 				playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 				this.removeEventListener(Event.ENTER_FRAME, particleFade);
 			}
+		}
+		
+		private function attack():void
+		{
+			attacking = true;
+		}
+		
+		private function attackAnimation():void
+		{
+			playerObject.rotation += 100;
+			trace("YOLO");
 		}
 	}
 }
