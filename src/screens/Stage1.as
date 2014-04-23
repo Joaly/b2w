@@ -19,6 +19,7 @@ package screens
 	import enemies.Jellyfish;
 	
 	import obstacles.Barrier;
+	import obstacles.Mine;
 	
 	import flash.utils.Timer;
 	
@@ -47,6 +48,7 @@ package screens
 		private var enemy2:Butterfly;
 		private var timer:Timer;
 		private var barrier:Barrier;
+		private var mine:Mine;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
@@ -115,8 +117,12 @@ package screens
 			this.addChild(enemy2);
 			
 			//Creamos una barrerra.
-			barrier = new Barrier(physics, player, 150, 250);
+			barrier = new Barrier(physics, player, 150, 200);
 			this.addChild(barrier);
+			
+			//Creamos una mina.
+			mine = new Mine(physics, player, Math.random(), 300);
+			this.addChild(mine);
 		}
 		
 		private function loop(event:Event):void

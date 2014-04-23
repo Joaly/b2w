@@ -141,12 +141,10 @@ package obstacles
 			
 			barrierParticleSystem.x = barrierObject.x;
 			barrierParticleSystem.y = barrierObject.y;
-			//barrierParticleSystem.emitAngleVariance = 0;
 			barrierParticleSystem.maxNumParticles = 200;
 			barrierParticleSystem.scaleX = 0.25;
 			barrierParticleSystem.scaleY = 0.3;
 			barrierParticleSystem.speed = 5;
-			//barrierParticleSystem.startSize *= 0.1;
 			Starling.juggler.add(barrierParticleSystem);
 			barrierParticleSystem.start();
 			
@@ -173,30 +171,15 @@ package obstacles
 		
 		private function contactLoop():void
 		{
-			if (!contactLeft)
-			{
-				for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
-				{
-				if (contactLeft)//Si hay contacto entonces se sale del bucle para que no compruebe.
-				{
-					timerLeft.start();
-					break;
-				}
-				ContactManager.onContactBegin(leftBarrierObject.name, Stage1.shots[i].name, leftContact);
-				}
-			}
+			trace(timerLeft.currentCount, timerRight.currentCount, timerBarrier.currentCount);
 			
-			if (!contactRight)
+			ContactManager.onContactBegin(barrierObject.name, playerObjective.name, playerContact); //Si la barrera contacta con el jugador, muere.
+			
+			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
 			{
-				for (var j:int = 0; j < Stage1.shots.length; j++)//Comprobamos si alguno de los disparos colisiona con la parte derecha.
-				{
-				if (contactRight)//Si hay contacto entonces se sale del bucle para que no compruebe.
-				{
-					timerRight.start();
-					break;
-				}
-				ContactManager.onContactBegin(rightBarrierObject.name, Stage1.shots[j].name, rightContact);
-				}
+				if (!contactLeft) ContactManager.onContactBegin(leftBarrierObject.name, Stage1.shots[i].name, leftContact);//Si hay contacto entonces no comprueba los demás contactos.
+				
+				if (!contactRight) ContactManager.onContactBegin(rightBarrierObject.name, Stage1.shots[i].name, rightContact);//Si hay contacto entonces no comprueba los demás contactos.
 			}
 			
 			if (timerLeft.currentCount == 5) //si el temporizador de la parte izquierda llega a 5, entonces reseteamos.
@@ -245,16 +228,13 @@ package obstacles
 				barrierObject.physicsProperties.active = true;
 				barrierParticleSystem.start();
 			}
-			
-			ContactManager.onContactBegin(barrierObject.name, playerObjective.name, playerContact); //Si la barrera contacta con el jugador, muere.
-		
-			trace(timerLeft.currentCount, timerRight.currentCount, timerBarrier.currentCount);
 		}
 		
 		private function leftContact(leftBarrier:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Si contacta con la parte izquierda, se borra el disparo y se pone a verde la imagen.
 		{
 			if (leftBarrier.name == "Left" && !contactLeft)
 			{
+				timerLeft.start();
 				leftBarrierImage.visible = false;
 				activatedLeftImage.visible = true;
 				shot.physicsProperties.name = "bounced";
@@ -266,6 +246,7 @@ package obstacles
 		{
 			if (rightBarrier.name == "Right" && !contactRight)
 			{
+				timerRight.start();
 				rightBarrierImage.visible = false;
 				activatedRightImage.visible = true;
 				shot.physicsProperties.name = "bounced";
@@ -275,7 +256,7 @@ package obstacles
 		
 		private function playerContact(barrier:PhysicsObject, player:PhysicsObject, contact:b2Contact):void //Si contacta con la barrera, el jugador muere.
 		{
-			player.name = "respawn";
+			player.physicsProperties.name = "respawn";
 		}
 	}
 

@@ -65,6 +65,12 @@ package
 		[Embed(source = "../media/graphics/BarrierTexture.pex", mimeType = "application/octet-stream")]
 		private static const ParticleConfigBarrier:Class;
 		
+		[Embed(source = "../media/graphics/Mina.png")]
+		private static const Mine:Class;
+		
+		[Embed(source = "../media/graphics/MinaExterior.png")]
+		private static const MineBox:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		
