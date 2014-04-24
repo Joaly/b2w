@@ -37,8 +37,6 @@ package obstacles
 		private var leftBarrierImage:Image;
 		private var rightBarrierImage:Image;
 		private var barrierImage:Image;
-		private var activatedLeftImage:Image;
-		private var activatedRightImage:Image;
 		
 		//Físicas del obstáculo.
 		private var leftBarrierObject:PhysicsObject;
@@ -93,8 +91,6 @@ package obstacles
 			barrierImage = new Image(Media.getTexture("BarreraRayo"));
 			leftBarrierImage = new Image(Media.getTexture("BarreraEncendido"));
 			rightBarrierImage = new Image(Media.getTexture("BarreraEncendido"));
-			activatedLeftImage = new Image(Media.getTexture("BarreraApagado"));
-			activatedRightImage = new Image(Media.getTexture("BarreraApagado"));
 
 			//Asignamos las propiedades a las variables imágenes.
 			barrierImage.pivotX = barrierImage.width/2; // Centramos el punto de ancla de la imagen.
@@ -102,26 +98,24 @@ package obstacles
 			barrierImage.scaleX = 0.3;
 			barrierImage.scaleY = 0.2;
 			
-			activatedLeftImage.pivotX = leftBarrierImage.pivotX = leftBarrierImage.width/2; // Centramos el punto de ancla de la imagen.
-			activatedLeftImage.pivotY = leftBarrierImage.pivotY = leftBarrierImage.height/2;
-			activatedLeftImage.scaleX = leftBarrierImage.scaleX = 0.6;
-			activatedLeftImage.scaleY = leftBarrierImage.scaleY = 0.6;
+			leftBarrierImage.pivotX = leftBarrierImage.width/2; // Centramos el punto de ancla de la imagen.
+			leftBarrierImage.pivotY = leftBarrierImage.height/2;
+			leftBarrierImage.scaleX = 0.6;
+			leftBarrierImage.scaleY = 0.6;
 			
-			activatedRightImage.pivotX = rightBarrierImage.pivotX = rightBarrierImage.width/2; // Centramos el punto de ancla de la imagen.
-			activatedRightImage.pivotY = rightBarrierImage.pivotY = rightBarrierImage.height/2;
-			activatedRightImage.scaleX = rightBarrierImage.scaleX = 0.6;
-			activatedRightImage.scaleY = rightBarrierImage.scaleY = 0.6;
+			rightBarrierImage.pivotX = rightBarrierImage.width/2; // Centramos el punto de ancla de la imagen.
+			rightBarrierImage.pivotY = rightBarrierImage.height/2;
+			rightBarrierImage.scaleX = 0.6;
+			rightBarrierImage.scaleY = 0.6;
 			
 			this.addChild(barrierImage);
 			this.addChild(leftBarrierImage);
 			this.addChild(rightBarrierImage);
-			this.addChild(activatedLeftImage);
-			this.addChild(activatedRightImage);
 			
 			//Empezamos a aplicar las físicas y ponemos las coordenadas a los objetos.
 			leftBarrierObject = barrierPhysics.injectPhysics(leftBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
-			activatedLeftImage.x = leftBarrierImage.x = leftBarrierObject.x = barrierStartX;
-			activatedLeftImage.y = leftBarrierImage.y = leftBarrierObject.y = barrierStartY;
+			leftBarrierImage.x = leftBarrierObject.x = barrierStartX;
+			leftBarrierImage.y = leftBarrierObject.y = barrierStartY;
 			leftBarrierObject.name = "Left";
 			leftBarrierObject.physicsProperties.isSensor = true;
 			
@@ -130,12 +124,9 @@ package obstacles
 			barrierImage.y = barrierObject.y = barrierStartY;
 			barrierObject.physicsProperties.isSensor = true;
 	
-			//barrierImage.x = leftBarrierObject.x + barrierImage.width/2;
-			//barrierImage.y = barrierStartY;
-			
 			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
-			activatedRightImage.x = rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
-			activatedRightImage.y = rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
+			rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
+			rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
 			rightBarrierObject.name = "Right";
 			rightBarrierObject.physicsProperties.isSensor = true;
 			
@@ -147,10 +138,6 @@ package obstacles
 			barrierParticleSystem.speed = 5;
 			Starling.juggler.add(barrierParticleSystem);
 			barrierParticleSystem.start();
-			
-			//Ponemos que sean invisibles las imágenes de la activación del obstáculo.
-			activatedLeftImage.visible = false;
-			activatedRightImage.visible = false;
 			
 			//Declaramos otras variables necesarias.
 			timerLeft = new Timer(1000, 0);
@@ -184,8 +171,7 @@ package obstacles
 			
 			if (timerLeft.currentCount == 5) //si el temporizador de la parte izquierda llega a 5, entonces reseteamos.
 			{
-				leftBarrierImage.visible = true;
-				activatedLeftImage.visible = false;
+				leftBarrierImage.texture = Media.getTexture("BarreraEncendido");
 				timerLeft.stop();
 				timerLeft.reset();
 				contactLeft = false;
@@ -193,14 +179,13 @@ package obstacles
 			
 			if (timerRight.currentCount == 5) //si el temporizador de la parte derecha llega a 5, entonces reseteamos.
 			{
-				rightBarrierImage.visible = true;
-				activatedRightImage.visible = false;
+				rightBarrierImage.texture = Media.getTexture("BarreraEncendido");
 				timerRight.stop();
 				timerRight.reset();
 				contactRight = false;
 			}
 			
-			if (activatedLeftImage.visible && activatedRightImage.visible)  //Si las dos partes han sido dadas, entonces hacemos invisible la barrera
+			if (contactLeft && contactRight)  //Si las dos partes han sido dadas, entonces hacemos invisible la barrera
 			{
 				timerBarrier.start();
 				timerLeft.stop();
@@ -218,12 +203,13 @@ package obstacles
 				timerBarrier.stop();
 				timerBarrier.reset();
 				
-				activatedLeftImage.visible = false;
-				activatedRightImage.visible = false;
+				
 				contactLeft = false;
 				contactRight = false;
-				leftBarrierImage.visible = true;
-				rightBarrierImage.visible = true;
+				
+				leftBarrierImage.texture = Media.getTexture("BarreraEncendido");
+				rightBarrierImage.texture = Media.getTexture("BarreraEncendido");
+				
 				barrierImage.visible = true;
 				barrierObject.physicsProperties.active = true;
 				barrierParticleSystem.start();
@@ -235,8 +221,7 @@ package obstacles
 			if (leftBarrier.name == "Left" && !contactLeft)
 			{
 				timerLeft.start();
-				leftBarrierImage.visible = false;
-				activatedLeftImage.visible = true;
+				leftBarrierImage.texture = Media.getTexture("BarreraApagado");
 				shot.physicsProperties.name = "bounced";
 				contactLeft = true;
 			}
@@ -247,8 +232,7 @@ package obstacles
 			if (rightBarrier.name == "Right" && !contactRight)
 			{
 				timerRight.start();
-				rightBarrierImage.visible = false;
-				activatedRightImage.visible = true;
+				rightBarrierImage.texture = Media.getTexture("BarreraApagado");
 				shot.physicsProperties.name = "bounced";
 				contactRight = true;
 			}
