@@ -117,7 +117,7 @@ package screens
 			this.addChild(enemy2);
 			
 			//Creamos una barrerra.
-			barrier = new Barrier(physics, player, 150, 200);
+			barrier = new Barrier(physics, player, 120, 200);
 			this.addChild(barrier);
 			
 			//Creamos una mina.

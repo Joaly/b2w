@@ -95,7 +95,7 @@ package obstacles
 			//Asignamos las propiedades a las variables imágenes.
 			barrierImage.pivotX = barrierImage.width/2; // Centramos el punto de ancla de la imagen.
 			barrierImage.pivotY = barrierImage.height/2;
-			barrierImage.scaleX = 0.3;
+			barrierImage.scaleX = 0.4;
 			barrierImage.scaleY = 0.2;
 			
 			leftBarrierImage.pivotX = leftBarrierImage.width/2; // Centramos el punto de ancla de la imagen.
@@ -116,19 +116,22 @@ package obstacles
 			leftBarrierObject = barrierPhysics.injectPhysics(leftBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			leftBarrierImage.x = leftBarrierObject.x = barrierStartX;
 			leftBarrierImage.y = leftBarrierObject.y = barrierStartY;
-			leftBarrierObject.name = "Left";
+			leftBarrierObject.name = "LeftBarrier";
 			leftBarrierObject.physicsProperties.isSensor = true;
 			
 			barrierObject = barrierPhysics.injectPhysics(barrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			barrierImage.x = barrierObject.x = leftBarrierObject.x + barrierImage.width/2;
 			barrierImage.y = barrierObject.y = barrierStartY;
+			barrierObject.name = "Barrier";
 			barrierObject.physicsProperties.isSensor = true;
-	
+
+
 			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
 			rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
-			rightBarrierObject.name = "Right";
+			rightBarrierObject.name = "RightBarrier";
 			rightBarrierObject.physicsProperties.isSensor = true;
+			
 			
 			barrierParticleSystem.x = barrierObject.x;
 			barrierParticleSystem.y = barrierObject.y;
@@ -160,7 +163,7 @@ package obstacles
 		{
 			trace(timerLeft.currentCount, timerRight.currentCount, timerBarrier.currentCount);
 			
-			ContactManager.onContactBegin(barrierObject.name, playerObjective.name, playerContact); //Si la barrera contacta con el jugador, muere.
+			ContactManager.onContactBegin(barrierObject.name, "player", playerContact); //Si la barrera contacta con el jugador, muere.
 			
 			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
 			{
@@ -218,7 +221,7 @@ package obstacles
 		
 		private function leftContact(leftBarrier:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Si contacta con la parte izquierda, se borra el disparo y se pone a verde la imagen.
 		{
-			if (leftBarrier.name == "Left" && !contactLeft)
+			if (!contactLeft)
 			{
 				timerLeft.start();
 				leftBarrierImage.texture = Media.getTexture("BarreraApagado");
@@ -229,7 +232,7 @@ package obstacles
 		
 		private function rightContact(rightBarrier:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Si contacta con la parte derecha, se borra el disparo y se pone a verde la imagen.
 		{
-			if (rightBarrier.name == "Right" && !contactRight)
+			if (!contactRight)
 			{
 				timerRight.start();
 				rightBarrierImage.texture = Media.getTexture("BarreraApagado");
