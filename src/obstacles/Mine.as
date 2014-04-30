@@ -82,8 +82,8 @@ package obstacles
 			
 			mineBoxImage.pivotX = mineBoxImage.width / 2; //Centramos el punto de ancla de la imagen.
 			mineBoxImage.pivotY = mineBoxImage.height / 2;
-			mineBoxImage.scaleX = 0.6;
-			mineBoxImage.scaleY = 0.6;
+			mineBoxImage.scaleX = 0.8;
+			mineBoxImage.scaleY = 0.8;
 			
 			this.addChild(mineImage);
 			this.addChild(mineBoxImage);
@@ -96,6 +96,8 @@ package obstacles
 			mineBoxObject = minePhysics.injectPhysics(mineBoxImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
 			mineBoxObject.name = "MineBox";
 			mineBoxObject.physicsProperties.isSensor = true;
+			
+			Stage1.enemies.push(mineBoxObject);
 			
 			//Si el random al crear el obstaculo es menor o igual a 0.5, aparecerá a la izquierda, sino aparecerá a la derecha.
 			if (mineStartX <= 0.5) mineBoxObject.x = mineBoxImage.x = mineImage.x =  mineObject.x = Stage1.OFFSET + mineImage.width / 2;
@@ -119,21 +121,12 @@ package obstacles
 		
 		private function mineLoop(event:Event):void
 		{
-			
-			ContactManager.onContactBegin(mineBoxObject.name,playerObjective.name, mineContact);//Comprobamos si el jugador colisiona con la mina.
-			
 			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la mina.
 			{
 				ContactManager.onContactBegin(mineObject.name, Stage1.shots[i].name, mineShotContact);
 				if (alreadyContact) break;
 			}
-			if(alreadyContact) mineDeath();
-		}
-		
-		private function mineContact(mineBox:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
-		{
-			player.physicsProperties.name = "respawn";
-			alreadyContact = true;
+			if(alreadyContact || mineBoxObject.name == "explosion") mineDeath();
 		}
 		
 		private function mineShotContact(mine:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void

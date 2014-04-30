@@ -124,14 +124,14 @@ package obstacles
 			barrierImage.y = barrierObject.y = barrierStartY;
 			barrierObject.name = "Barrier";
 			barrierObject.physicsProperties.isSensor = true;
-
+			
+			Stage1.enemies.push(barrierObject);
 
 			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
 			rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
 			rightBarrierObject.name = "RightBarrier";
-			rightBarrierObject.physicsProperties.isSensor = true;
-			
+			rightBarrierObject.physicsProperties.isSensor = true;			
 			
 			barrierParticleSystem.x = barrierObject.x;
 			barrierParticleSystem.y = barrierObject.y;
@@ -162,8 +162,6 @@ package obstacles
 		private function contactLoop():void
 		{
 			trace(timerLeft.currentCount, timerRight.currentCount, timerBarrier.currentCount);
-			
-			ContactManager.onContactBegin(barrierObject.name, "player", playerContact); //Si la barrera contacta con el jugador, muere.
 			
 			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
 			{
@@ -239,11 +237,6 @@ package obstacles
 				shot.physicsProperties.name = "bounced";
 				contactRight = true;
 			}
-		}
-		
-		private function playerContact(barrier:PhysicsObject, player:PhysicsObject, contact:b2Contact):void //Si contacta con la barrera, el jugador muere.
-		{
-			player.physicsProperties.name = "respawn";
 		}
 	}
 

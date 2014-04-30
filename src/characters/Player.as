@@ -191,6 +191,7 @@ package characters
 		{
 			playerObject.name = "respawn";
 			if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
+			if (enemy.name == "MineBox") enemy.name = "explosion";
 		}
 
 		private function jump(force:b2Vec2):void
