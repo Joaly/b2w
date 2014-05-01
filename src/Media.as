@@ -71,6 +71,12 @@ package
 		[Embed(source = "../media/graphics/MinaExterior.png")]
 		private static const MineBox:Class;
 		
+		[Embed(source = "../media/graphics/Robot.png")]
+		private static const WhiteRobot:Class;
+		
+		[Embed(source = "../media/graphics/RobotBox.png")]
+		private static const WhiteRobotBox:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		

@@ -161,8 +161,6 @@ package obstacles
 		
 		private function contactLoop():void
 		{
-			trace(timerLeft.currentCount, timerRight.currentCount, timerBarrier.currentCount);
-			
 			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
 			{
 				if (!contactLeft) ContactManager.onContactBegin(leftBarrierObject.name, Stage1.shots[i].name, leftContact);//Si hay contacto entonces no comprueba los demás contactos.

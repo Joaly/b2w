@@ -5,6 +5,7 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
+	import enemies.Robot;
 	
 	import characters.Player;
 	
@@ -46,6 +47,7 @@ package screens
 		private var player:Player;
 		private var enemy1:Jellyfish;
 		private var enemy2:Butterfly;
+		private var enemy3:Robot;
 		private var timer:Timer;
 		private var barrier:Barrier;
 		private var mine:Mine;
@@ -115,6 +117,10 @@ package screens
 			//Creamos al enemigo Mariposa.
 			enemy2 = new Butterfly(physics, player, 150, 50);
 			this.addChild(enemy2);
+			
+			//Creamos al enemigo Robot.
+			enemy3 = new Robot(physics, player, Math.random(), 100);
+			this.addChild(enemy3);
 			
 			//Creamos una barrerra.
 			barrier = new Barrier(physics, player, 120, 200);
