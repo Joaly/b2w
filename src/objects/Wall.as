@@ -51,6 +51,7 @@ package objects
 			// Añadimos físicas a la pared.
 			wallObject = wallPhysics.injectPhysics(this, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			wallObject.name = wallName;
+			wallObject.physicsProperties.contactGroup = "wall";
 			wallObject.x = wallX; // Posicionamos el objeto.
 			wallObject.y = wallY;
 			if (wallName == "Left") wallObject.x = wallImage.width/2;

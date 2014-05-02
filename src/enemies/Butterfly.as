@@ -42,6 +42,7 @@ package enemies
 			createEnemy("MariposaEnemigo", 1, 20/-60, "contactWeak");
 			shotsToBounce = new Vector.<PlayerShot>;
 			speedY = new Number(2);
+			this.addEventListener(Event.ENTER_FRAME, update);
 		}
 		
 		override protected function movementPatternX():void
@@ -62,17 +63,13 @@ package enemies
 				enemyImage.scaleX *= -1;
 				enemySpeed.x *= -1;
 			}
-			
-			for (var i:int = 0; i < Stage1.shots.length; i++) //Si colisiona alguna de las balas del jugador...
-			{
-				ContactManager.onContactBegin(enemyObject.name, Stage1.shots[i].name, shotContact);
-			}
 		}
 		
-		private function shotContact(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.
+		private function bounceShot(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.
 		{
+			trace(enemy.name);
 			shot.physicsProperties.name = "bounced";
-			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 3, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y));
+			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 3, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y), true);
 			shotsToBounce.push(shotBounced);
 		}
 		
@@ -89,10 +86,14 @@ package enemies
 				for (var i:int; i < shotsToBounce.length; i++)
 				{
 					this.addChild(shotsToBounce[i]);
-					Stage1.shotsBounced.push(shotsToBounce[i].shotObject);
 					shotsToBounce.splice(0,1);
 				}
 			}
+		}
+		
+		private function update(event:Event):void
+		{
+			ContactManager.onContactBegin("contactWeak", "shot", bounceShot, true);
 		}
 	}
 }

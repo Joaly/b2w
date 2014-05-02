@@ -10,9 +10,7 @@ package enemies
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
-	import flash.geom.Rectangle;
 	import flash.utils.Timer;
-	import flash.utils.getTimer;
 	
 	import projectiles.Bullet;
 	import projectiles.PlayerShot;
@@ -73,10 +71,8 @@ package enemies
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			enemyObject.x = enemyStartX;
 			enemyObject.y = enemyStartY;
-	
-			Stage1.enemies.push(enemyObject);
-
-			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
+			
+			enemyObject.physicsProperties.contactGroup = name;
 			enemyObject.physicsProperties.isSensor = true;
 	
 			timer = new Timer(100, 0);

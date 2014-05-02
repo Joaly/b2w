@@ -97,6 +97,7 @@ package obstacles
 			barrierImage.pivotY = barrierImage.height/2;
 			barrierImage.scaleX = 0.4;
 			barrierImage.scaleY = 0.2;
+			barrierImage.visible = false;
 			
 			leftBarrierImage.pivotX = leftBarrierImage.width/2; // Centramos el punto de ancla de la imagen.
 			leftBarrierImage.pivotY = leftBarrierImage.height/2;
@@ -117,6 +118,7 @@ package obstacles
 			leftBarrierImage.x = leftBarrierObject.x = barrierStartX;
 			leftBarrierImage.y = leftBarrierObject.y = barrierStartY;
 			leftBarrierObject.name = "LeftBarrier";
+			leftBarrierObject.physicsProperties.contactGroup = "leftBar";
 			leftBarrierObject.physicsProperties.isSensor = true;
 			
 			barrierObject = barrierPhysics.injectPhysics(barrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
@@ -124,13 +126,12 @@ package obstacles
 			barrierImage.y = barrierObject.y = barrierStartY;
 			barrierObject.name = "Barrier";
 			barrierObject.physicsProperties.isSensor = true;
-			
-			Stage1.enemies.push(barrierObject);
 
 			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
 			rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
 			rightBarrierObject.name = "RightBarrier";
+			rightBarrierObject.physicsProperties.contactGroup = "rightBar";
 			rightBarrierObject.physicsProperties.isSensor = true;			
 			
 			barrierParticleSystem.x = barrierObject.x;
@@ -161,14 +162,12 @@ package obstacles
 		
 		private function contactLoop():void
 		{
-			trace(timerLeft.currentCount, timerRight.currentCount, timerBarrier.currentCount);
-			
-			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
-			{
-				if (!contactLeft) ContactManager.onContactBegin(leftBarrierObject.name, Stage1.shots[i].name, leftContact);//Si hay contacto entonces no comprueba los demás contactos.
+			//for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
+			//{
+				if (!contactLeft) ContactManager.onContactBegin("leftBar", "shot", leftContact, true);//Si hay contacto entonces no comprueba los demás contactos.
 				
-				if (!contactRight) ContactManager.onContactBegin(rightBarrierObject.name, Stage1.shots[i].name, rightContact);//Si hay contacto entonces no comprueba los demás contactos.
-			}
+				if (!contactRight) ContactManager.onContactBegin("rightBar", "shot", rightContact, true);//Si hay contacto entonces no comprueba los demás contactos.
+			//}
 			
 			if (timerLeft.currentCount == 5) //si el temporizador de la parte izquierda llega a 5, entonces reseteamos.
 			{

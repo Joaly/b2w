@@ -46,7 +46,6 @@ package enemies
 		
 		override protected function attack():void //Función dedicada a disparar hacia el jugador.
 		{
-			
 			timer.start(); //El temporizador empieza.
 			
 			if (timer.currentCount == 20) //Cada dos segundos se creará un disparo.

@@ -3,24 +3,25 @@ package characters
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	import Box2D.Dynamics.b2Body;
-
+	
 	import com.reyco1.physinjector.PhysInjector;
 	import com.reyco1.physinjector.contact.ContactManager;
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
-
+	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.Timer;
-
+	
 	import objects.Wall;
-
+	
 	import projectiles.PlayerShot;
-
+	
 	import screens.Stage1;
-
+	
 	import starling.core.Starling;
 	import starling.core.starling_internal;
+	import starling.display.BlendMode;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
@@ -57,6 +58,7 @@ package characters
 		private var particle:Texture;
 		private var particleSystem:PDParticleSystem;
 		private var particleTimer:Timer;
+		private var attacking:Boolean;
 
 		public var isDead:Boolean;
 
@@ -85,6 +87,7 @@ package characters
 			playerObject.x = playerX;
 			playerObject.y = playerY;
 			playerObject.name = "player";
+			playerObject.physicsProperties.contactGroup = "player";
 
 			position = new Point(playerImage.x, playerImage.y);
 			onJump = new Boolean(true);
@@ -94,6 +97,7 @@ package characters
 			timer = new Timer(100, 0);
 			particleTimer = new Timer(10, 0);
 			jumpForce = new b2Vec2(0,0);
+			attacking = false;
 
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 
@@ -118,6 +122,7 @@ package characters
 
 				// En caso contario, realizamos un disparo.
 				else if (!onJump) shoot(event.getTouch(stage, TouchPhase.BEGAN));
+				else attack();
 			}
 
 			if (event.getTouch(stage, TouchPhase.ENDED)) 
@@ -155,25 +160,15 @@ package characters
 
 		private function update(event:Event):void
 		{
-			if (playerObject.name == "respawn") playerDeath();
-			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
-			ContactManager.onContactBegin("player", wallLeft.wallObject.name, wallContact);
-			ContactManager.onContactBegin("player", wallRight.wallObject.name, wallContact);
 			position.x = playerObject.x;
 			position.y = playerObject.y;
-			for (var i:int; i < Stage1.enemies.length; i++)
-			{
-				ContactManager.onContactBegin("player", Stage1.enemies[i].name, enemyContact);
-			}
-
-			if (Stage1.shotsBounced.length > 0)
-			{
-				for (var j:int; j < Stage1.shotsBounced.length; j++)					
-				{
-					ContactManager.onContactBegin("player", Stage1.shotsBounced[j].name, enemyContact);
-					Stage1.shotsBounced.splice(0,1);
-				}
-			}
+			
+			if (playerObject.name == "respawn") playerDeath();
+			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
+			
+			ContactManager.onContactBegin("player", "wall", wallContact, true);
+			ContactManager.onContactBegin("player", "enemy", enemyContact, true);
+			ContactManager.onContactBegin("player", "enemyShot", enemyContact, true);
 		}
 
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
@@ -181,6 +176,8 @@ package characters
 			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
 			slideAllowed = true;
+			playerImage.blendMode = BlendMode.NORMAL;
+			attacking = false;
 
 			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
@@ -189,9 +186,10 @@ package characters
 
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			playerObject.name = "respawn";
+			if (!attacking) playerObject.name = "respawn";
 			if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
 			if (enemy.name == "MineBox") enemy.name = "explosion";
+			else enemy.physicsProperties.name = "slashed";
 		}
 
 		private function jump(force:b2Vec2):void
@@ -214,7 +212,7 @@ package characters
 		{
 			if (!coolDown)
 			{
-				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY));
+				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY), false);
 				this.addChild(shot);
 
 				if (timer.currentCount <= 5) shotsFired++;				
@@ -293,6 +291,12 @@ package characters
 				playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 				this.removeEventListener(Event.ENTER_FRAME, particleFade);
 			}
+		}
+		
+		private function attack():void
+		{
+			playerImage.blendMode = BlendMode.SCREEN;
+			attacking = true;
 		}
 	}
 }

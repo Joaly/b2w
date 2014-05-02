@@ -91,13 +91,13 @@ package obstacles
 			//Ponemos las físicas a los objetos.
 			mineObject = minePhysics.injectPhysics(mineImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
 			mineObject.name = "Mine";
+			mineObject.physicsProperties.contactGroup = "mine";
 			mineObject.physicsProperties.isSensor = true;
 			
 			mineBoxObject = minePhysics.injectPhysics(mineBoxImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
 			mineBoxObject.name = "MineBox";
+			mineBoxObject.physicsProperties.contactGroup = "mineBox";
 			mineBoxObject.physicsProperties.isSensor = true;
-			
-			Stage1.enemies.push(mineBoxObject);
 			
 			//Si el random al crear el obstaculo es menor o igual a 0.5, aparecerá a la izquierda, sino aparecerá a la derecha.
 			if (mineStartX <= 0.5) mineBoxObject.x = mineBoxImage.x = mineImage.x =  mineObject.x = Stage1.OFFSET + mineImage.width / 2;
@@ -121,10 +121,10 @@ package obstacles
 		
 		private function mineLoop(event:Event):void
 		{
-			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la mina.
+			//for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la mina.
 			{
-				ContactManager.onContactBegin(mineObject.name, Stage1.shots[i].name, mineShotContact);
-				if (alreadyContact) break;
+				ContactManager.onContactBegin("mine", "shot", mineShotContact, true);
+				//if (alreadyContact) break;
 			}
 			if(alreadyContact || mineBoxObject.name == "explosion") mineDeath();
 		}

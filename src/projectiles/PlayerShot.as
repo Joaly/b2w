@@ -41,15 +41,17 @@ package projectiles
 		private var direction:b2Vec2;
 		private var target:Point;
 		private var timer:Timer;
+		private var enemyShot:Boolean;
 		
 		
-		public function PlayerShot(physics:PhysInjector, x:Number, y:Number, shotSpeed:Number, target:Point)
+		public function PlayerShot(physics:PhysInjector, x:Number, y:Number, shotSpeed:Number, target:Point, enemyShot:Boolean)
 		{
 			shotPhysics = physics;
 			startX = x;
 			startY = y;
 			speed = shotSpeed;
 			this.target = new Point(target.x, target.y); // Posición donde irá el disparo.
+			this.enemyShot = enemyShot;
 			
 			this.addEventListener(starling.events.Event.ADDED_TO_STAGE, createShot);
 		}
@@ -70,15 +72,15 @@ package projectiles
 			// Creamos el objeto del disparo.
 			shotObject = shotPhysics.injectPhysics(shotImage, PhysInjector.CIRCLE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			shotObject.physicsProperties.isSensor = true;
-			shotObject.name = "shot" + new String(Math.round(target.x*target.y*Math.random()));
+			//shotObject.name = "shot" + new String(Math.round(target.x*target.y*Math.random()));
+			if (enemyShot) shotObject.physicsProperties.contactGroup = "enemyShot";
+			else shotObject.physicsProperties.contactGroup = "shot";
 			shotObject.x = startX;
 			shotObject.y = startY;
 			
 			// Calculamos la velocidad del disparo.
 			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
 			direction = new b2Vec2((target.x - startX) / speedModule * speed, (target.y - startY) / speedModule * speed);
-			
-			Stage1.shots.push(shotObject);
 			
 			// Creamos el sistema de partículas.
 			shotParticleSystem.x = shotObject.x;
@@ -112,30 +114,32 @@ package projectiles
 			}
 			
 			//ContactManager.onContactBegin(shotObject.name, "shotWeak", shotContact); // Si colisiona con un enemigo débil a los disparos lo eliminamos.
-			for (var i:int; i < Stage1.enemies.length; i++)
+			/*for (var i:int; i < Stage1.enemies.length; i++)
 			{
 				ContactManager.onContactBegin(shotObject.name, Stage1.enemies[i].name, shotContact);
-			}			
+			}	*/
+			ContactManager.onContactBegin("shot", "shotWeak", shotWeakContact, true);
 		}		
 		
-		private function shotContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
+		private function shotWeakContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			
-			if (enemy.name.substr(0,8) == "shotWeak") // Comprueba si el enemigo es débil al disparo según el inicio de la cadena, dado que el resto es aleatorio.
-			{
-				enemy.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
-				this.removeEventListener(Event.ENTER_FRAME, movement);
-				shot.physicsProperties.isDynamic = false;
-				shot.body.GetWorld().DestroyBody(shot.body);
-				shot.dispose();
-				shotParticleSystem.startSize *= 2;
-				shotParticleSystem.emitAngleVariance = 10;
-				shotParticleSystem.endColor = new ColorArgb(2.5,0.5,0,5);
-				shotParticleSystem.lifespan *= 0.6;
-				timer.start();
-				this.addEventListener(Event.ENTER_FRAME, shotParticleFade);
-				this.removeChild(shotImage);
-			}
+			enemy.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
+			this.removeEventListener(Event.ENTER_FRAME, movement);
+			shot.physicsProperties.isDynamic = false;
+			shot.body.GetWorld().DestroyBody(shot.body);
+			//shot.dispose();
+			shotParticleSystem.startSize *= 2;
+			shotParticleSystem.emitAngleVariance = 10;
+			shotParticleSystem.endColor = new ColorArgb(2.5,0.5,0,5);
+			shotParticleSystem.lifespan *= 0.6;
+			timer.start();
+			this.addEventListener(Event.ENTER_FRAME, shotParticleFade);
+			this.removeChild(shotImage);
+		}
+		
+		private function playerContact(player:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
+		{
+			player.name = "respawn";
 		}
 		
 		private function shotParticleFade():void
