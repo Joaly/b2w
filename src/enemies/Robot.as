@@ -1,15 +1,17 @@
 package enemies 
 {
+	import Box2D.Collision.Shapes.b2MassData;
 	import Box2D.Common.Math.b2Vec2;
-	import feathers.controls.ImageLoader;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	
 	import characters.Player;
 	
 	import com.reyco1.physinjector.PhysInjector;
+	import com.reyco1.physinjector.contact.ContactManager;
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
-	import com.reyco1.physinjector.contact.ContactManager;
+	
+	import feathers.controls.ImageLoader;
 	
 	import flash.utils.Timer;
 	
@@ -38,7 +40,7 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("WhiteRobot", 0, 0.2, "contactWeak");
+			createEnemy("WhiteRobot", 0, 0.5, "contactWeak");
 		}
 		
 		override protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String):void
@@ -77,8 +79,6 @@ package enemies
 			}
 			
 			enemyObject.y  = robotBox.y = enemyStartY;
-			
-			Stage1.enemies.push(enemyObject);
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
@@ -101,26 +101,19 @@ package enemies
 			
 			robotBox.y = enemyObject.y - robotBox.width/2; //La posición "y" de la caja que seguirá al enemigo debe ser calculada en todo momento.
 			
-			trace(enemyObject.x, enemyImage.x, robotBox.x);
+			trace(enemyObject.y, enemyImage.y, robotBox.y);
 			
 			// Cambiamos el sentido cuando llega a un cierto rango.
-			if (enemyObject.y >= enemyStartY + 50) 
+			if (enemyObject.y > enemyStartY + 50) 
 			{
-				enemyObject.y -= enemyImage.height/5;
-				enemySpeed.y *= -1;
-				enemyImage.scaleY *= -1;
+				enemyObject.y -= 2;
+				enemySpeed.y = -1;
 			}
 			
-			if (enemyObject.y <= enemyStartY - 50) 
+			if (enemyObject.y < enemyStartY - 50) 
 			{
-				enemyObject.y += enemyImage.height/5;
-				enemySpeed.y *= -1;
-				enemyImage.scaleY *= -1;
-			}
-			
-			for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la mina.
-			{
-				ContactManager.onContactBegin(enemyObject.name, Stage1.shots[i].name, robotShotContact);
+				enemyObject.y += 2;
+				enemySpeed.y = 0.5;
 			}
 		}
 		

@@ -100,8 +100,8 @@ package screens
 			this.addChild(player);
 			
 			//Creamos al enemigo Medusa.
-			enemy1 = new Jellyfish(physics, player, 150, 150);
-			this.addChild(enemy1);
+			//enemy1 = new Jellyfish(physics, player, 150, 150);
+			//this.addChild(enemy1);
 			
 			//Creamos al enemigo Mariposa.
 			enemy2 = new Butterfly(physics, player, 150, 50);
