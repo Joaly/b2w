@@ -29,9 +29,10 @@ package enemies
 
 	public class Robot extends Enemy
 	{
-		
-		private var speedY:Number;
+		private var enemyBoxObject:PhysicsObject;
+		private var timerStop:Timer;
 		private var robotBox:Image;
+		private var robotStop:Boolean;
 		
 		public function Robot(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -60,32 +61,38 @@ package enemies
 			robotBox.scaleX = 0.2;
 			robotBox.scaleY = 0.2;
 			
+			robotBox.visible = false;
+			
 			this.addChild(robotBox);
 			this.addChild(enemyImage);
 			
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
+			enemyBoxObject = enemyPhysics.injectPhysics(robotBox, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
+			
+			enemyBoxObject.physicsProperties.contactGroup = "robotBox";
 			
 			if (enemyStartX <= 0.5)
 			{
 				enemyObject.x = Stage1.OFFSET + enemyImage.width/2;
-				robotBox.x = Stage1.OFFSET - enemyImage.width/2;
+				enemyBoxObject.x = Stage1.OFFSET - 10;
 			}
 			else 
 			{
 				enemyObject.x = stage.stageWidth - Stage1.OFFSET - enemyImage.width / 2;
-				robotBox.x = stage.stageWidth - Stage1.OFFSET + enemyImage.width/2;
+				enemyBoxObject.x = stage.stageWidth - Stage1.OFFSET - 10;
 				enemyImage.scaleX *= -1;
 				robotBox.scaleX *= -1;
 			}
 			
-			enemyObject.y  = robotBox.y = enemyStartY;
+			enemyObject.y = enemyStartY;
+			enemyBoxObject.y = enemyStartY - enemyImage.width/1.5;
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
-			
-			robotBox.visible = false;
 	
-			timer = new Timer(100, 0);
+			timer = new Timer(1000, 0);
+			timerStop = new Timer(1000, 0);
+			robotStop = new Boolean(false);
 			
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
@@ -98,28 +105,59 @@ package enemies
 		override protected function movementPatternY():void
 		{
 			enemyObject.body.SetLinearVelocity(enemySpeed); //Aplicamos velocidad al enemigo.
-			
-			robotBox.y = enemyObject.y - robotBox.width/2; //La posición "y" de la caja que seguirá al enemigo debe ser calculada en todo momento.
-			
-			trace(enemyObject.y, enemyImage.y, robotBox.y);
-			
+			enemyBoxObject.body.SetLinearVelocity(enemySpeed);
+		
 			// Cambiamos el sentido cuando llega a un cierto rango.
-			if (enemyObject.y > enemyStartY + 50) 
+			
+			if (robotStop)
+			{
+				enemyObject.physicsProperties.isDynamic= false;
+				enemyBoxObject.physicsProperties.isDynamic = false;
+				
+				if (timerStop.currentCount == 2) 
+				{
+					timerStop.reset();
+					timerStop.stop();
+					robotStop = false;
+					
+					enemyObject.physicsProperties.isDynamic = true;
+					enemyBoxObject.physicsProperties.isDynamic = true;
+				}
+			}
+	
+			if (Math.round(enemyObject.y) > enemyStartY + 34) 
 			{
 				enemyObject.y -= 2;
+				enemyBoxObject.y -= 2;
 				enemySpeed.y = -1;
+				robotStop = true;
+				timerStop.start();
 			}
 			
-			if (enemyObject.y < enemyStartY - 50) 
+			if (Math.round(enemyObject.y) < enemyStartY - 35) 
 			{
 				enemyObject.y += 2;
+				enemyBoxObject.y += 2;
 				enemySpeed.y = 0.5;
+				robotStop = true;
+				timerStop.start();
 			}
+			
+			if (timer.currentCount == 1)
+			{
+				enemyImage.texture = Media.getTexture("WhiteRobot");
+				timer.reset();
+				timer.stop();
+			}
+			
+			ContactManager.onContactBegin("robotBox", "shot", robotShotContact, true);
 		}
 		
-		private function robotShotContact(mine:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
+		private function robotShotContact(robotBox:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
 		{
 			shot.physicsProperties.name = "bounced";
+			enemyImage.texture = Media.getTexture("WhiteRobotCover");
+			timer.start();
 
 		}
 		
