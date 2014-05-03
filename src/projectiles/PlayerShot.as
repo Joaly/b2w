@@ -30,19 +30,20 @@ package projectiles
 	public class PlayerShot extends Sprite
 	{
 		private var shotImage:Image;
-		public var shotObject:PhysicsObject;
+		private var shotObject:PhysicsObject;
 		private var shotPhysics:PhysInjector;
+		
 		private var shotParticleConfig:XML;
 		private var shotParticle:Texture;
 		private var shotParticleSystem:PDParticleSystem;
+		
 		private var startX:Number;
 		private var startY:Number;
 		private var speed:Number;
 		private var direction:b2Vec2;
 		private var target:Point;
 		private var timer:Timer;
-		private var enemyShot:Boolean;
-		
+		private var enemyShot:Boolean;		
 		
 		public function PlayerShot(physics:PhysInjector, x:Number, y:Number, shotSpeed:Number, target:Point, enemyShot:Boolean)
 		{
@@ -58,6 +59,7 @@ package projectiles
 		
 		private function createShot(event:Event):void
 		{
+			// Inicializamos las variables del sistema de partículas.
 			shotParticleConfig = new XML(Media.getXML("ParticleConfig"));
 			shotParticle = Media.getTexture("Particle");
 			shotParticleSystem = new PDParticleSystem(shotParticleConfig, shotParticle);
@@ -72,13 +74,12 @@ package projectiles
 			// Creamos el objeto del disparo.
 			shotObject = shotPhysics.injectPhysics(shotImage, PhysInjector.CIRCLE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			shotObject.physicsProperties.isSensor = true;
-			//shotObject.name = "shot" + new String(Math.round(target.x*target.y*Math.random()));
 			if (enemyShot) shotObject.physicsProperties.contactGroup = "enemyShot";
 			else shotObject.physicsProperties.contactGroup = "shot";
 			shotObject.x = startX;
 			shotObject.y = startY;
 			
-			// Calculamos la velocidad del disparo.
+			// Calculamos la velocidad y dirección del disparo.
 			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
 			direction = new b2Vec2((target.x - startX) / speedModule * speed, (target.y - startY) / speedModule * speed);
 			
@@ -92,17 +93,19 @@ package projectiles
 			shotParticleSystem.start();
 			
 			timer = new Timer(10,0);
+			
 			this.addEventListener(Event.ENTER_FRAME, movement);
 		}
 		
 		private function movement(event:Event):void
 		{
-			
 			shotObject.body.SetLinearVelocity(direction); // Aplicamos la velocidad al objeto.
 			
+			// Movemos las partículas junto con el disparo.
 			shotParticleSystem.x = shotObject.x;				
 			shotParticleSystem.y = shotObject.y;
 			
+			// Controlamos cuando eliminamos el disparo.
 			if (shotObject.x < -100 || shotObject.x > stage.stageWidth+100 || shotObject.y < -100 || shotObject.y > stage.stageHeight+100 || shotObject.physicsProperties.name == "bounced") // Eliminamos el disparo cuando salga de pantalla.
 			{
 				this.removeEventListener(Event.ENTER_FRAME, movement);
@@ -112,29 +115,16 @@ package projectiles
 				shotParticleSystem.stop(true);
 				this.removeChild(shotImage);
 			}
+
+			ContactManager.onContactBegin("shot", "shotWeak", shotWeakContact, true); // Comprobamos colisiones con enemigos débiles a disparos.
 			
-			//ContactManager.onContactBegin(shotObject.name, "shotWeak", shotContact); // Si colisiona con un enemigo débil a los disparos lo eliminamos.
-			/*for (var i:int; i < Stage1.enemies.length; i++)
-			{
-				ContactManager.onContactBegin(shotObject.name, Stage1.enemies[i].name, shotContact);
-			}	*/
-			ContactManager.onContactBegin("shot", "shotWeak", shotWeakContact, true);
+			if (shotObject.name == "remove") shotRemoval(); // Comprobamos si necesitamos eliminar el disparo.
 		}		
 		
 		private function shotWeakContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
 			enemy.physicsProperties.name = "dead"; // Como no podemos acceder a todas las propiedades del enemigo, cambiamos su nombre y lo eliminamos desde dentro.
-			this.removeEventListener(Event.ENTER_FRAME, movement);
-			shot.physicsProperties.isDynamic = false;
-			shot.body.GetWorld().DestroyBody(shot.body);
-			//shot.dispose();
-			shotParticleSystem.startSize *= 2;
-			shotParticleSystem.emitAngleVariance = 10;
-			shotParticleSystem.endColor = new ColorArgb(2.5,0.5,0,5);
-			shotParticleSystem.lifespan *= 0.6;
-			timer.start();
-			this.addEventListener(Event.ENTER_FRAME, shotParticleFade);
-			this.removeChild(shotImage);
+			shotObject.name = "remove";
 		}
 		
 		private function playerContact(player:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
@@ -152,6 +142,21 @@ package projectiles
 				this.removeEventListener(Event.ENTER_FRAME, shotParticleFade);
 			}
 			
+		}
+
+		private function shotRemoval():void
+		{
+			this.removeEventListener(Event.ENTER_FRAME, movement);
+			shotObject.physicsProperties.isDynamic = false;
+			shotObject.body.GetWorld().DestroyBody(shotObject.body);
+			shotObject.dispose();
+			shotParticleSystem.startSize *= 2;
+			shotParticleSystem.emitAngleVariance = 10;
+			shotParticleSystem.endColor = new ColorArgb(2.5,0.5,0,5);
+			shotParticleSystem.lifespan *= 0.6;
+			timer.start();
+			this.addEventListener(Event.ENTER_FRAME, shotParticleFade);
+			this.removeChild(shotImage);
 		}
 	}
 }

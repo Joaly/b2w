@@ -21,7 +21,6 @@ package screens
 	
 	import flash.utils.Timer;
 	
-	import objects.Floor;
 	import objects.Wall;
 	
 	import obstacles.Barrier;
@@ -41,7 +40,6 @@ package screens
 		private var stageBg:Image;
 		
 		// Objetos de la partida.
-		private var floor:Floor;
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
 		private var player:Player;
@@ -73,8 +71,8 @@ package screens
 		{
 			// Creación del fondo.
 			stageBg = new Image(Media.getTexture("Stage1Bg"));
-			stageBg.width /= 2; // REDIMENSION
-			stageBg.height /= 2; // REDIMENSION
+			stageBg.width /= 2; // TEMPORAL
+			stageBg.height /= 2; // TEMPORAL
 			stageBg.y = -stageBg.height/2;
 			this.addChild(stageBg);
 			
@@ -84,10 +82,6 @@ package screens
 		{
 			PhysInjector.STARLING = true;
 			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 20), false); // Creamos la gravedad del escenario.
-			
-			// Creamos el suelo.
-			//floor = new Floor(physics, 0, stage.stageHeight);
-			//this.addChild(floor);
 			
 			// Creamos las paredes.
 			wallLeft = new Wall(physics, "Left");
@@ -100,8 +94,8 @@ package screens
 			this.addChild(player);
 			
 			//Creamos al enemigo Medusa.
-			//enemy1 = new Jellyfish(physics, player, 150, 150);
-			//this.addChild(enemy1);
+			enemy1 = new Jellyfish(physics, player, 150, 150);
+			this.addChild(enemy1);
 			
 			//Creamos al enemigo Mariposa.
 			enemy2 = new Butterfly(physics, player, 150, 50);

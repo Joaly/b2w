@@ -68,14 +68,14 @@ package enemies
 			enemyImage.scaleY = 0.5;
 			this.addChild(enemyImage);
 			
+			// Creamos y posicionamos el objeto físico.
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			enemyObject.x = enemyStartX;
-			enemyObject.y = enemyStartY;
-			
+			enemyObject.y = enemyStartY;			
 			enemyObject.physicsProperties.contactGroup = name;
 			enemyObject.physicsProperties.isSensor = true;
 	
-			timer = new Timer(100, 0);
+			timer = new Timer(100, 0); // Temporizador que se usará para el patrón de ataque.
 			
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
@@ -141,6 +141,7 @@ package enemies
 		
 		private function enemyDeath():void
 		{
+			// La imagen del enemigo parpadeará antes de desaparecer.
 			if (enemyImage.alpha > 0) 
 			{
 				enemyImage.alpha -= 0.03;

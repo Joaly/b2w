@@ -3,8 +3,6 @@ package obstacles
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import feathers.controls.ImageLoader;
-	import flash.events.TimerEvent;
 	
 	import characters.Player;
 	
@@ -13,21 +11,24 @@ package obstacles
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
+	import feathers.controls.ImageLoader;
+	
+	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 	
 	import projectiles.PlayerShot;
 	
 	import screens.Stage1;
 	
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.EnterFrameEvent;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
-	import flash.utils.Timer;
-	import starling.animation.Tween;
-	import starling.core.Starling;
 	import starling.extensions.ColorArgb;
 	import starling.extensions.PDParticleSystem;
 	import starling.textures.Texture;
@@ -90,12 +91,10 @@ package obstacles
 			
 			//Ponemos las físicas a los objetos.
 			mineObject = minePhysics.injectPhysics(mineImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
-			mineObject.name = "Mine";
 			mineObject.physicsProperties.contactGroup = "mine";
 			mineObject.physicsProperties.isSensor = true;
 			
 			mineBoxObject = minePhysics.injectPhysics(mineBoxImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
-			mineBoxObject.name = "MineBox";
 			mineBoxObject.physicsProperties.contactGroup = "mineBox";
 			mineBoxObject.physicsProperties.isSensor = true;
 			
@@ -121,18 +120,22 @@ package obstacles
 		
 		private function mineLoop(event:Event):void
 		{
-			//for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la mina.
-			{
-				ContactManager.onContactBegin("mine", "shot", mineShotContact, true);
-				//if (alreadyContact) break;
-			}
-			if(alreadyContact || mineBoxObject.name == "explosion") mineDeath();
+			ContactManager.onContactBegin("mine", "shot", mineShotContact, true);
+			ContactManager.onContactBegin("mineBox", "player", mineExplosion, true);
+			
+			if (alreadyContact || mineBoxObject.name == "explosion") mineDeath();
 		}
 		
 		private function mineShotContact(mine:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
 		{
 			shot.physicsProperties.name = "bounced";
 			alreadyContact = true;
+		}
+		
+		private function mineExplosion(mine:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
+		{
+			player.name = "respawn";
+			mine.name = "explosion";
 		}
 		
 		private function mineDeath():void //Función dedicada a realizar las partículas de la explosión para luego eliminar los objetos.
