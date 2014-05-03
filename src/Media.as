@@ -77,6 +77,9 @@ package
 		[Embed(source = "../media/graphics/RobotBox.png")]
 		private static const WhiteRobotBox:Class;
 		
+		[Embed(source = "../media/graphics/RobotProteccion.png")]
+		private static const WhiteRobotCover:Class;
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		

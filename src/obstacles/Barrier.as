@@ -210,7 +210,6 @@ package obstacles
 				leftBarrierImage.texture = Media.getTexture("BarreraEncendido");
 				rightBarrierImage.texture = Media.getTexture("BarreraEncendido");
 				
-				barrierImage.visible = true;
 				barrierObject.physicsProperties.active = true;
 				barrierParticleSystem.start();
 			}
