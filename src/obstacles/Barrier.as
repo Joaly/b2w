@@ -117,20 +117,18 @@ package obstacles
 			leftBarrierObject = barrierPhysics.injectPhysics(leftBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			leftBarrierImage.x = leftBarrierObject.x = barrierStartX;
 			leftBarrierImage.y = leftBarrierObject.y = barrierStartY;
-			leftBarrierObject.name = "LeftBarrier";
 			leftBarrierObject.physicsProperties.contactGroup = "leftBar";
 			leftBarrierObject.physicsProperties.isSensor = true;
 			
 			barrierObject = barrierPhysics.injectPhysics(barrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			barrierImage.x = barrierObject.x = leftBarrierObject.x + barrierImage.width/2;
 			barrierImage.y = barrierObject.y = barrierStartY;
-			barrierObject.name = "Barrier";
+			barrierObject.physicsProperties.contactGroup = "barrier";
 			barrierObject.physicsProperties.isSensor = true;
 
 			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
 			rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
 			rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
-			rightBarrierObject.name = "RightBarrier";
 			rightBarrierObject.physicsProperties.contactGroup = "rightBar";
 			rightBarrierObject.physicsProperties.isSensor = true;			
 			
@@ -162,12 +160,9 @@ package obstacles
 		
 		private function contactLoop():void
 		{
-			//for (var i:int = 0; i < Stage1.shots.length; i++) //Comprobamos si alguno de los disparos colisiona con la parte izquierda.
-			//{
-				if (!contactLeft) ContactManager.onContactBegin("leftBar", "shot", leftContact, true);//Si hay contacto entonces no comprueba los demás contactos.
-				
-				if (!contactRight) ContactManager.onContactBegin("rightBar", "shot", rightContact, true);//Si hay contacto entonces no comprueba los demás contactos.
-			//}
+			if (!contactLeft) ContactManager.onContactBegin("leftBar", "shot", leftContact, true); //Si hay contacto entonces no comprueba los demás contactos.				
+			if (!contactRight) ContactManager.onContactBegin("rightBar", "shot", rightContact, true); //Si hay contacto entonces no comprueba los demás contactos.
+			ContactManager.onContactBegin("barrier", "player", playerContact, true);
 			
 			if (timerLeft.currentCount == 5) //si el temporizador de la parte izquierda llega a 5, entonces reseteamos.
 			{
@@ -194,7 +189,6 @@ package obstacles
 				timerRight.reset();
 				
 				barrierParticleSystem.stop();
-				barrierImage.visible = false;
 				barrierObject.physicsProperties.active = false;
 			}
 			
@@ -235,6 +229,11 @@ package obstacles
 				shot.physicsProperties.name = "bounced";
 				contactRight = true;
 			}
+		}
+		
+		private function playerContact(barrier:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
+		{
+			player.name = "respawn";
 		}
 	}
 

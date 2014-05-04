@@ -27,11 +27,11 @@ package enemies
 
 	public class Butterfly extends Enemy
 	{
-
 		private var tween:Tween;
 		private var bounce:Boolean;
 		private var shotsToBounce:Vector.<PlayerShot>;
 		private	var speedY:Number;
+		
 		public function Butterfly(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
 			super(physics, player, startX, startY);
@@ -65,14 +65,6 @@ package enemies
 			}
 		}
 		
-		private function bounceShot(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.
-		{
-			trace(enemy.name);
-			shot.physicsProperties.name = "bounced";
-			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 3, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y), true);
-			shotsToBounce.push(shotBounced);
-		}
-		
 		override protected function movementPatternY():void
 		{
 			//Movimiento "aleteo" de la mariposa.
@@ -94,6 +86,13 @@ package enemies
 		private function update(event:Event):void
 		{
 			ContactManager.onContactBegin("contactWeak", "shot", bounceShot, true);
+		}
+		
+		private function bounceShot(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.
+		{
+			shot.physicsProperties.name = "bounced";
+			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 3, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y), true);
+			shotsToBounce.push(shotBounced);
 		}
 	}
 }

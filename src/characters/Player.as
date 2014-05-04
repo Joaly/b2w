@@ -167,7 +167,8 @@ package characters
 			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
 			
 			ContactManager.onContactBegin("player", "wall", wallContact, true);
-			ContactManager.onContactBegin("player", "enemy", enemyContact, true);
+			ContactManager.onContactBegin("player", "contactWeak", enemyContact, true);			
+			ContactManager.onContactBegin("player", "shotWeak", enemyContact, true);
 			ContactManager.onContactBegin("player", "enemyShot", enemyContact, true);
 		}
 
@@ -186,17 +187,19 @@ package characters
 
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			if (!attacking) playerObject.name = "respawn";
-			if (enemy.name.substr(0,4) == "shot") enemy.physicsProperties.name = "bounced";
-			if (enemy.name == "MineBox") enemy.name = "explosion";
-			else enemy.physicsProperties.name = "slashed";
+			if (attacking && enemy.physicsProperties.contactGroup == "contactWeak") enemy.physicsProperties.name = "slashed";
+			else
+			{
+				player.name = "respawn";
+				if (enemy.physicsProperties.contactGroup == "enemyShot") enemy.physicsProperties.name = "bounced";
+			}
 		}
 
 		private function jump(force:b2Vec2):void
 		{
 			playerObject.physicsProperties.isDynamic = true;
 			onJump = true;
-			//var force:b2Vec2 = new b2Vec2(touch.globalX-playerObject.x, touch.globalY-playerObject.y*1.2); // Creamos la fuerza para el salto según la distancia del toque.
+			
 			if (force.y < -forceLimit) force.y = -forceLimit;
 			if (force.y > 0) 
 			{
@@ -219,7 +222,7 @@ package characters
 				else if (timer.currentCount >= 30) shotsFired = 0;				
 				timer.reset();
 				timer.start();	
-				if (shotsFired >= 5)
+				if (shotsFired >= 3)
 				{
 					coolDown = true;
 					timer.reset();
