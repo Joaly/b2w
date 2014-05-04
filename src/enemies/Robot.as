@@ -89,6 +89,7 @@ package enemies
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
+			enemyBoxObject.physicsProperties.isSensor = true;
 	
 			timer = new Timer(1000, 0);
 			timerStop = new Timer(1000, 0);
