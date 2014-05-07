@@ -6,6 +6,7 @@ package screens
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
 	import enemies.Robot;
+	import obstacles.Nut;
 	
 	import characters.Player;
 	
@@ -49,6 +50,7 @@ package screens
 		private var timer:Timer;
 		private var barrier:Barrier;
 		private var mine:Mine;
+		private var nut:Nut;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
@@ -83,6 +85,10 @@ package screens
 			PhysInjector.STARLING = true;
 			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 20), false); // Creamos la gravedad del escenario.
 			
+			//Creamos una tuerca.
+			nut = new Nut(physics, player, Math.random(), 300);
+			this.addChild(nut);
+			
 			// Creamos las paredes.
 			wallLeft = new Wall(physics, "Left");
 			this.addChild(wallLeft);
@@ -110,8 +116,9 @@ package screens
 			this.addChild(barrier);
 			
 			//Creamos una mina.
-			mine = new Mine(physics, player, Math.random(), 300);
+			mine = new Mine(physics, player, Math.random(), 75);
 			this.addChild(mine);
+			
 		}
 		
 		private function loop(event:Event):void
