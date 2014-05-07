@@ -39,7 +39,7 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("MariposaEnemigo", 1, 20/-60, "contactWeak");
+			createEnemy("MariposaEnemigo", 1, 20/-60, "contactWeakB");
 			shotsToBounce = new Vector.<PlayerShot>;
 			speedY = new Number(2);
 			this.addEventListener(Event.ENTER_FRAME, update);
@@ -85,7 +85,7 @@ package enemies
 		
 		private function update(event:Event):void
 		{
-			ContactManager.onContactBegin("contactWeak", "shot", bounceShot, true);
+			ContactManager.onContactBegin("contactWeakB", "shot", bounceShot, true);
 		}
 		
 		private function bounceShot(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.

@@ -71,7 +71,8 @@ package enemies
 			// Creamos y posicionamos el objeto físico.
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			enemyObject.x = enemyStartX;
-			enemyObject.y = enemyStartY;			
+			enemyObject.y = enemyStartY;
+
 			enemyObject.physicsProperties.contactGroup = name;
 			enemyObject.physicsProperties.isSensor = true;
 	
@@ -139,7 +140,7 @@ package enemies
 			}
 		}
 		
-		private function enemyDeath():void
+		protected function enemyDeath():void
 		{
 			// La imagen del enemigo parpadeará antes de desaparecer.
 			if (enemyImage.alpha > 0) 
@@ -149,7 +150,6 @@ package enemies
 				else enemyImage.blendMode = BlendMode.SCREEN;
 			}
 			else this.removeEventListener(Event.ENTER_FRAME, enemyDeath);
-			trace(timer.currentCount);
 		}
 	}
 }

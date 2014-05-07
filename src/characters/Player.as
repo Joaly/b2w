@@ -110,7 +110,7 @@ package characters
 			if (event.getTouch(stage, TouchPhase.BEGAN))
 			{
 				// Si tocamos cerca del jugador almacenamos las coordenadas.
-				if ((event.getTouch(stage, TouchPhase.BEGAN).globalX >= playerObject.x-playerImage.width)
+				if ((event.getTouch(stage, TouchPhase.BEGAN).globalX >= playerObject.x-playerImage.width && !onJump)
 					&& (event.getTouch(stage, TouchPhase.BEGAN).globalX <= playerObject.x+playerImage.width)
 					&& (event.getTouch(stage, TouchPhase.BEGAN).globalY >= playerObject.y-playerImage.height)
 					&& (event.getTouch(stage, TouchPhase.BEGAN).globalY <= playerObject.y+playerImage.height))
@@ -121,7 +121,11 @@ package characters
 				}
 
 				// En caso contario, realizamos un disparo.
-				else if (!onJump) shoot(event.getTouch(stage, TouchPhase.BEGAN));
+				else if (!onJump) 
+				{
+					shoot(event.getTouch(stage, TouchPhase.BEGAN));
+					touchBegin = null;
+				}
 				else attack();
 			}
 
@@ -167,7 +171,8 @@ package characters
 			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
 			
 			ContactManager.onContactBegin("player", "wall", wallContact, true);
-			ContactManager.onContactBegin("player", "contactWeak", enemyContact, true);			
+			ContactManager.onContactBegin("player", "contactWeak", enemyContact, true);
+			ContactManager.onContactBegin("player", "contactWeakB", enemyContact, true);			
 			ContactManager.onContactBegin("player", "shotWeak", enemyContact, true);
 			ContactManager.onContactBegin("player", "enemyShot", enemyContact, true);
 		}
@@ -187,7 +192,7 @@ package characters
 
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
 		{
-			if (attacking && enemy.physicsProperties.contactGroup == "contactWeak") enemy.physicsProperties.name = "slashed";
+			if (attacking && enemy.physicsProperties.contactGroup.substr(0,11) == "contactWeak") enemy.physicsProperties.name = "slashed";
 			else
 			{
 				player.name = "respawn";
