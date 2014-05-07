@@ -44,6 +44,8 @@ package enemies
 
 		}
 		
+		override protected function enemyDeath():void{}
+		
 		override protected function attack():void //Función dedicada a disparar hacia el jugador.
 		{
 			timer.start(); //El temporizador empieza.

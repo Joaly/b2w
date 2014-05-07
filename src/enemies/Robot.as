@@ -67,29 +67,29 @@ package enemies
 			this.addChild(enemyImage);
 			
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
-			enemyBoxObject = enemyPhysics.injectPhysics(robotBox, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
+			//enemyBoxObject = enemyPhysics.injectPhysics(robotBox, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
 			
-			enemyBoxObject.physicsProperties.contactGroup = "robotBox";
+			enemyObject.physicsProperties.contactGroup = name;
 			
 			if (enemyStartX <= 0.5)
 			{
 				enemyObject.x = Stage1.OFFSET + enemyImage.width/2;
-				enemyBoxObject.x = Stage1.OFFSET - 10;
+				//enemyBoxObject.x = Stage1.OFFSET - 10;
 			}
 			else 
 			{
 				enemyObject.x = stage.stageWidth - Stage1.OFFSET - enemyImage.width / 2;
-				enemyBoxObject.x = stage.stageWidth - Stage1.OFFSET - 10;
+				//enemyBoxObject.x = stage.stageWidth - Stage1.OFFSET - 10;
 				enemyImage.scaleX *= -1;
 				robotBox.scaleX *= -1;
 			}
 			
 			enemyObject.y = enemyStartY;
-			enemyBoxObject.y = enemyStartY - enemyImage.width/1.5;
+			//enemyBoxObject.y = enemyStartY - enemyImage.width/1.5;
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
-			enemyBoxObject.physicsProperties.isSensor = true;
+			//enemyBoxObject.physicsProperties.isSensor = true;
 	
 			timer = new Timer(1000, 0);
 			timerStop = new Timer(1000, 0);
@@ -106,14 +106,14 @@ package enemies
 		override protected function movementPatternY():void
 		{
 			enemyObject.body.SetLinearVelocity(enemySpeed); //Aplicamos velocidad al enemigo.
-			enemyBoxObject.body.SetLinearVelocity(enemySpeed);
+			//enemyBoxObject.body.SetLinearVelocity(enemySpeed);
 		
 			// Cambiamos el sentido cuando llega a un cierto rango.
 			
 			if (robotStop)
 			{
 				enemyObject.physicsProperties.isDynamic= false;
-				enemyBoxObject.physicsProperties.isDynamic = false;
+				//enemyBoxObject.physicsProperties.isDynamic = false;
 				
 				if (timerStop.currentCount == 2) 
 				{
@@ -122,14 +122,14 @@ package enemies
 					robotStop = false;
 					
 					enemyObject.physicsProperties.isDynamic = true;
-					enemyBoxObject.physicsProperties.isDynamic = true;
+					//enemyBoxObject.physicsProperties.isDynamic = true;
 				}
 			}
 	
 			if (Math.round(enemyObject.y) > enemyStartY + 34) 
 			{
 				enemyObject.y -= 2;
-				enemyBoxObject.y -= 2;
+				//enemyBoxObject.y -= 2;
 				enemySpeed.y = -1;
 				robotStop = true;
 				timerStop.start();
@@ -138,7 +138,7 @@ package enemies
 			if (Math.round(enemyObject.y) < enemyStartY - 35) 
 			{
 				enemyObject.y += 2;
-				enemyBoxObject.y += 2;
+				//enemyBoxObject.y += 2;
 				enemySpeed.y = 0.5;
 				robotStop = true;
 				timerStop.start();
@@ -151,7 +151,7 @@ package enemies
 				timer.stop();
 			}
 			
-			ContactManager.onContactBegin("robotBox", "shot", robotShotContact, true);
+			ContactManager.onContactBegin("contactWeak", "shot", robotShotContact, true);
 		}
 		
 		private function robotShotContact(robotBox:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
