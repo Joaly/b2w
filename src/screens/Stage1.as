@@ -5,7 +5,6 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import enemies.Robot;
 	
 	import characters.Player;
 	
@@ -18,6 +17,7 @@ package screens
 	import enemies.Butterfly;
 	import enemies.Enemy;
 	import enemies.Jellyfish;
+	import enemies.Robot;
 	
 	import flash.utils.Timer;
 	
