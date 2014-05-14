@@ -80,6 +80,19 @@ package
 		[Embed(source = "../media/graphics/RobotProteccion.png")]
 		private static const WhiteRobotCover:Class;
 		
+		[Embed(source = "../media/graphics/Tuerca.png")]
+		private static const Nut:Class;
+		
+		[Embed(source = "../media/graphics/TuercaEnganche.png")]
+		private static const CoverNut:Class;
+		
+		[Embed(source = "../media/graphics/particleTuerca.pex", mimeType = "application/octet-stream")]
+		private static const ParticleConfigNut:Class;
+		
+		[Embed(source = "../media/graphics/textureTuerca.png")]
+		private static const ParticleNut:Class;
+		
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		
