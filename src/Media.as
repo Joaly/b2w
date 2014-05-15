@@ -92,6 +92,13 @@ package
 		[Embed(source = "../media/graphics/textureTuerca.png")]
 		private static const ParticleNut:Class;
 		
+		// Imágenes de la interfaz.
+		[Embed(source = "../media/graphics/interface/bulletOn.png")]
+		private static const BulletOn:Class;
+		
+		[Embed(source = "../media/graphics/interface/bulletOff.png")]
+		private static const BulletOff:Class;
+		
 		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();

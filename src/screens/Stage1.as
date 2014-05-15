@@ -5,8 +5,6 @@ package screens
 	import Box2D.Common.Math.*;
 	import Box2D.Dynamics.*;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import enemies.Robot;
-	import obstacles.Nut;
 	
 	import characters.Player;
 	
@@ -19,13 +17,16 @@ package screens
 	import enemies.Butterfly;
 	import enemies.Enemy;
 	import enemies.Jellyfish;
+	import enemies.Robot;
 	
+	import flash.media.Camera;
 	import flash.utils.Timer;
 	
 	import objects.Wall;
 	
 	import obstacles.Barrier;
 	import obstacles.Mine;
+	import obstacles.Nut;
 	
 	import starling.core.Starling;
 	import starling.display.Image;
@@ -51,6 +52,7 @@ package screens
 		private var barrier:Barrier;
 		private var mine:Mine;
 		private var nut:Nut;
+		private var gameInterface:GameInterface;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
@@ -119,6 +121,8 @@ package screens
 			mine = new Mine(physics, player, Math.random(), 75);
 			this.addChild(mine);
 			
+			gameInterface = new GameInterface();
+			this.addChild(gameInterface);
 		}
 		
 		private function loop(event:Event):void
