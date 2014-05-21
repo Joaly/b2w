@@ -125,6 +125,7 @@ package
 		{
 			if (_textures[name] == undefined)
 			{
+				trace(name);
 				var bitmap:Bitmap = new Media[name]();
 				_textures[name] = Texture.fromBitmap(bitmap);
 			}
