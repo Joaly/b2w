@@ -39,7 +39,7 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("MariposaEnemigo", 1, 20/-60, "contactWeakB");
+			createEnemy("Mariposa2Enemigo", 1, 20/-60, "contactWeakB");
 			shotsToBounce = new Vector.<PlayerShot>;
 			speedY = new Number(2);
 			this.addEventListener(Event.ENTER_FRAME, update);

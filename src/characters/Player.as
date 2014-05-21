@@ -44,7 +44,7 @@ package characters
 		public var position:Point;
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
-		private var onJump:Boolean;
+		public var onJump:Boolean;
 		private var timer:Timer;
 		private var shotsFired:Number;
 		private var coolDown:Boolean;
@@ -166,6 +166,9 @@ package characters
 		{
 			position.x = playerObject.x;
 			position.y = playerObject.y;
+			
+			playerImage.x = playerObject.x;
+			playerImage.y = playerObject.y;
 			
 			if (playerObject.name == "respawn") playerDeath();
 			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";

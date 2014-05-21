@@ -21,7 +21,6 @@ package
 		{
 			/*_welcome = new WelcomeScreen;
 			this.addChild(_welcome);*/
-			
 			_stage01 = new Stage1;
 			this.addChild(_stage01);
 		}

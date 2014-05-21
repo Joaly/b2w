@@ -37,6 +37,7 @@ package obstacles
 		//Parámetros de la tuerca.
 		private var nutImage:Image;
 		private var nutCoverImage:Image;
+		private var nutAgarreImage:Image;
 		private var nutObject:PhysicsObject;
 		private var nutPhysics:PhysInjector;
 		
@@ -75,20 +76,27 @@ package obstacles
 			this.addChild(nutParticleSystem);
 			
 			nutImage = new Image(Media.getTexture("Nut"));
+			nutAgarreImage = new Image(Media.getTexture("AgarreNut"));
 			nutCoverImage = new Image(Media.getTexture("CoverNut"));
 			
 			nutImage.pivotX = nutImage.width/2; // Centramos el punto de ancla de la imagen.
 			nutImage.pivotY = nutImage.height/2;
-			nutImage.scaleX = 0.26;
-			nutImage.scaleY = 0.26;
+			nutImage.scaleX = 0.23;
+			nutImage.scaleY = 0.23;
+			
+			nutAgarreImage.pivotX = nutAgarreImage.width/2; // Centramos el punto de ancla de la imagen.
+			nutAgarreImage.pivotY = nutAgarreImage.height/2;
+			nutAgarreImage.scaleX = 0.2;
+			nutAgarreImage.scaleY = 0.2;
 			
 			nutCoverImage.pivotX = nutCoverImage.width / 2; //Centramos el punto de ancla de la imagen.
 			nutCoverImage.pivotY = nutCoverImage.height / 2;
-			nutCoverImage.scaleX = 0.25;
-			nutCoverImage.scaleY = 0.35;
+			nutCoverImage.scaleX = 0.2;
+			nutCoverImage.scaleY = 0.3;
 			
 			this.addChild(nutImage);
 			this.addChild(nutCoverImage);
+			this.addChild(nutAgarreImage);
 			
 			//Ponemos las físicas al objeto.
 			nutObject = nutPhysics.injectPhysics(nutImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
@@ -100,14 +108,17 @@ package obstacles
 			if (nutStartX <= 0.5) 
 			{
 				nutCoverImage.x =  Stage1.OFFSET + nutCoverImage.width / 2;
-				nutObject.x = nutImage.x = nutCoverImage.x;
-				angle = new Number(3);
+				nutAgarreImage.x = nutCoverImage.x + nutAgarreImage.width / 4;
+				nutObject.x = nutImage.x = nutAgarreImage.x + nutAgarreImage.width / 2,
+				angle = new Number(2);
 			}
 			else 
 			{
 				nutCoverImage.x = stage.stageWidth - Stage1.OFFSET - nutCoverImage.width / 2;
-				nutObject.x = nutImage.x = nutCoverImage.x;
-				angle = new Number(-3);
+				nutCoverImage.scaleX *= -1;
+				nutAgarreImage.x = nutCoverImage.x - nutAgarreImage.width / 4;
+				nutObject.x = nutImage.x = nutAgarreImage.x - nutAgarreImage.width / 2;
+				angle = new Number(-2);
 			}
 			
 			nutCoverImage.y = nutObject.y = nutImage.y = nutStartY;
@@ -120,8 +131,8 @@ package obstacles
 			
 			nutParticleSystem.x = nutObject.x;
 			nutParticleSystem.y = nutObject.y;
-			nutParticleSystem.scaleX = 0.4;
-			nutParticleSystem.scaleY = 0.46;
+			nutParticleSystem.scaleX = 0.5;
+			nutParticleSystem.scaleY = 0.47;
 			Starling.juggler.add(nutParticleSystem);
 			nutParticleSystem.start();
 			
@@ -130,24 +141,25 @@ package obstacles
 		
 		private function nutLoop(event:Event):void
 		{
-			nutObject.body.SetLinearVelocity(nutSpeed); //Aplicamos velocidad a la tuerca.
+			nutAgarreImage.y = nutObject.y;
 			nutParticleSystem.y = nutObject.y;
+			nutObject.body.SetLinearVelocity(nutSpeed); //Aplicamos velocidad a la tuerca.
 			nutObject.rotation += angle;
 			
-			if (Math.round(nutObject.y) >= nutStartY + nutCoverImage.height/2 - nutImage.height/4) 
+			if (Math.round(nutObject.y) >= nutStartY + nutCoverImage.height/2 - nutCoverImage.height/7) 
 			{
 				nutObject.y -= 1;
 				nutSpeed.y = -1;
-				if (nutStartX <= 0.5) angle = -3;
-				else angle = 3;
+				if (nutStartX <= 0.5) angle = -2;
+				else angle = 2;
 			}
 			
-			if (Math.round(nutObject.y) <= nutStartY - nutCoverImage.height/2 + nutImage.height/4) 
+			if (Math.round(nutObject.y) <= nutStartY - nutCoverImage.height/2 + nutCoverImage.height/7) 
 			{
 				nutObject.y += 1;
 				nutSpeed.y = 0.25;
-				if (nutStartX <= 0.5) angle = 3;
-				else angle = -3;
+				if (nutStartX <= 0.5) angle = 2;
+				else angle = -2;
 			}
 			
 			ContactManager.onContactBegin("nut", "player", playerDeath, true);
