@@ -59,6 +59,7 @@ package characters
 		private var particleSystem:PDParticleSystem;
 		private var particleTimer:Timer;
 		private var attacking:Boolean;
+		private var gameInterface:GameInterface;
 
 		public var isDead:Boolean;
 
@@ -100,6 +101,9 @@ package characters
 			attacking = false;
 
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
+			
+			gameInterface = new GameInterface(this);
+			this.addChild(gameInterface);
 
 			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
@@ -223,7 +227,11 @@ package characters
 				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY), false);
 				this.addChild(shot);
 
-				if (timer.currentCount <= 5) shotsFired++;				
+				if (timer.currentCount <= 5) 
+				{
+					shotsFired++;
+					gameInterface.bulletFired();
+				}
 				else if (timer.currentCount >= 30) shotsFired = 0;				
 				timer.reset();
 				timer.start();	

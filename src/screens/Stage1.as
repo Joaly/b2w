@@ -52,7 +52,6 @@ package screens
 		private var barrier:Barrier;
 		private var mine:Mine;
 		private var nut:Nut;
-		private var gameInterface:GameInterface;
 		
 		// Físicas del mundo.
 		private var physics:PhysInjector;
@@ -120,9 +119,6 @@ package screens
 			//Creamos una mina.
 			mine = new Mine(physics, player, Math.random(), 75);
 			this.addChild(mine);
-			
-			gameInterface = new GameInterface();
-			this.addChild(gameInterface);
 		}
 		
 		private function loop(event:Event):void
