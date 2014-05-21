@@ -145,6 +145,9 @@ package screens
 				y += 0.7;
 				stageBg.y -= 0.7;
 				//stageArea.y -= 0.4;
+				wallLeft.wallObject.y -= 0.4;
+				wallRight.wallObject.y -= 0.4;
+				
 				physics.globalOffsetY += 0.7;
 				spawnEnemyY += 0.7;
 				spawnObstacleY += 0.7;
