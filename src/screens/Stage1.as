@@ -49,6 +49,7 @@ package screens
 		// Variables para el spawn
 		private var spawnEnemyY:Number;
 		private var spawnObstacleY:Number;
+		private var GeneralSpawn:Number;
 		
 		// Objetos de la partida.
 		private var wallLeft:Wall;
@@ -77,7 +78,8 @@ package screens
 			injectPhysics(); // Creación de los objetos físicos.
 			
 			spawnEnemyY = new Number(0);//Creamos las variables que pondrán el límite donde se creará el obstáculo o enemigo aleatorio.
-			spawnObstacleY = new Number(25);
+			spawnObstacleY = new Number(0);
+			GeneralSpawn = new Number(0);
 			timerDeath = new Timer(1000, 0);
 			
 			this.addEventListener(Event.ENTER_FRAME, loop);
@@ -142,31 +144,34 @@ package screens
 				
 			if (player.onJump)
 			{
-				y += 0.7;
-				stageBg.y -= 0.7;
+				y += 2.7;
+				stageBg.y -= 2.7;
 				//stageArea.y -= 0.4;
+				GeneralSpawn -= 2.7;
 				wallLeft.wallObject.y -= 0.4;
 				wallRight.wallObject.y -= 0.4;
 				
-				physics.globalOffsetY += 0.7;
-				spawnEnemyY += 0.7;
-				spawnObstacleY += 0.7;
+				physics.globalOffsetY += 2.7;
+				spawnEnemyY += 1;
+				spawnObstacleY += 1;
 				
-				if (spawnObstacleY >= 65) //Si pasa de 60 entonces...
+				if (spawnObstacleY >= 80) //Si pasa de 60 entonces...
 				{
 					spawnObstacleY = 0;
 					
+					trace("hola");
+					
 					switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
 					{
-						case 0: nut = new Nut(physics, player, Math.random(), 300);  //Creamos una tuerca.
+						case 0: nut = new Nut(physics, player, Math.random(), GeneralSpawn - 120);  //Creamos una tuerca.
 								this.addChild(nut);
 								break;
-								
-						case 1: barrier = new Barrier(physics, player, 120, 200); //Creamos una barrera.
+										 
+						case 1: barrier = new Barrier(physics, player, randomRange(70,200), GeneralSpawn - 70); //Creamos una barrera.
 								this.addChild(barrier);
 								break;
-								
-						case 2: mine = new Mine(physics, player, Math.random(), 75); //Creamos una mina.
+			
+						case 2: mine = new Mine(physics, player, Math.random(), GeneralSpawn - 70); //Creamos una mina.
 								this.addChild(mine);
 								break;
 								
@@ -174,21 +179,23 @@ package screens
 					}
 				}
 				
-				if (spawnEnemyY >= 80) //Si pasa de 60 entonces...
+				if (spawnEnemyY >= 40) //Si pasa de 60 entonces...
 				{
 					spawnEnemyY = 0;
 					
+					trace("hola");
+					
 					switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
 					{
-						case 0: enemy1 = new Jellyfish(physics, player, 150, 150); //Creamos una medusa.
-								this.addChild(enemy1)
+						case 0: enemy1 = new Jellyfish(physics, player, 150, GeneralSpawn - 70); //Creamos una medusa.
+								this.addChild(enemy1);
 								break;
-								
-						case 1: enemy2 = new Butterfly(physics, player, 150, 50); //Creamos una mariposa.
+										 
+						case 1: enemy2 = new Butterfly(physics, player, 150, GeneralSpawn - 70); //Creamos una mariposa.
 								this.addChild(enemy2);
 								break;
-								
-						case 2: enemy3 = new Robot(physics, player, Math.random(), 100); //Creamos un robot.
+	
+						case 2: enemy3 = new Robot(physics, player, Math.random(), GeneralSpawn - 70); //Creamos un robot.
 								this.addChild(enemy3);
 								break;
 								
@@ -196,7 +203,6 @@ package screens
 					}
 				}
 			}
-			
 			physics.update(); // Actualizamos las físicas a cada frame.
 		}
 		
@@ -204,5 +210,5 @@ package screens
 		{
 			return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 		}
-	}	
+	}
 }

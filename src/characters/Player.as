@@ -167,6 +167,9 @@ package characters
 			position.x = playerObject.x;
 			position.y = playerObject.y;
 			
+			playerImage.x = playerObject.x;
+			playerImage.y = playerObject.y;
+			
 			if (playerObject.name == "respawn") playerDeath();
 			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
 			
