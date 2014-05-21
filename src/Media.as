@@ -35,8 +35,14 @@ package
 		[Embed(source = "../media/graphics/Medusa.png")]
 		public static const MedusaEnemigo:Class;
 		
+		[Embed(source = "../media/graphics/Medusa2.png")]
+		public static const Medusa2Enemigo:Class;
+		
 		[Embed(source = "../media/graphics/Mariposa.png")]
 		public static const MariposaEnemigo:Class;
+		
+		[Embed(source = "../media/graphics/Mariposa2.png")]
+		public static const Mariposa2Enemigo:Class;
 		
 		[Embed(source="../media/graphics/particle.pex", mimeType="application/octet-stream")]
 		private static const ParticleConfig:Class;
@@ -80,21 +86,32 @@ package
 		[Embed(source = "../media/graphics/RobotProteccion.png")]
 		private static const WhiteRobotCover:Class;
 		
+		[Embed(source = "../media/graphics/RobotNegro.png")]
+		private static const BlackRobot:Class;
+		
+		[Embed(source = "../media/graphics/RobotNegroProteccion.png")]
+		private static const BlackRobotCover:Class;
+		
 		[Embed(source = "../media/graphics/Tuerca.png")]
 		private static const Nut:Class;
 		
 		[Embed(source = "../media/graphics/TuercaEnganche.png")]
 		private static const CoverNut:Class;
 		
+		[Embed(source = "../media/graphics/TuercaAgarre.png")]
+		private static const AgarreNut:Class;
+		
 		[Embed(source = "../media/graphics/particleTuerca.pex", mimeType = "application/octet-stream")]
 		private static const ParticleConfigNut:Class;
 		
 		[Embed(source = "../media/graphics/textureTuerca.png")]
-		private static const ParticleNut:Class;		
+		private static const ParticleNut:Class;
 		
-		// Imágenes de la interfaz.
-		[Embed(source = "../media/graphics/interface/bullet.png")]
-		private static const BulletInterface:Class;		
+		[Embed(source = "../media/graphics/BG.png")]
+		private static const BG:Class;
+		
+		[Embed(source = "../media/graphics/Rect.png")]
+		private static const Rect:Class;		
 		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();

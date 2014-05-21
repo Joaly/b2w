@@ -35,14 +35,14 @@ package objects
 			this.addEventListener(Event.ADDED_TO_STAGE, createWall);
 		}
 		
-		//* CREACIÓN DE LA PARED *//
+		//* CREACIÓN DE LA PARED 1 *//
 		private function createWall(event:Event):void
 		{
 			// Creamos la imagen de la pared.
 			wallTile = Media.getTexture("WallTile");
 			wallImage = new TiledImage(wallTile);
 			wallImage.width = Stage1.OFFSET;
-			wallImage.height = stage.stageHeight;
+			wallImage.height = stage.stageHeight * 5;
 			wallImage.pivotX = wallImage.width/2;
 			wallImage.pivotY = wallImage.height/2;
 			if (wallName == "Right") wallImage.scaleX *= -1;
