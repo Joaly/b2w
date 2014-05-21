@@ -7,6 +7,7 @@ package screens
 	import Box2D.Dynamics.Contacts.b2Contact;
 	import enemies.Robot;
 	import obstacles.Nut;
+	import starling.textures.Texture;
 	
 	import characters.Player;
 	
@@ -40,9 +41,14 @@ package screens
 		// Fondo del escenario.
 		private var stageBg:Image;
 		
+		// Rectángulo (área de la pantalla)
+		//private var stageArea:Image;
+		private var timerDeath:Timer;
+		private var isDead:Boolean;
+				
+		// Variables para el spawn
 		private var spawnEnemyY:Number;
 		private var spawnObstacleY:Number;
-		private var GeneralSpawn:Number;
 		
 		// Objetos de la partida.
 		private var wallLeft:Wall;
@@ -71,8 +77,8 @@ package screens
 			injectPhysics(); // Creación de los objetos físicos.
 			
 			spawnEnemyY = new Number(0);//Creamos las variables que pondrán el límite donde se creará el obstáculo o enemigo aleatorio.
-			spawnObstacleY = new Number(0);
-			GeneralSpawn = new Number(0);
+			spawnObstacleY = new Number(25);
+			timerDeath = new Timer(1000, 0);
 			
 			this.addEventListener(Event.ENTER_FRAME, loop);
 		}
@@ -80,12 +86,12 @@ package screens
 		private function drawScreen():void
 		{
 			// Creación del fondo.
-			stageBg = new Image(Media.getTexture("Stage1Bg"));
-			stageBg.width /= 2; // TEMPORAL
-			stageBg.height /= 2; // TEMPORAL
-			stageBg.y = -stageBg.height/2;
+			stageBg = new Image(Media.getTexture("BG"));
 			this.addChild(stageBg);
 			
+			/*stageArea = new Image(Media.getTexture("Rect"));
+			stageArea.y = 640;
+			this.addChild(stageArea);*/
 		}
 		
 		private function injectPhysics():void
@@ -132,16 +138,17 @@ package screens
 		private function loop(event:Event):void
 		{
 			
-			//trace(spawnEnemyY, spawnObstacleY);
-			
-			if (player.onJump) 
+			trace(spawnEnemyY, spawnObstacleY, player.playerObject.x);
+				
+			if (player.onJump)
 			{
-				y += 1;
-				physics.globalOffsetY += 1;
-				spawnEnemyY += 1;
-				spawnObstacleY += 1;
-				GeneralSpawn -= 1;
-
+				y += 0.7;
+				stageBg.y -= 0.7;
+				//stageArea.y -= 0.4;
+				physics.globalOffsetY += 0.7;
+				spawnEnemyY += 0.7;
+				spawnObstacleY += 0.7;
+				
 				if (spawnObstacleY >= 80) //Si pasa de 60 entonces...
 				{
 					spawnObstacleY = 0;
@@ -175,7 +182,7 @@ package screens
 					switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
 					{
 						case 0: enemy1 = new Jellyfish(physics, player, 150, GeneralSpawn - 70); //Creamos una medusa.
-								this.addChild(enemy1)
+								this.addChild(enemy1);
 								break;
 										 
 						case 1: enemy2 = new Butterfly(physics, player, 150, GeneralSpawn - 70); //Creamos una mariposa.
@@ -197,5 +204,5 @@ package screens
 		{
 			return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 		}
-	}	
+	}
 }

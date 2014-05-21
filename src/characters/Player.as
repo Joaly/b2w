@@ -264,7 +264,10 @@ package characters
 		private function playerDeath():void			
 		{
 			this.removeEventListener(Event.ENTER_FRAME, update);
-			onJump = true;
+			onJump = false;
+			
+			isDead = true;
+			
 			playerObject.name = "player";
 			playerImage.visible = false;
 			playerObject.physicsProperties.awake = false;
@@ -284,7 +287,7 @@ package characters
 			this.addEventListener(Event.ENTER_FRAME, particleFade);
 			particleTimer.reset();
 			particleTimer.start();
-			playerObject.x = stage.stageWidth/2;
+			playerObject.x = stage.stageWidth;
 			playerObject.y = stage.stageHeight;
 			playerImage.x = playerObject.x;
 			playerImage.y = playerObject.y;

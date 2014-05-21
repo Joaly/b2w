@@ -107,6 +107,11 @@ package
 		[Embed(source = "../media/graphics/textureTuerca.png")]
 		private static const ParticleNut:Class;
 		
+		[Embed(source = "../media/graphics/BG.png")]
+		private static const BG:Class;
+		
+		[Embed(source = "../media/graphics/Rect.png")]
+		private static const Rect:Class;		
 		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
