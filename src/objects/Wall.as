@@ -42,7 +42,7 @@ package objects
 			wallTile = Media.getTexture("WallTile");
 			wallImage = new TiledImage(wallTile);
 			wallImage.width = Stage1.OFFSET;
-			wallImage.height = stage.stageHeight;
+			wallImage.height = stage.stageHeight * 5;
 			wallImage.pivotX = wallImage.width/2;
 			wallImage.pivotY = wallImage.height/2;
 			if (wallName == "Right") wallImage.scaleX *= -1;

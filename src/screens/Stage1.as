@@ -49,6 +49,7 @@ package screens
 		// Variables para el spawn
 		private var spawnEnemyY:Number;
 		private var spawnObstacleY:Number;
+		private var GeneralSpawn:Number;
 		
 		// Objetos de la partida.
 		private var wallLeft:Wall;
@@ -77,7 +78,8 @@ package screens
 			injectPhysics(); // Creación de los objetos físicos.
 			
 			spawnEnemyY = new Number(0);//Creamos las variables que pondrán el límite donde se creará el obstáculo o enemigo aleatorio.
-			spawnObstacleY = new Number(25);
+			spawnObstacleY = new Number(0);
+			GeneralSpawn = new Number(0);
 			timerDeath = new Timer(1000, 0);
 			
 			this.addEventListener(Event.ENTER_FRAME, loop);
@@ -142,15 +144,16 @@ package screens
 				
 			if (player.onJump)
 			{
-				y += 0.7;
-				stageBg.y -= 0.7;
+				y += 2.7;
+				stageBg.y -= 2.7;
 				//stageArea.y -= 0.4;
+				GeneralSpawn -= 2.7;
 				wallLeft.wallObject.y -= 0.4;
 				wallRight.wallObject.y -= 0.4;
 				
-				physics.globalOffsetY += 0.7;
-				spawnEnemyY += 0.7;
-				spawnObstacleY += 0.7;
+				physics.globalOffsetY += 2.7;
+				spawnEnemyY += 1;
+				spawnObstacleY += 1;
 				
 				if (spawnObstacleY >= 80) //Si pasa de 60 entonces...
 				{
