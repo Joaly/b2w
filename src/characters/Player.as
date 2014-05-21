@@ -44,7 +44,7 @@ package characters
 		public var position:Point;
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
-		private var onJump:Boolean;
+		public var onJump:Boolean;
 		private var timer:Timer;
 		private var shotsFired:Number;
 		private var coolDown:Boolean;
@@ -261,7 +261,10 @@ package characters
 		private function playerDeath():void			
 		{
 			this.removeEventListener(Event.ENTER_FRAME, update);
-			onJump = true;
+			onJump = false;
+			
+			isDead = true;
+			
 			playerObject.name = "player";
 			playerImage.visible = false;
 			playerObject.physicsProperties.awake = false;
@@ -281,7 +284,7 @@ package characters
 			this.addEventListener(Event.ENTER_FRAME, particleFade);
 			particleTimer.reset();
 			particleTimer.start();
-			playerObject.x = stage.stageWidth/2;
+			playerObject.x = stage.stageWidth;
 			playerObject.y = stage.stageHeight;
 			playerImage.x = playerObject.x;
 			playerImage.y = playerObject.y;

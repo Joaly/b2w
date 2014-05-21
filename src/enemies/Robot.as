@@ -33,6 +33,7 @@ package enemies
 		private var timerStop:Timer;
 		private var robotBox:Image;
 		private var robotStop:Boolean;
+		private var blackRobot:Boolean;
 		
 		public function Robot(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -47,8 +48,19 @@ package enemies
 		override protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String):void
 		{
 			// La creación y posicionamiento de la imagen y objetos del enemigo será idéntica para todos los tipos.
+			if (Math.random() < 0.5) 
+			{
+				image = "WhiteRobot";
+				blackRobot = new Boolean(false);
+			}
+			
+			else 
+			{
+				image = "BlackRobot";
+				blackRobot = new Boolean(true);
+				
+			}
 			enemyImage = new Image(Media.getTexture(image));
-			robotBox = new Image(Media.getTexture("WhiteRobotBox"));
 			enemySpeed = new b2Vec2(speedX, speedY);
 			
 			enemyImage.pivotX = enemyImage.width/2; // Centramos el punto de ancla de la imagen.
@@ -56,40 +68,26 @@ package enemies
 			enemyImage.scaleX = 0.2;
 			enemyImage.scaleY = 0.2;
 			
-			robotBox.pivotX = enemyImage.width/2;
-			robotBox.pivotY = enemyImage.height/2;
-			robotBox.scaleX = 0.2;
-			robotBox.scaleY = 0.2;
-			
-			robotBox.visible = false;
-			
-			this.addChild(robotBox);
 			this.addChild(enemyImage);
 			
 			enemyObject = enemyPhysics.injectPhysics(enemyImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
-			//enemyBoxObject = enemyPhysics.injectPhysics(robotBox, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
 			
 			enemyObject.physicsProperties.contactGroup = name;
 			
 			if (enemyStartX <= 0.5)
 			{
 				enemyObject.x = Stage1.OFFSET + enemyImage.width/2;
-				//enemyBoxObject.x = Stage1.OFFSET - 10;
 			}
 			else 
 			{
 				enemyObject.x = stage.stageWidth - Stage1.OFFSET - enemyImage.width / 2;
-				//enemyBoxObject.x = stage.stageWidth - Stage1.OFFSET - 10;
 				enemyImage.scaleX *= -1;
-				robotBox.scaleX *= -1;
 			}
 			
 			enemyObject.y = enemyStartY;
-			//enemyBoxObject.y = enemyStartY - enemyImage.width/1.5;
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
-			//enemyBoxObject.physicsProperties.isSensor = true;
 	
 			timer = new Timer(1000, 0);
 			timerStop = new Timer(1000, 0);
@@ -106,14 +104,12 @@ package enemies
 		override protected function movementPatternY():void
 		{
 			enemyObject.body.SetLinearVelocity(enemySpeed); //Aplicamos velocidad al enemigo.
-			//enemyBoxObject.body.SetLinearVelocity(enemySpeed);
 		
 			// Cambiamos el sentido cuando llega a un cierto rango.
 			
 			if (robotStop)
 			{
 				enemyObject.physicsProperties.isDynamic= false;
-				//enemyBoxObject.physicsProperties.isDynamic = false;
 				
 				if (timerStop.currentCount == 2) 
 				{
@@ -122,14 +118,12 @@ package enemies
 					robotStop = false;
 					
 					enemyObject.physicsProperties.isDynamic = true;
-					//enemyBoxObject.physicsProperties.isDynamic = true;
 				}
 			}
 	
 			if (Math.round(enemyObject.y) > enemyStartY + 34) 
 			{
 				enemyObject.y -= 2;
-				//enemyBoxObject.y -= 2;
 				enemySpeed.y = -1;
 				robotStop = true;
 				timerStop.start();
@@ -138,7 +132,6 @@ package enemies
 			if (Math.round(enemyObject.y) < enemyStartY - 35) 
 			{
 				enemyObject.y += 2;
-				//enemyBoxObject.y += 2;
 				enemySpeed.y = 0.5;
 				robotStop = true;
 				timerStop.start();
@@ -146,7 +139,8 @@ package enemies
 			
 			if (timer.currentCount == 1)
 			{
-				enemyImage.texture = Media.getTexture("WhiteRobot");
+				if (blackRobot) enemyImage.texture = Media.getTexture("BlackRobot");
+				else enemyImage.texture = Media.getTexture("WhiteRobot");
 				timer.reset();
 				timer.stop();
 			}
@@ -157,9 +151,9 @@ package enemies
 		private function robotShotContact(robotBox:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
 		{
 			shot.physicsProperties.name = "bounced";
-			enemyImage.texture = Media.getTexture("WhiteRobotCover");
+			if (blackRobot) enemyImage.texture = Media.getTexture("BlackRobotCover");
+			else enemyImage.texture = Media.getTexture("WhiteRobotCover");
 			timer.start();
-
 		}
 		
 	}

@@ -7,6 +7,7 @@ package screens
 	import Box2D.Dynamics.Contacts.b2Contact;
 	import enemies.Robot;
 	import obstacles.Nut;
+	import starling.textures.Texture;
 	
 	import characters.Player;
 	
@@ -40,6 +41,15 @@ package screens
 		// Fondo del escenario.
 		private var stageBg:Image;
 		
+		// Rectángulo (área de la pantalla)
+		//private var stageArea:Image;
+		private var timerDeath:Timer;
+		private var isDead:Boolean;
+				
+		// Variables para el spawn
+		private var spawnEnemyY:Number;
+		private var spawnObstacleY:Number;
+		
 		// Objetos de la partida.
 		private var wallLeft:Wall;
 		private var wallRight:Wall;
@@ -66,18 +76,22 @@ package screens
 			drawScreen(); // Creación de los elementos gráficos.
 			injectPhysics(); // Creación de los objetos físicos.
 			
+			spawnEnemyY = new Number(0);//Creamos las variables que pondrán el límite donde se creará el obstáculo o enemigo aleatorio.
+			spawnObstacleY = new Number(25);
+			timerDeath = new Timer(1000, 0);
+			
 			this.addEventListener(Event.ENTER_FRAME, loop);
 		}
 		
 		private function drawScreen():void
 		{
 			// Creación del fondo.
-			stageBg = new Image(Media.getTexture("Stage1Bg"));
-			stageBg.width /= 2; // TEMPORAL
-			stageBg.height /= 2; // TEMPORAL
-			stageBg.y = -stageBg.height/2;
+			stageBg = new Image(Media.getTexture("BG"));
 			this.addChild(stageBg);
 			
+			/*stageArea = new Image(Media.getTexture("Rect"));
+			stageArea.y = 640;
+			this.addChild(stageArea);*/
 		}
 		
 		private function injectPhysics():void
@@ -85,9 +99,9 @@ package screens
 			PhysInjector.STARLING = true;
 			physics = new PhysInjector(Starling.current.nativeStage, new b2Vec2(0, 20), false); // Creamos la gravedad del escenario.
 			
-			//Creamos una tuerca.
+			/*//Creamos una tuerca.
 			nut = new Nut(physics, player, Math.random(), 300);
-			this.addChild(nut);
+			this.addChild(nut);*/
 			
 			// Creamos las paredes.
 			wallLeft = new Wall(physics, "Left");
@@ -99,7 +113,7 @@ package screens
 			player = new Player(physics, stage.stageWidth/2, stage.stageHeight, wallLeft, wallRight);
 			this.addChild(player);
 			
-			//Creamos al enemigo Medusa.
+			/*//Creamos al enemigo Medusa.
 			enemy1 = new Jellyfish(physics, player, 150, 150);
 			this.addChild(enemy1);
 			
@@ -117,13 +131,75 @@ package screens
 			
 			//Creamos una mina.
 			mine = new Mine(physics, player, Math.random(), 75);
-			this.addChild(mine);
+			this.addChild(mine);*/
 			
 		}
 		
 		private function loop(event:Event):void
 		{
+			
+			trace(spawnEnemyY, spawnObstacleY, player.playerObject.x);
+				
+			if (player.onJump)
+			{
+				y += 0.7;
+				stageBg.y -= 0.7;
+				//stageArea.y -= 0.4;
+				physics.globalOffsetY += 0.7;
+				spawnEnemyY += 0.7;
+				spawnObstacleY += 0.7;
+				
+				if (spawnObstacleY >= 65) //Si pasa de 60 entonces...
+				{
+					spawnObstacleY = 0;
+					
+					switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
+					{
+						case 0: nut = new Nut(physics, player, Math.random(), 300);  //Creamos una tuerca.
+								this.addChild(nut);
+								break;
+								
+						case 1: barrier = new Barrier(physics, player, 120, 200); //Creamos una barrera.
+								this.addChild(barrier);
+								break;
+								
+						case 2: mine = new Mine(physics, player, Math.random(), 75); //Creamos una mina.
+								this.addChild(mine);
+								break;
+								
+						default: break;
+					}
+				}
+				
+				if (spawnEnemyY >= 80) //Si pasa de 60 entonces...
+				{
+					spawnEnemyY = 0;
+					
+					switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
+					{
+						case 0: enemy1 = new Jellyfish(physics, player, 150, 150); //Creamos una medusa.
+								this.addChild(enemy1)
+								break;
+								
+						case 1: enemy2 = new Butterfly(physics, player, 150, 50); //Creamos una mariposa.
+								this.addChild(enemy2);
+								break;
+								
+						case 2: enemy3 = new Robot(physics, player, Math.random(), 100); //Creamos un robot.
+								this.addChild(enemy3);
+								break;
+								
+						default: break;
+					}
+				}
+			}
+			
 			physics.update(); // Actualizamos las físicas a cada frame.
+		}
+		
+		private function randomRange(minNum:Number, maxNum:Number):Number 
+		{
+			return (Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum);
 		}
 	}	
 }
