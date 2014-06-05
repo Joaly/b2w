@@ -31,6 +31,7 @@ package enemies
 		private var bounce:Boolean;
 		private var shotsToBounce:Vector.<PlayerShot>;
 		private	var speedY:Number;
+		private var butterTimer:Timer;
 		
 		public function Butterfly(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -39,9 +40,11 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("Mariposa2Enemigo", 1, 20/-60, "contactWeakB");
+			createEnemy("Mariposa2Enemigo", 1, 20/-60, "contactWeakB", 200);
 			shotsToBounce = new Vector.<PlayerShot>;
 			speedY = new Number(2);
+			butterTimer = new Timer(100,0);
+			butterTimer.start();
 			this.addEventListener(Event.ENTER_FRAME, update);
 		}
 		
@@ -68,10 +71,19 @@ package enemies
 		override protected function movementPatternY():void
 		{
 			//Movimiento "aleteo" de la mariposa.
-			enemyObject.y += speedY; 
-			if (enemyObject.y >= enemyStartY + 30) speedY = -2.5;
-			else if (enemyObject.y <= enemyStartY) speedY = 0.5;
-
+			enemyObject.y += speedY;
+			if (butterTimer.currentCount < 3) speedY = -2.5;
+			else if (butterTimer.currentCount < 18) speedY = 0.5;
+			else 
+			{
+				butterTimer.reset();
+				butterTimer.start();
+			}
+		}
+		
+		private function update(event:Event):void
+		{
+			ContactManager.onContactBegin("contactWeakB", "shot", bounceShot, true);			
 			
 			if (shotsToBounce.length > 0)
 			{
@@ -81,11 +93,6 @@ package enemies
 					shotsToBounce.splice(0,1);
 				}
 			}
-		}
-		
-		private function update(event:Event):void
-		{
-			ContactManager.onContactBegin("contactWeakB", "shot", bounceShot, true);
 		}
 		
 		private function bounceShot(enemy:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void //Entonces se borra esa bala y se crea otra que apunte al jugador, pues la mariposa repele los disparos.

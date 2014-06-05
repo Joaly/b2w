@@ -35,7 +35,7 @@ package characters
 	public class Player extends Sprite
 	{
 		private const forceLimit:Number = 120;
-		private var playerImage:Image;
+		public var playerImage:Image;
 		private var playerX:Number;
 		private var playerY:Number;
 		public var playerObject:PhysicsObject;
@@ -46,19 +46,25 @@ package characters
 		private var wallRight:Wall;
 		public var onJump:Boolean;
 		private var timer:Timer;
-		private var shotsFired:Number;
+		public var shotsFired:Number;
 		private var coolDown:Boolean;
 		private var jumpForce:b2Vec2;
 		private var touchBegin:Touch;
 		private var touchEnd:Touch;
 		private var slideAllowed:Boolean;
-		private var slideSpeed:Number;
+		public var slideSpeed:Number;
 		private var slideDistance:Number;
 		private var particleConfig:XML;
 		private var particle:Texture;
 		private var particleSystem:PDParticleSystem;
 		private var particleTimer:Timer;
 		private var attacking:Boolean;
+		private var firstWallContact:Boolean;
+		public var sliding:Boolean;
+		public var offsetY:Number;
+		private var playerInterface:GameInterface;
+		private var restored:Boolean;
+		public var score:Number;
 
 		public var isDead:Boolean;
 
@@ -86,6 +92,7 @@ package characters
 			playerObject = playerPhysics.injectPhysics(playerImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			playerObject.x = playerX;
 			playerObject.y = playerY;
+			playerObject.physicsProperties.isSensor = true;
 			playerObject.name = "player";
 			playerObject.physicsProperties.contactGroup = "player";
 
@@ -100,6 +107,17 @@ package characters
 			attacking = false;
 
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
+			
+			ContactManager.onContactBegin("player", "wall", wallContact, true);
+			ContactManager.onContactBegin("player", "contactWeak", enemyContact, true);
+			ContactManager.onContactBegin("player", "contactWeakB", enemyContact, true);			
+			ContactManager.onContactBegin("player", "shotWeak", enemyContact, true);
+			ContactManager.onContactBegin("player", "enemyShot", enemyContact, true);
+			//offsetY = 0;
+			
+			score = new Number;
+			playerInterface = new GameInterface(this);
+			this.addChild(playerInterface);
 
 			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
@@ -118,6 +136,8 @@ package characters
 					touchBegin = event.getTouch(stage, TouchPhase.BEGAN);
 					jumpForce.x = new Number(touchBegin.globalX);
 					jumpForce.y = new Number(touchBegin.globalY);
+					trace(jumpForce.y);
+					trace(playerObject.y);
 				}
 
 				// En caso contario, realizamos un disparo.
@@ -156,6 +176,7 @@ package characters
 						slideSpeed = 5;
 						slideDistance = 0;
 						slideAllowed = false;
+						sliding = true;
 						this.addEventListener(Event.ENTER_FRAME, slideDown);
 					}
 				}
@@ -167,21 +188,32 @@ package characters
 			position.x = playerObject.x;
 			position.y = playerObject.y;
 			
-			playerImage.x = playerObject.x;
-			playerImage.y = playerObject.y;
-			
 			if (playerObject.name == "respawn") playerDeath();
 			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";
 			
-			ContactManager.onContactBegin("player", "wall", wallContact, true);
-			ContactManager.onContactBegin("player", "contactWeak", enemyContact, true);
-			ContactManager.onContactBegin("player", "contactWeakB", enemyContact, true);			
-			ContactManager.onContactBegin("player", "shotWeak", enemyContact, true);
-			ContactManager.onContactBegin("player", "enemyShot", enemyContact, true);
+			if (!coolDown)
+			{
+				if (timer.currentCount >= 5 && !restored) 
+				{
+					playerInterface.bulletRestore();
+					restored = true;
+				}
+			}
+			else if (timer.currentCount >= 20) 
+			{
+				playerInterface.bulletRestore();
+			}
 		}
 
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
 		{
+			if (!firstWallContact)
+			{
+				firstWallContact = true;
+				Stage1.cameraOn = true;
+			}
+			
+			else offsetY -= 10;
 			playerObject.physicsProperties.isDynamic = false;
 			onJump = false;
 			slideAllowed = true;
@@ -190,7 +222,6 @@ package characters
 
 			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
-			playerImage.x = playerObject.x;
 		}
 
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
@@ -225,20 +256,26 @@ package characters
 			{
 				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY), false);
 				this.addChild(shot);
+				restored = false;
 
-				if (timer.currentCount <= 5) 
+				if (timer.currentCount < 5) 
 				{
 					shotsFired++;
 				}
-				else if (timer.currentCount >= 30) shotsFired = 0;				
+				else //if (timer.currentCount >= 30) 
+				{
+					shotsFired = 1;
+				}
 				timer.reset();
-				timer.start();	
+				timer.start();
+				
 				if (shotsFired >= 3)
 				{
 					coolDown = true;
 					timer.reset();
 					timer.start();
 				}
+				playerInterface.bulletFired();
 			}			
 
 			if (coolDown && timer.currentCount >= 20)
@@ -255,25 +292,30 @@ package characters
 		{
 			if (slideDistance < 100)
 			{
-				playerObject.y += slideSpeed;
+				//playerObject.y += slideSpeed;
 				slideDistance += slideSpeed;
-				playerImage.y = playerObject.y;
+				//playerImage.y += slideSpeed;
 				slideSpeed += 1;
 			}
 
-			else this.removeEventListener(Event.ENTER_FRAME, slideDown);
+			else 
+			{
+				sliding = false;
+				this.removeEventListener(Event.ENTER_FRAME, slideDown);
+			}
 		}
 
 		private function playerDeath():void			
 		{
 			this.removeEventListener(Event.ENTER_FRAME, update);
+			stage.removeEventListener(TouchEvent.TOUCH, playerTouch);
 			onJump = false;
 			
 			isDead = true;
 			
 			playerObject.name = "player";
 			playerImage.visible = false;
-			playerObject.physicsProperties.awake = false;
+			playerObject.physicsProperties.active = false;
 			particleConfig = new XML(Media.getXML("ParticleConfig"));
 			particle = Media.getTexture("Particle");
 			particleSystem = new PDParticleSystem(particleConfig, particle);
@@ -290,10 +332,6 @@ package characters
 			this.addEventListener(Event.ENTER_FRAME, particleFade);
 			particleTimer.reset();
 			particleTimer.start();
-			playerObject.x = stage.stageWidth;
-			playerObject.y = stage.stageHeight;
-			playerImage.x = playerObject.x;
-			playerImage.y = playerObject.y;
 		}
 
 		private function particleFade(event:Event):void
@@ -301,12 +339,11 @@ package characters
 			if (particleTimer.currentCount >= 10) particleSystem.stop(false);			
 			if (particleTimer.currentCount >= 50)
 			{
-				playerImage.visible = true;
-				playerObject.physicsProperties.isDynamic = true;
 				this.addEventListener(Event.ENTER_FRAME, update);
 				particleSystem.dispose();
-				playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 				this.removeEventListener(Event.ENTER_FRAME, particleFade);
+				
+				
 			}
 		}
 		

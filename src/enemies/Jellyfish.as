@@ -25,6 +25,7 @@ package enemies
 	public class Jellyfish extends Enemy
 	{
 		private var speedY:Number;
+		public static const points:Number = new Number(100);
 		
 		public function Jellyfish(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -33,7 +34,7 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("Medusa2Enemigo", 0.5, 20/-60, "shotWeak");
+			createEnemy("Medusa2Enemigo", 0.5, 20/-60, "shotWeak", 100);
 			speedY = new Number(0);
 		}
 		

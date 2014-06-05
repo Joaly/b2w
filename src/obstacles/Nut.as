@@ -78,6 +78,7 @@ package obstacles
 			nutImage = new Image(Media.getTexture("Nut"));
 			nutAgarreImage = new Image(Media.getTexture("AgarreNut"));
 			nutCoverImage = new Image(Media.getTexture("CoverNut"));
+			Stage1.imagesToMove.push(nutCoverImage);
 			
 			nutImage.pivotX = nutImage.width/2; // Centramos el punto de ancla de la imagen.
 			nutImage.pivotY = nutImage.height/2;
@@ -102,6 +103,7 @@ package obstacles
 			nutObject = nutPhysics.injectPhysics(nutImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
 			nutObject.physicsProperties.contactGroup = "nut";
 			nutObject.physicsProperties.isSensor = true;
+			Stage1.physicsObjects.push(nutObject);
 			
 			//Si el random al crear el obstaculo es menor o igual a 0.5, aparecerá a la izquierda, sino aparecerá a la derecha.
 			
@@ -143,10 +145,11 @@ package obstacles
 		{
 			nutAgarreImage.y = nutObject.y;
 			nutParticleSystem.y = nutObject.y;
-			nutObject.body.SetLinearVelocity(nutSpeed); //Aplicamos velocidad a la tuerca.
 			nutObject.rotation += angle;
 			
-			if (Math.round(nutObject.y) >= nutStartY + nutCoverImage.height/2 - nutCoverImage.height/7) 
+			nutObject.body.SetLinearVelocity(nutSpeed); //Aplicamos velocidad a la tuerca.
+			
+			if (Math.round(nutObject.y) >= nutCoverImage.y + nutCoverImage.height/2 - 20) 
 			{
 				nutObject.y -= 1;
 				nutSpeed.y = -1;
@@ -154,7 +157,7 @@ package obstacles
 				else angle = 2;
 			}
 			
-			if (Math.round(nutObject.y) <= nutStartY - nutCoverImage.height/2 + nutCoverImage.height/7) 
+			if (Math.round(nutObject.y) <= nutCoverImage.y - nutCoverImage.height/2 + 20) 
 			{
 				nutObject.y += 1;
 				nutSpeed.y = 0.25;

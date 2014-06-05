@@ -41,6 +41,9 @@ package enemies
 		protected var playerObjective:Player;		
 		protected var timer:Timer;
 		
+		protected var enemyPoints:Number;
+		
+		
 		public function Enemy(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
 		{
 			enemyPhysics = physics;
@@ -53,10 +56,10 @@ package enemies
 		
 		protected function initEnemy(event:Event):void
 		{
-			createEnemy("Player", 3, -1, "general"); // Esta función aplica los parámetros de imagen, velocidad en X e Y y el nombre del objeto.
+			createEnemy("Player", 3, -1, "general", 0); // Esta función aplica los parámetros de imagen, velocidad en X e Y y el nombre del objeto.
 		}
 		
-		protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String):void
+		protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String, points:Number):void
 		{
 			// La creación y posicionamiento de la imagen y objetos del enemigo será idéntica para todos los tipos.
 			enemyImage = new Image(Media.getTexture(image));
@@ -75,6 +78,10 @@ package enemies
 
 			enemyObject.physicsProperties.contactGroup = name;
 			enemyObject.physicsProperties.isSensor = true;
+			
+			enemyPoints = new Number(points);
+			
+			Stage1.physicsObjects.push(enemyObject);
 	
 			timer = new Timer(100, 0); // Temporizador que se usará para el patrón de ataque.
 			
@@ -127,6 +134,7 @@ package enemies
 				enemyObject.physicsProperties.isDynamic = false;
 				enemyObject.body.GetWorld().DestroyBody(enemyObject.body);
 				this.removeChild(enemyImage);
+				playerObjective.score += enemyPoints;
 			}
 			
 			if (enemyObject.physicsProperties.name == "slashed")
@@ -137,6 +145,7 @@ package enemies
 				timer.reset();
 				timer.start();
 				this.addEventListener(Event.ENTER_FRAME, enemyDeath);
+				playerObjective.score += enemyPoints;
 			}
 		}
 		

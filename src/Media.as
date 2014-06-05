@@ -5,11 +5,18 @@ package
 	
 	import starling.display.Sprite;
 	import starling.textures.Texture;
+	import starling.textures.TextureAtlas;
 	
 	public class Media extends Sprite
 	{
-		[Embed(source= "../media/graphics/welcome_screen.png")]
+		[Embed(source= "../media/graphics/titleScreen.png")]
 		public static const WelcomeScreen:Class;
+		
+		[Embed(source= "../media/graphics/titleSpriteSheet.png")]
+		public static const TitleSpriteSheet:Class;
+		
+		[Embed(source= "../media/graphics/titleConfig.xml", mimeType="application/octet-stream")]
+		public static const TitleConfig:Class;
 		
 		[Embed(source= "../media/graphics/stage_01_bg.png")]
 		public static const Stage1Bg:Class;
@@ -113,8 +120,33 @@ package
 		[Embed(source = "../media/graphics/Rect.png")]
 		private static const Rect:Class;		
 		
+		//Interfaz.
+		[Embed(source = "../media/graphics/interface/bullet.png")]
+		private static const Bullet:Class;
+		
+		[Embed(source = "../media/graphics/interface/gear.png")]
+		private static const Gear:Class;
+		
+		[Embed(source = "../media/graphics/interface/playButton.png")]
+		private static const Play:Class;
+		
+		[Embed(source = "../media/graphics/interface/controlsButton.png")]
+		private static const Controls:Class;
+		
+		[Embed(source = "../media/graphics/interface/aboutButton.png")]
+		private static const About:Class;
+		
+		[Embed(source = "../media/graphics/interface/retryButton.png")]
+		private static const Retry:Class;
+		
+		//Fuentes.		
+		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]
+		private static const Square:Class;
+		
+		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
+		private static var _titleAtlas:TextureAtlas;
 		
 		public function Media()
 		{
@@ -140,6 +172,17 @@ package
 				_xmlFiles[name] = xml;
 			}
 			return _xmlFiles[name];
+		}
+		
+		public static function getAtlas():TextureAtlas
+		{	
+			if (_titleAtlas == null) {
+				
+				var texture:Texture = getTexture("TitleSpriteSheet");
+				var xml:XML= XML(new TitleConfig());
+				_titleAtlas = new TextureAtlas(texture, xml);
+			}
+			return _titleAtlas;	
 		}
 	}
 }

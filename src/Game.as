@@ -8,7 +8,7 @@ package
 	
 	public class Game extends Sprite
 	{
-		private var _welcome:WelcomeScreen;
+		private var welcome:WelcomeScreen;
 		private var _stage01:Stage1;
 		
 		public function Game()
@@ -19,10 +19,10 @@ package
 		
 		private function onAddedToStage(event:Event):void
 		{
-			/*_welcome = new WelcomeScreen;
-			this.addChild(_welcome);*/
-			_stage01 = new Stage1;
-			this.addChild(_stage01);
+			welcome = new WelcomeScreen;
+			this.addChild(welcome);
+			//_stage01 = new Stage1;
+			//this.addChild(_stage01);
 		}
 	}
 }

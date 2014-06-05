@@ -79,6 +79,8 @@ package projectiles
 			shotObject.x = startX;
 			shotObject.y = startY;
 			
+			//Stage1.physicsObjects.push(shotObject);
+			
 			// Calculamos la velocidad y dirección del disparo.
 			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
 			direction = new b2Vec2((target.x - startX) / speedModule * speed, (target.y - startY) / speedModule * speed);
@@ -119,6 +121,7 @@ package projectiles
 			ContactManager.onContactBegin("shot", "shotWeak", shotWeakContact, true); // Comprobamos colisiones con enemigos débiles a disparos.
 			
 			if (shotObject.name == "remove") shotRemoval(); // Comprobamos si necesitamos eliminar el disparo.
+			
 		}		
 		
 		private function shotWeakContact(shot:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void

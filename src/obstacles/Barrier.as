@@ -2,8 +2,6 @@ package obstacles
 {
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
-	import feathers.controls.ImageLoader;
-	import flash.events.TimerEvent;
 	
 	import characters.Player;
 	
@@ -12,21 +10,24 @@ package obstacles
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
 	
+	import feathers.controls.ImageLoader;
+	
+	import flash.events.TimerEvent;
 	import flash.geom.Rectangle;
+	import flash.utils.Timer;
 	
 	import projectiles.PlayerShot;
 	
 	import screens.Stage1;
 	
+	import starling.animation.Tween;
+	import starling.core.Starling;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.EnterFrameEvent;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
-	import flash.utils.Timer;
-	import starling.animation.Tween;
-	import starling.core.Starling;
 	import starling.extensions.ColorArgb;
 	import starling.extensions.PDParticleSystem;
 	import starling.textures.Texture;
@@ -64,6 +65,8 @@ package obstacles
 		private var barrierParticleConfig:XML;
 		private var barrierParticle:Texture;
 		private var barrierParticleSystem:PDParticleSystem;
+		
+		private var barrierOn:Boolean;
 		
 		
 		
@@ -114,23 +117,26 @@ package obstacles
 			this.addChild(rightBarrierImage);
 			
 			//Empezamos a aplicar las físicas y ponemos las coordenadas a los objetos.
-			leftBarrierObject = barrierPhysics.injectPhysics(leftBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
+			leftBarrierObject = barrierPhysics.injectPhysics(leftBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			leftBarrierImage.x = leftBarrierObject.x = barrierStartX;
 			leftBarrierImage.y = leftBarrierObject.y = barrierStartY;
 			leftBarrierObject.physicsProperties.contactGroup = "leftBar";
 			leftBarrierObject.physicsProperties.isSensor = true;
+			Stage1.physicsObjects.push(leftBarrierObject);
 			
-			barrierObject = barrierPhysics.injectPhysics(barrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
+			barrierObject = barrierPhysics.injectPhysics(barrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			barrierImage.x = barrierObject.x = leftBarrierObject.x + barrierImage.width/2;
 			barrierImage.y = barrierObject.y = barrierStartY;
 			barrierObject.physicsProperties.contactGroup = "barrier";
 			barrierObject.physicsProperties.isSensor = true;
+			Stage1.physicsObjects.push(barrierObject);
 
-			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
+			rightBarrierObject = barrierPhysics.injectPhysics(rightBarrierImage, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:true, friction:0.5, restitution:0}));
 			rightBarrierImage.x = rightBarrierObject.x = barrierImage.x + barrierImage.width/2;
 			rightBarrierImage.y = rightBarrierObject.y = barrierStartY;
 			rightBarrierObject.physicsProperties.contactGroup = "rightBar";
-			rightBarrierObject.physicsProperties.isSensor = true;			
+			rightBarrierObject.physicsProperties.isSensor = true;
+			Stage1.physicsObjects.push(rightBarrierObject);	
 			
 			barrierParticleSystem.x = barrierObject.x;
 			barrierParticleSystem.y = barrierObject.y;
@@ -149,6 +155,8 @@ package obstacles
 			contactLeft = new Boolean(false);
 			contactRight = new Boolean(false);
 			
+			barrierOn = true;
+			
 			this.addEventListener(Event.ENTER_FRAME, barrierLoop);
 			
 		}
@@ -163,6 +171,11 @@ package obstacles
 			if (!contactLeft) ContactManager.onContactBegin("leftBar", "shot", leftContact, true); //Si hay contacto entonces no comprueba los demás contactos.				
 			if (!contactRight) ContactManager.onContactBegin("rightBar", "shot", rightContact, true); //Si hay contacto entonces no comprueba los demás contactos.
 			ContactManager.onContactBegin("barrier", "player", playerContact, true);
+			
+			barrierObject.body.SetLinearVelocity(new b2Vec2(0,-0.34));
+			leftBarrierObject.body.SetLinearVelocity(new b2Vec2(0,-0.34));
+			rightBarrierObject.body.SetLinearVelocity(new b2Vec2(0,-0.34));
+			barrierParticleSystem.y = barrierObject.y;
 			
 			if (timerLeft.currentCount == 5) //si el temporizador de la parte izquierda llega a 5, entonces reseteamos.
 			{
@@ -189,7 +202,7 @@ package obstacles
 				timerRight.reset();
 				
 				barrierParticleSystem.stop();
-				barrierObject.physicsProperties.active = false;
+				barrierOn = false;
 			}
 			
 			if (timerBarrier.currentCount == 5) //Si llega el contador de la barrera a 5, la hacemos visible otra vez.
@@ -204,7 +217,7 @@ package obstacles
 				leftBarrierImage.texture = Media.getTexture("BarreraEncendido");
 				rightBarrierImage.texture = Media.getTexture("BarreraEncendido");
 				
-				barrierObject.physicsProperties.active = true;
+				barrierOn = true;
 				barrierParticleSystem.start();
 			}
 		}
@@ -233,7 +246,7 @@ package obstacles
 		
 		private function playerContact(barrier:PhysicsObject, player:PhysicsObject, contact:b2Contact):void
 		{
-			player.name = "respawn";
+			if (barrierOn) player.name = "respawn";
 		}
 	}
 

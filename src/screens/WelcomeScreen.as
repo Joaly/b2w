@@ -1,12 +1,23 @@
 package screens
 {
+	import flash.utils.Timer;
+	
+	import starling.core.Starling;
+	import starling.display.Button;
 	import starling.display.Image;
+	import starling.display.MovieClip;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	
 	public class WelcomeScreen extends Sprite
 	{
-		private var _welcomeImage:Image;
+		private var welcomeImage:Image;
+		private var titleAnimation:MovieClip;
+		private var playButton:Button;
+		private var controlsButton:Button;
+		private var aboutButton:Button;
+		private var gameStage:Stage1;
+		private var buttonTimer:Timer;
 		
 		public function WelcomeScreen()
 		{
@@ -21,10 +32,86 @@ package screens
 		
 		private function drawScreen():void
 		{
-			_welcomeImage = new Image(Media.getTexture("WelcomeScreen"));
-			_welcomeImage.width /= 2; //REDIMENSION
-			_welcomeImage.height /= 2; //REDIMENSION
-			this.addChild(_welcomeImage);
+			welcomeImage = new Image(Media.getTexture("WelcomeScreen"));
+			welcomeImage.width /= 2; //REDIMENSION
+			welcomeImage.height /= 2; //REDIMENSION
+			this.addChild(welcomeImage);
+			
+			titleAnimation = new MovieClip(Media.getAtlas().getTextures("GameIntro_"),12);
+			titleAnimation.scaleX = 0.5;
+			titleAnimation.scaleY = 0.5;
+			titleAnimation.loop = false;
+			titleAnimation.y = 70;
+			Starling.juggler.add(titleAnimation);
+			this.addChild(titleAnimation);
+			
+			buttonTimer = new Timer(10,0);
+			buttonTimer.start();
+			
+			this.addEventListener(Event.ENTER_FRAME, buttonsDelay);
+		}
+		
+		private function buttonsDelay(event:Event):void
+		{
+			if (buttonTimer.currentCount == 200)
+			{
+				createButtons();
+			}
+			
+			if (buttonTimer.currentCount > 210)
+			{
+				playButton.alpha += 0.01;
+				controlsButton.alpha += 0.01;
+				aboutButton.alpha += 0.0;
+				
+				if (playButton.alpha == 1)
+				{
+					buttonTimer.stop();
+					playButton.touchable = true;
+					controlsButton.touchable = true;
+					aboutButton.touchable = true;
+					this.removeEventListener(Event.ENTER_FRAME, buttonsDelay);
+				}
+			}
+		}
+		
+		private function createButtons():void
+		{
+			playButton = new Button(Media.getTexture("Play"));
+			playButton.scaleX = 0.3;
+			playButton.scaleY = 0.3;
+			playButton.x = stage.stageWidth/2 - playButton.width/2;
+			playButton.y = 300;
+			playButton.alpha = 0;
+			playButton.touchable = false;
+			this.addChild(playButton);
+			
+			controlsButton = new Button(Media.getTexture("Controls"));
+			controlsButton.scaleX = 0.3;
+			controlsButton.scaleY = 0.3;
+			controlsButton.x = stage.stageWidth/2 - controlsButton.width/2;
+			controlsButton.y = 340;
+			controlsButton.alpha = 0;
+			controlsButton.touchable = false;
+			this.addChild(controlsButton);
+			
+			aboutButton = new Button(Media.getTexture("About"));
+			aboutButton.scaleX = 0.3;
+			aboutButton.scaleY = 0.3;
+			aboutButton.x = stage.stageWidth/2 - aboutButton.width/2;
+			aboutButton.y = 380;
+			aboutButton.alpha = 0;
+			aboutButton.touchable = false;
+			this.addChild(aboutButton);
+			
+			playButton.addEventListener(Event.TRIGGERED, playClick);
+		}
+		
+		private function playClick(event:Event):void
+		{
+			gameStage = new Stage1();
+			stage.addChild(gameStage);
+			this.visible = false;
 		}
 	}
 }

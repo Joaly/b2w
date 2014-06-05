@@ -34,6 +34,7 @@ package enemies
 		private var robotBox:Image;
 		private var robotStop:Boolean;
 		private var blackRobot:Boolean;
+		private var roboTimer:Timer;
 		
 		public function Robot(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
@@ -42,10 +43,10 @@ package enemies
 		
 		override protected function initEnemy(event:Event):void
 		{
-			createEnemy("WhiteRobot", 0, 0.5, "contactWeak");
+			createEnemy("WhiteRobot", 0, 0.5, "contactWeak", 250);
 		}
 		
-		override protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String):void
+		override protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String, points:Number):void
 		{
 			// La creación y posicionamiento de la imagen y objetos del enemigo será idéntica para todos los tipos.
 			if (Math.random() < 0.5) 
@@ -88,10 +89,17 @@ package enemies
 
 			enemyObject.name = name + new String(Math.round(enemyObject.x*Math.random()));
 			enemyObject.physicsProperties.isSensor = true;
+			
+			Stage1.physicsObjects.push(enemyObject);
 	
 			timer = new Timer(1000, 0);
 			timerStop = new Timer(1000, 0);
 			robotStop = new Boolean(false);
+			
+			roboTimer = new Timer(10, 0);
+			roboTimer.start();
+			
+			enemyPoints = points;
 			
 			this.addEventListener(Event.ENTER_FRAME, enemyLoop);
 		}
@@ -104,6 +112,7 @@ package enemies
 		override protected function movementPatternY():void
 		{
 			enemyObject.body.SetLinearVelocity(enemySpeed); //Aplicamos velocidad al enemigo.
+			enemyImage.y = enemyObject.y;
 		
 			// Cambiamos el sentido cuando llega a un cierto rango.
 			
@@ -116,25 +125,45 @@ package enemies
 					timerStop.reset();
 					timerStop.stop();
 					robotStop = false;
+					if (roboTimer.currentCount > 100) 
+					{
+						roboTimer.reset();
+						roboTimer.start();
+					}
 					
 					enemyObject.physicsProperties.isDynamic = true;
 				}
 			}
 	
-			if (Math.round(enemyObject.y) > enemyStartY + 34) 
+			if (roboTimer.currentCount < 50) 
 			{
-				enemyObject.y -= 2;
-				enemySpeed.y = -1;
+				//enemyObject.y -= 2;
+				enemySpeed.y = 0.5;
+				//robotStop = true;
+				timerStop.start();
+			}
+			else if (roboTimer.currentCount == 50)
+			{
 				robotStop = true;
+			}
+			
+			else if (roboTimer.currentCount < 120) 
+			{
+				//enemyObject.y += 2;
+				enemySpeed.y = -1.2;
+				//robotStop = true;
 				timerStop.start();
 			}
 			
-			if (Math.round(enemyObject.y) < enemyStartY - 35) 
+			else if (roboTimer.currentCount == 120)
 			{
-				enemyObject.y += 2;
-				enemySpeed.y = 0.5;
 				robotStop = true;
-				timerStop.start();
+			}
+			
+			else
+			{
+				roboTimer.reset();
+				roboTimer.start();				
 			}
 			
 			if (timer.currentCount == 1)

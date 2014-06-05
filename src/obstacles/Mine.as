@@ -90,13 +90,15 @@ package obstacles
 			this.addChild(mineBoxImage);
 			
 			//Ponemos las físicas a los objetos.
-			mineObject = minePhysics.injectPhysics(mineImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
+			mineObject = minePhysics.injectPhysics(mineImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
 			mineObject.physicsProperties.contactGroup = "mine";
-			mineObject.physicsProperties.isSensor = true;
+			mineObject.physicsProperties.isSensor = true;		
+			Stage1.physicsObjects.push(mineObject);
 			
-			mineBoxObject = minePhysics.injectPhysics(mineBoxImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:false, friction:0.5, restitution:0 } ));
+			mineBoxObject = minePhysics.injectPhysics(mineBoxImage, PhysInjector.SQUARE, new PhysicsProperties( { isDynamic:true, friction:0.5, restitution:0 } ));
 			mineBoxObject.physicsProperties.contactGroup = "mineBox";
 			mineBoxObject.physicsProperties.isSensor = true;
+			Stage1.physicsObjects.push(mineBoxObject);
 			
 			//Si el random al crear el obstaculo es menor o igual a 0.5, aparecerá a la izquierda, sino aparecerá a la derecha.
 			if (mineStartX <= 0.5) mineBoxObject.x = mineBoxImage.x = mineImage.x =  mineObject.x = Stage1.OFFSET + mineImage.width / 2;
@@ -123,7 +125,16 @@ package obstacles
 			ContactManager.onContactBegin("mine", "shot", mineShotContact, true);
 			ContactManager.onContactBegin("mineBox", "player", mineExplosion, true);
 			
+			mineObject.body.SetLinearVelocity(new b2Vec2(0,-0.34));
+			mineBoxObject.body.SetLinearVelocity(new b2Vec2(0,-0.34));
+			
+			mineImage.y = mineObject.y;
+			mineBoxImage.y = mineBoxObject.y;
+			
 			if (alreadyContact || mineBoxObject.name == "explosion") mineDeath();
+			
+			/*mineImage.y = mineObject.y;
+			mineBoxImage.y = mineBoxObject.y;*/
 		}
 		
 		private function mineShotContact(mine:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
@@ -150,13 +161,28 @@ package obstacles
 			
 			this.removeEventListener(Event.ENTER_FRAME, mineLoop);
 			
+			mineObject.physicsProperties.isDynamic = false;
 			mineObject.body.GetWorld().DestroyBody(mineObject.body);
 			mineObject.dispose();
 			this.removeChild(mineImage);
 		
+			mineBoxObject.physicsProperties.isDynamic = false;
 			mineBoxObject.body.GetWorld().DestroyBody(mineBoxObject.body);
 			mineBoxObject.dispose();
 			this.removeChild(mineBoxImage);
+			
+			for (var i:int; i < Stage1.physicsObjects.length; i++)
+			{
+				if (Stage1.physicsObjects[i] == mineObject) 
+				{
+					Stage1.physicsObjects.splice(i,1);
+				}
+				
+				if (Stage1.physicsObjects[i] == mineBoxObject) 
+				{
+					Stage1.physicsObjects.splice(i,1);
+				}
+			}
 			
 			particleSystem.startSize *= 2;
 			particleSystem.emitAngleVariance = 360;

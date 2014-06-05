@@ -59,6 +59,14 @@ package objects
 			wallObject.y = stage.stageHeight/2;
 			wallImage.x = wallObject.x; // Centramos la imagen en el objeto.
 			wallImage.y = wallObject.y;
+			
+			Stage1.physicsObjects.push(wallObject);
+			this.addEventListener(Event.ENTER_FRAME, update);
+		}
+		
+		private function update(event:Event):void
+		{
+			wallImage.y = wallObject.y;
 		}
 	}
 }
