@@ -70,6 +70,8 @@ package characters
 
 		public var isDead:Boolean;
 
+		private var playerArt:MovieClip;
+		
 		public function Player(physics:PhysInjector, x:Number, y:Number, wallL:Wall, wallR:Wall)
 		{
 			playerPhysics = physics;
@@ -97,6 +99,8 @@ package characters
 			playerObject.physicsProperties.isSensor = true;
 			playerObject.name = "player";
 			playerObject.physicsProperties.contactGroup = "player";
+			
+			playerImage.visible = false;
 
 			position = new Point(playerImage.x, playerImage.y);
 			onJump = new Boolean(true);
@@ -124,6 +128,20 @@ package characters
 
 			stage.addEventListener(TouchEvent.TOUCH, playerTouch);
 			this.addEventListener(Event.ENTER_FRAME, update);
+			
+			this.removeEventListener(Event.ADDED_TO_STAGE, createPlayer);
+			createPlayerArt();
+		}
+		
+		private function createPlayerArt():void
+		{
+			playerArt = new MovieClip(Media.getCharAtlas().getTextures("DStandR__"), 20);
+			playerArt.scaleX = 0.6;
+			playerArt.scaleY = 0.6;
+			playerArt.pivotX = (playerArt.width / 2) + 20;
+			playerArt.pivotY = playerArt.height / 2;
+			Starling.juggler.add(playerArt);
+			this.addChild(playerArt);
 		}
 
 		private function playerTouch(event:TouchEvent):void
@@ -190,6 +208,9 @@ package characters
 		{
 			position.x = playerObject.x;
 			position.y = playerObject.y;
+			
+			playerArt.x = playerObject.x;
+			playerArt.y = playerObject.y;
 			
 			if (playerObject.name == "respawn") playerDeath();
 			if (playerObject.y > stage.stageHeight+playerImage.height*2) playerObject.name = "respawn";

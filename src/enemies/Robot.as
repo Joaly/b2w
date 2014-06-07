@@ -3,6 +3,7 @@ package enemies
 	import Box2D.Collision.Shapes.b2MassData;
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
+	import starling.display.MovieClip;
 	
 	import characters.Player;
 	
@@ -36,14 +37,43 @@ package enemies
 		private var blackRobot:Boolean;
 		private var roboTimer:Timer;
 		
+		private var roboArt:MovieClip;
+		
 		public function Robot(physics:PhysInjector, player:Player, startX:Number, startY:Number)
 		{
 			super(physics, player, startX, startY);
+			this.addEventListener(Event.ADDED_TO_STAGE, initEnemy);
 		}
 		
 		override protected function initEnemy(event:Event):void
 		{
 			createEnemy("WhiteRobot", 0, 0.5, "contactWeak", 250);
+			
+			enemyImage.visible = false;
+			
+			this.removeEventListener(Event.ADDED_TO_STAGE, initEnemy);
+			createRoboArt();
+		}
+		
+		private function createRoboArt():void
+		{
+			roboArt = new MovieClip(Media.getCharAtlas().getTextures("RobStand/RobStand__"), 10);
+			
+			if (enemyObject.x > stage.stageWidth/2) 
+			{
+				roboArt.rotation = -(Math.PI) / 2;
+			}
+			else 
+			{
+				roboArt.rotation = (Math.PI) / 2;
+			}
+			
+			roboArt.scaleX = 0.5;
+			roboArt.scaleY = 0.5;
+			roboArt.pivotX = roboArt.width / 2;
+			roboArt.pivotY = roboArt.height / 2;
+			Starling.juggler.add(roboArt);
+			this.addChild(roboArt);
 		}
 		
 		override protected function createEnemy(image:String, speedX:Number, speedY:Number, name:String, points:Number):void
@@ -77,7 +107,8 @@ package enemies
 			
 			if (enemyStartX <= 0.5)
 			{
-				enemyObject.x = Stage1.OFFSET + enemyImage.width/2;
+				enemyObject.x = Stage1.OFFSET + enemyImage.width / 2;
+				
 			}
 			else 
 			{
@@ -113,6 +144,9 @@ package enemies
 		{
 			enemyObject.body.SetLinearVelocity(enemySpeed); //Aplicamos velocidad al enemigo.
 			enemyImage.y = enemyObject.y;
+			
+			roboArt.x = enemyObject.x;
+			roboArt.y = enemyObject.y;
 		
 			// Cambiamos el sentido cuando llega a un cierto rango.
 			
@@ -172,6 +206,7 @@ package enemies
 				else enemyImage.texture = Media.getTexture("WhiteRobot");
 				timer.reset();
 				timer.stop();
+				roboArt.play();
 			}
 			
 			ContactManager.onContactBegin("contactWeak", "shot", robotShotContact, true);
@@ -179,6 +214,8 @@ package enemies
 		
 		private function robotShotContact(robotBox:PhysicsObject, shot:PhysicsObject, contact:b2Contact):void
 		{
+			roboArt.stop();
+			roboArt.currentFrame = 7;
 			shot.physicsProperties.name = "bounced";
 			if (blackRobot) enemyImage.texture = Media.getTexture("BlackRobotCover");
 			else enemyImage.texture = Media.getTexture("WhiteRobotCover");
