@@ -34,7 +34,6 @@ package screens
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.fluocode.Fluocam;
 	import starling.textures.Texture;
 	
 	public class Stage1 extends Sprite
