@@ -23,6 +23,7 @@ package characters
 	import starling.core.starling_internal;
 	import starling.display.BlendMode;
 	import starling.display.Image;
+	import starling.display.MovieClip;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
@@ -65,6 +66,7 @@ package characters
 		private var playerInterface:GameInterface;
 		private var restored:Boolean;
 		public var score:Number;
+		private var jumpTimer:Timer;
 
 		public var isDead:Boolean;
 
@@ -103,6 +105,7 @@ package characters
 			shotsFired = new Number(0);
 			timer = new Timer(100, 0);
 			particleTimer = new Timer(10, 0);
+			jumpTimer = new Timer(100, 0);
 			jumpForce = new b2Vec2(0,0);
 			attacking = false;
 
@@ -203,6 +206,8 @@ package characters
 			{
 				playerInterface.bulletRestore();
 			}
+			
+			if (onJump && jumpTimer.currentCount > 10) Stage1.cameraOn = false;
 		}
 
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
@@ -222,6 +227,8 @@ package characters
 
 			if (wall.name == "Left") playerObject.x = Stage1.OFFSET+playerImage.width/2;
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
+			
+			jumpTimer.reset();
 		}
 
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
@@ -248,6 +255,8 @@ package characters
 			if (force.x < -forceLimit) force.x = -forceLimit;
 			if (force.x > forceLimit) force.x = forceLimit;
 			playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
+			
+			jumpTimer.start();
 		}
 
 		private function shoot(touchPos:Touch):void

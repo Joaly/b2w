@@ -149,6 +149,10 @@ package screens
 					spawnObstacleY += 1;
 					spawnEnemyY += 1;
 				}
+				wallLeft.wallImage2.y += coord;
+				wallLeft.wallImage3.y += coord;
+				wallRight.wallImage2.y += coord;
+				wallRight.wallImage3.y += coord;
 			}
 			
 			if (player.sliding)
@@ -170,15 +174,15 @@ package screens
 				
 				switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
 				{
-					case 0: nut = new Nut(physics, player, Math.random(), GeneralSpawn - 120);  //Creamos una tuerca.
+					case 0: nut = new Nut(physics, player, Math.random(), GeneralSpawn);  //Creamos una tuerca.
 						this.addChild(nut);
 						break;
 					
-					case 1: barrier = new Barrier(physics, player, randomRange(70,200), GeneralSpawn - 70); //Creamos una barrera.
+					case 1: barrier = new Barrier(physics, player, randomRange(70,200), GeneralSpawn); //Creamos una barrera.
 						this.addChild(barrier);
 						break;
 					
-					case 2: mine = new Mine(physics, player, Math.random(), GeneralSpawn - 70); //Creamos una mina.
+					case 2: mine = new Mine(physics, player, Math.random(), GeneralSpawn); //Creamos una mina.
 						this.addChild(mine);
 						break;
 					
@@ -192,15 +196,15 @@ package screens
 				
 				switch(randomRange(0,2)) //Según el valor random que saldrá del rango 0-2, se creará un enemigo u otro.
 				{
-					case 0: enemy1 = new Jellyfish(physics, player, 150, GeneralSpawn - 70); //Creamos una medusa.
+					case 0: enemy1 = new Jellyfish(physics, player, 150, GeneralSpawn); //Creamos una medusa.
 						this.addChild(enemy1);
 						break;
 					
-					case 1: enemy2 = new Butterfly(physics, player, 150, GeneralSpawn - 70); //Creamos una mariposa.
+					case 1: enemy2 = new Butterfly(physics, player, 150, GeneralSpawn); //Creamos una mariposa.
 						this.addChild(enemy2);
 						break;
 					
-					case 2: enemy3 = new Robot(physics, player, Math.random(), GeneralSpawn - 70); //Creamos un robot.
+					case 2: enemy3 = new Robot(physics, player, Math.random(), GeneralSpawn); //Creamos un robot.
 						this.addChild(enemy3);
 						break;
 					

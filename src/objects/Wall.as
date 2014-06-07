@@ -20,7 +20,9 @@ package objects
 	public class Wall extends Sprite
 	{
 		private var wallTile:Texture;
-		private var wallImage:TiledImage;
+		public var wallImage:TiledImage;
+		public var wallImage2:TiledImage;
+		public var wallImage3:TiledImage;
 		public var wallObject:PhysicsObject;
 		private var wallPhysics:PhysInjector;
 		private var wallX:Number;
@@ -42,11 +44,27 @@ package objects
 			wallTile = Media.getTexture("WallTile");
 			wallImage = new TiledImage(wallTile);
 			wallImage.width = Stage1.OFFSET;
-			wallImage.height = stage.stageHeight * 5;
+			wallImage.height = stage.stageHeight;
 			wallImage.pivotX = wallImage.width/2;
 			wallImage.pivotY = wallImage.height/2;
 			if (wallName == "Right") wallImage.scaleX *= -1;
 			this.addChild(wallImage);
+			
+			wallImage2 = new TiledImage(wallTile);
+			wallImage2.width = Stage1.OFFSET;
+			wallImage2.height = stage.stageHeight;
+			wallImage2.pivotX = wallImage2.width/2;
+			wallImage2.pivotY = wallImage2.height/2;
+			if (wallName == "Right") wallImage2.scaleX *= -1;
+			this.addChild(wallImage2);
+			
+			wallImage3 = new TiledImage(wallTile);
+			wallImage3.width = Stage1.OFFSET;
+			wallImage3.height = stage.stageHeight;
+			wallImage3.pivotX = wallImage3.width/2;
+			wallImage3.pivotY = wallImage3.height/2;
+			if (wallName == "Right") wallImage3.scaleX *= -1;
+			this.addChild(wallImage3);
 			
 			// Añadimos físicas a la pared.
 			wallObject = wallPhysics.injectPhysics(this, PhysInjector.SQUARE, new PhysicsProperties({isDynamic:false, friction:0.5, restitution:0}));
@@ -59,14 +77,23 @@ package objects
 			wallObject.y = stage.stageHeight/2;
 			wallImage.x = wallObject.x; // Centramos la imagen en el objeto.
 			wallImage.y = wallObject.y;
+			wallImage.visible = false;
 			
-			Stage1.physicsObjects.push(wallObject);
+			wallImage2.x = wallObject.x;
+			wallImage2.y = wallObject.y;
+			
+			wallImage3.x = wallObject.x;
+			wallImage3.y = -wallObject.y;
+			
 			this.addEventListener(Event.ENTER_FRAME, update);
 		}
 		
 		private function update(event:Event):void
 		{
-			wallImage.y = wallObject.y;
+			if (wallImage2.y >= stage.stageHeight + wallImage2.height/2) wallImage2.y = -stage.stageHeight/2;
+			if (wallImage3.y >= stage.stageHeight + wallImage3.height/2) wallImage3.y = -stage.stageHeight/2;
+			if (wallImage2.y < -stage.stageHeight/2) wallImage2.y = stage.stageHeight * 1.5;			
+			if (wallImage3.y < -stage.stageHeight/2) wallImage3.y = stage.stageHeight * 1.5;
 		}
 	}
 }
