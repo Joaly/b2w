@@ -62,7 +62,7 @@ package screens
 			{
 				playButton.alpha += 0.01;
 				controlsButton.alpha += 0.01;
-				aboutButton.alpha += 0.0;
+				aboutButton.alpha += 0.01;
 				
 				if (playButton.alpha == 1)
 				{
