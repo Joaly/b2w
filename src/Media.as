@@ -139,6 +139,12 @@ package
 		[Embed(source = "../media/graphics/interface/retryButton.png")]
 		private static const Retry:Class;
 		
+		[Embed(source = "../media/graphics/SpriteSheetB2W.png")]
+		private static const SheetPNG:Class;
+		
+		[Embed(source = "../media/graphics/SpriteSheetB2W.xml", mimeType="application/octet-stream")]
+		private static const SheetXML:Class;
+		
 		//Fuentes.		
 		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]
 		private static const Square:Class;
@@ -147,6 +153,7 @@ package
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		private static var _titleAtlas:TextureAtlas;
+		private static var _charAtlas:TextureAtlas;
 		
 		public function Media()
 		{
@@ -183,6 +190,17 @@ package
 				_titleAtlas = new TextureAtlas(texture, xml);
 			}
 			return _titleAtlas;	
+		}
+		
+		public static function getCharAtlas():TextureAtlas
+		{	
+			if (_charAtlas == null) {
+				
+				var texture:Texture = getTexture("SheetPNG");
+				var xml:XML= XML(new SheetXML());
+				_charAtlas = new TextureAtlas(texture, xml);
+			}
+			return _charAtlas;	
 		}
 	}
 }
