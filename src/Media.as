@@ -130,6 +130,9 @@ package
 		[Embed(source = "../media/graphics/interface/playButton.png")]
 		private static const Play:Class;
 		
+		[Embed(source = "../media/graphics/interface/storyButton.png")]
+		private static const Story:Class;
+		
 		[Embed(source = "../media/graphics/interface/controlsButton.png")]
 		private static const Controls:Class;
 		
@@ -138,6 +141,9 @@ package
 		
 		[Embed(source = "../media/graphics/interface/retryButton.png")]
 		private static const Retry:Class;
+		
+		[Embed(source = "../media/graphics/interface/menuButton.png")]
+		private static const Menu:Class;
 		
 		//Fuentes.		
 		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]

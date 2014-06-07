@@ -35,6 +35,7 @@ package screens
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.fluocode.Fluocam;
+	import starling.text.TextField;
 	import starling.textures.Texture;
 	
 	public class Stage1 extends Sprite
@@ -77,6 +78,7 @@ package screens
 		public static var imagesToMove:Vector.<Image>;
 		
 		private var retryButton:Button;
+		private var menuButton:Button;
 		
 		public function Stage1()
 		{
@@ -220,12 +222,25 @@ package screens
 				cameraOn = false;
 				
 				retryButton = new Button(Media.getTexture("Retry"));
-				retryButton.scaleX = 0.5;
-				retryButton.scaleY = 0.5;
+				retryButton.scaleX = 0.4;
+				retryButton.scaleY = 0.4;
 				retryButton.x = stage.stageWidth/2 - retryButton.width/2;
 				retryButton.y = stage.stageHeight/2 - retryButton.height/2;
 				this.addChild(retryButton);
 				retryButton.addEventListener(Event.TRIGGERED, retry);
+				
+				menuButton = new Button(Media.getTexture("Menu"));
+				menuButton.scaleX = 0.4;
+				menuButton.scaleY = 0.4;
+				menuButton.x = stage.stageWidth/2 - retryButton.width/2;
+				menuButton.y = retryButton.y + retryButton.height + 10;
+				this.addChild(menuButton);
+				menuButton.addEventListener(Event.TRIGGERED, menu);
+				
+				var score:TextField = new TextField(stage.stageWidth, 100, "SCORE: " + player.score, "Square", 30, 0xffffff);
+				this.addChild(score);
+				score.hAlign = "center";
+				score.y = retryButton.y - retryButton.height - 40;
 			}
 		}
 		
@@ -233,6 +248,13 @@ package screens
 		{
 			var newStage:Stage1 = new Stage1();
 			stage.addChild(newStage);
+			this.removeChildren(0, -1, true);
+			this.removeFromParent(true);
+		}
+		
+		private function menu(event:Event):void
+		{
+			this.removeChildren(0, -1, true);
 			this.removeFromParent(true);
 		}
 		
