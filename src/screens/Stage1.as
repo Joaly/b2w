@@ -168,6 +168,10 @@ package screens
 				{
 					imagesToMove[j].y -= player.slideSpeed;
 				}
+				wallLeft.wallImage2.y -= player.slideSpeed;
+				wallLeft.wallImage3.y -= player.slideSpeed;
+				wallRight.wallImage2.y -= player.slideSpeed;
+				wallRight.wallImage3.y -= player.slideSpeed;
 			}
 			
 			if (spawnObstacleY >= 80) //Si pasa de 60 entonces...

@@ -155,6 +155,9 @@ package
 		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]
 		private static const Square:Class;
 		
+		[Embed(source = "../media/fonts/roboto.ttf", embedAsCFF="false", fontFamily="Roboto")]
+		private static const Roboto:Class;
+		
 		
 		private static var _textures:Dictionary = new Dictionary();
 		private static var _xmlFiles:Dictionary = new Dictionary();

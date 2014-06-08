@@ -138,21 +138,21 @@ package screens
 			bg.scaleY = 0.5;
 			this.addChild(bg);
 			
-			story = new TextField(stage.stageWidth-40, stage.stageHeight-40, "hola", "Verdana", 16, 0xffffff);
+			story = new TextField(stage.stageWidth-40, stage.stageHeight-40, "hola", "Roboto", 16, 0xffffff, true);
 			this.addChild(story);
 			story.pivotX = story.width/2;
 			story.x = stage.stageWidth/2;
 			story.y = stage.stageHeight;
-			story.text = "Dwayne Varnados was a soldier who was part of a special program of training " +
+			story.text = "Dwayne Varnados was a soldier part of a special program of training " +
 				"which purpose was to create a generation of super-agents for the FBI: the project MORPHEUS. " +
 				"After months of hard physical and mental training, which included inhuman exercises " +
-				"and consumption of special drugs to potentiate human attributes, " +
-				"Dwayne became a highly qualified super-soldier." +
+				"and consumption of special drugs to enhance human attributes, " +
+				"Dwayne became a highly qualified super-soldier.\n\n" +
 				"Once Dwayne promoted, the FBI asked him to carry out a top secret mission: " +
-				"to assassinate the USA president. Dwayne immediately rejected, and decided to leave the company " +
-				"and to move to a little village among mountains, looking for peace and tranquility. "+
-				"A few weeks later, Dwayne noticed by an article on the newspaper that the USA president was murdered, " +
-				"and the government blamed him. Decided, Dwayne started his own battle against the world with only one purpose: " +
+				"to assassinate the USA president. Dwayne immediately rejected, and decided to leave the company, " +
+				"moving to a little village among the mountains, looking for peace and tranquility.\n\n"+
+				"A few weeks later, Dwayne noticed in an article of the newspaper that the USA president was murdered " +
+				"and the government had framed him. Decided, Dwayne started his own battle against the world with only one purpose: " +
 				"to clean his name and discover the truth.";
 			
 			back = new Button(Media.getTexture("Menu"));
