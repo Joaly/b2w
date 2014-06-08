@@ -118,7 +118,13 @@ package
 		private static const BG:Class;
 		
 		[Embed(source = "../media/graphics/Rect.png")]
-		private static const Rect:Class;		
+		private static const Rect:Class;
+		
+		[Embed(source = "../media/graphics/SpriteSheetB2W.png")]
+		private static const SheetPNG:Class;
+		
+		[Embed(source = "../media/graphics/SpriteSheetB2W.xml", mimeType="application/octet-stream")]
+		private static const SheetXML:Class;		
 		
 		//Interfaz.
 		[Embed(source = "../media/graphics/interface/bullet.png")]
@@ -144,12 +150,9 @@ package
 		
 		[Embed(source = "../media/graphics/interface/menuButton.png")]
 		private static const Menu:Class;
-
-		[Embed(source = "../media/graphics/SpriteSheetB2W.png")]
-		private static const SheetPNG:Class;
 		
-		[Embed(source = "../media/graphics/SpriteSheetB2W.xml", mimeType="application/octet-stream")]
-		private static const SheetXML:Class;
+		[Embed(source = "../media/graphics/interface/backButton.png")]
+		private static const Back:Class;
 		
 		//Fuentes.		
 		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]

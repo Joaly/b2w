@@ -21,6 +21,7 @@ package screens
 		private var gameStage:Stage1;
 		private var buttonTimer:Timer;
 		private var story:TextField;
+		private var about:TextField;
 		private var back:Button;
 		private var bg:Image;
 		
@@ -85,8 +86,8 @@ package screens
 		private function createButtons():void
 		{
 			playButton = new Button(Media.getTexture("Play"));
-			playButton.scaleX = 0.3;
-			playButton.scaleY = 0.3;
+			playButton.scaleX = 0.35;
+			playButton.scaleY = 0.35;
 			playButton.x = stage.stageWidth/2 - playButton.width/2;
 			playButton.y = 260;
 			playButton.alpha = 0;
@@ -94,8 +95,8 @@ package screens
 			this.addChild(playButton);
 			
 			storyButton = new Button(Media.getTexture("Story"));
-			storyButton.scaleX = 0.3;
-			storyButton.scaleY = 0.3;
+			storyButton.scaleX = 0.35;
+			storyButton.scaleY = 0.35;
 			storyButton.x = stage.stageWidth/2 - storyButton.width/2;
 			storyButton.y = 300;
 			storyButton.alpha = 0;
@@ -104,8 +105,8 @@ package screens
 			
 			
 			controlsButton = new Button(Media.getTexture("Controls"));
-			controlsButton.scaleX = 0.3;
-			controlsButton.scaleY = 0.3;
+			controlsButton.scaleX = 0.35;
+			controlsButton.scaleY = 0.35;
 			controlsButton.x = stage.stageWidth/2 - controlsButton.width/2;
 			controlsButton.y = 340;
 			controlsButton.alpha = 0;
@@ -113,8 +114,8 @@ package screens
 			this.addChild(controlsButton);
 			
 			aboutButton = new Button(Media.getTexture("About"));
-			aboutButton.scaleX = 0.3;
-			aboutButton.scaleY = 0.3;
+			aboutButton.scaleX = 0.35;
+			aboutButton.scaleY = 0.35;
 			aboutButton.x = stage.stageWidth/2 - aboutButton.width/2;
 			aboutButton.y = 380;
 			aboutButton.alpha = 0;
@@ -123,6 +124,7 @@ package screens
 			
 			playButton.addEventListener(Event.TRIGGERED, playClick);
 			storyButton.addEventListener(Event.TRIGGERED, storyClick);
+			aboutButton.addEventListener(Event.TRIGGERED, aboutClick);
 		}
 		
 		private function playClick(event:Event):void
@@ -143,6 +145,7 @@ package screens
 			story.pivotX = story.width/2;
 			story.x = stage.stageWidth/2;
 			story.y = stage.stageHeight;
+			story.alpha = 0.8;
 			story.text = "Dwayne Varnados was a soldier part of a special program of training " +
 				"which purpose was to create a generation of super-agents for the FBI: the project MORPHEUS. " +
 				"After months of hard physical and mental training, which included inhuman exercises " +
@@ -155,16 +158,46 @@ package screens
 				"and the government had framed him. Decided, Dwayne started his own battle against the world with only one purpose: " +
 				"to clean his name and discover the truth.";
 			
-			back = new Button(Media.getTexture("Menu"));
+			back = new Button(Media.getTexture("Back"));
 			back.scaleX = 0.4;
 			back.scaleY = 0.4;
 			back.alpha = 0.5;
 			back.x = stage.stageWidth - back.width - 10;
 			back.y = stage.stageHeight - back.height - 10;
-			back.addEventListener(Event.TRIGGERED, backClick);
+			back.addEventListener(Event.TRIGGERED, backStoryClick);
 			this.addChild(back);
 			
 			this.addEventListener(Event.ENTER_FRAME, scroll);
+		}
+		
+		private function aboutClick(event:Event):void
+		{
+			bg = new Image(Media.getTexture("WelcomeScreen"));
+			bg.scaleX = 0.5;
+			bg.scaleY = 0.5;
+			this.addChild(bg);
+			
+			about = new TextField(stage.stageWidth-40, stage.stageHeight-40, "hola", "Roboto", 20, 0xffffff, true);
+			this.addChild(about);
+			about.vAlign = "center";
+			about.pivotX = about.width/2;
+			about.pivotY = about.height/2;
+			about.x = stage.stageWidth/2;
+			about.y = stage.stageHeight/2;
+			about.alpha = 0.8;
+			about.text = "Created by:\n\n" +
+						"Jordi Calvet\n\n" +
+						"Joaquín Pereira\n\n" +
+						"Jose Luis Recatalá";
+			
+			back = new Button(Media.getTexture("Back"));
+			back.scaleX = 0.4;
+			back.scaleY = 0.4;
+			back.alpha = 0.5;
+			back.x = stage.stageWidth - back.width - 10;
+			back.y = stage.stageHeight - back.height - 10;
+			back.addEventListener(Event.TRIGGERED, backAboutClick);
+			this.addChild(back);
 		}
 		
 		private function scroll(event:Event):void
@@ -173,13 +206,19 @@ package screens
 			if (story.y < -story.height-20) story.y = stage.stageHeight;
 		}
 		
-		private function backClick(event:Event):void
+		private function backStoryClick(event:Event):void
 		{
 			bg.removeFromParent(true);
 			back.removeFromParent(true);
 			story.removeFromParent(true);
-			this.removeEventListener(Event.ENTER_FRAME, scroll);
-			
+			this.removeEventListener(Event.ENTER_FRAME, scroll);			
+		}
+		
+		private function backAboutClick(event:Event):void
+		{
+			bg.removeFromParent(true);
+			back.removeFromParent(true);
+			about.removeFromParent(true);			
 		}
 	}
 }
