@@ -71,6 +71,7 @@ package characters
 		public var isDead:Boolean;
 
 		private var playerArt:MovieClip;
+		private var weaponArt:MovieClip;
 		
 		public function Player(physics:PhysInjector, x:Number, y:Number, wallL:Wall, wallR:Wall)
 		{
@@ -131,17 +132,193 @@ package characters
 			
 			this.removeEventListener(Event.ADDED_TO_STAGE, createPlayer);
 			createPlayerArt();
+			createWeaponArt();
 		}
 		
 		private function createPlayerArt():void
 		{
-			playerArt = new MovieClip(Media.getCharAtlas().getTextures("DStandR__"), 20);
-			playerArt.scaleX = 0.6;
-			playerArt.scaleY = 0.6;
+			playerArt = new MovieClip(Media.getCharAtlas().getTextures("DJumpL__"), 20);	
+			playerArt.scaleX = 0.5;
+			playerArt.scaleY = 0.5;
 			playerArt.pivotX = (playerArt.width / 2) + 20;
 			playerArt.pivotY = playerArt.height / 2;
 			Starling.juggler.add(playerArt);
+			playerArt.loop = false;
 			this.addChild(playerArt);
+		}
+		
+		private function createWeaponArt():void
+		{
+			weaponArt = new MovieClip(Media.getCharAtlas().getTextures("DShotR__"), 20);
+			weaponArt.scaleX = 0;
+			weaponArt.scaleY = 0;
+			weaponArt.pivotX = weaponArt.width / 2;
+			weaponArt.pivotY = weaponArt.height / 2;
+			Starling.juggler.add(weaponArt);
+		}
+		
+		private function changeAnimation(status:String):void
+		{
+			switch (status) 
+			{
+				case "stand":
+					if (playerObject.x >= 318.1) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DStandR__"), 20);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						this.addChild(playerArt);
+					}
+					
+					if (playerObject.x <= 65.9) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DStandL__"), 20);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2)+20;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						this.addChild(playerArt);
+					}
+					
+				case "jump":
+					if (onJump && playerObject.x > stage.stageWidth /2) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DJumpR__"), 35);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						playerArt.loop = false;
+						this.addChild(playerArt);
+					}
+					
+					if (onJump  && playerObject.x < stage.stageWidth /2) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DJumpL__"), 35);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2)+20;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						playerArt.loop = false;
+						this.addChild(playerArt);
+					}
+					
+				case "slide":
+					if (sliding && playerObject.x == 318.1) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DSlideR__"), 40);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
+						playerArt.pivotY = (playerArt.height / 2);
+						Starling.juggler.add(playerArt);
+						this.addChild(playerArt);
+					}
+					
+					if (sliding && playerObject.x == 65.9) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DSlideL__"), 40);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
+						playerArt.pivotY = (playerArt.height / 2);
+						Starling.juggler.add(playerArt);
+						this.addChild(playerArt);
+					}
+					
+				/*case "shoot":
+					if (playerObject.x > stage.stageWidth/2) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DWhileSR__"), 20);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 5;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						this.addChild(playerArt);
+					}
+					
+					if (playerObject.x < stage.stageWidth/2) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DWhileSL__"), 20);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 5;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						this.addChild(playerArt);
+					}
+					
+					if (playerObject.x > stage.stageWidth/2)
+					{
+						this.removeChild(weaponArt);
+						weaponArt = new MovieClip(Media.getCharAtlas().getTextures("DShotR__"), 20);
+						weaponArt.scaleX = 0.5;
+						weaponArt.scaleY = 0.5;
+						weaponArt.pivotX = (weaponArt.width / 2) + 65;
+						weaponArt.pivotY = weaponArt.height / 2;
+						Starling.juggler.add(weaponArt);
+						weaponArt.loop = false;
+						this.addChild(weaponArt);
+					}
+					
+					if (playerObject.x < stage.stageWidth/2)
+					{
+						this.removeChild(weaponArt);
+						weaponArt = new MovieClip(Media.getCharAtlas().getTextures("DShotL__"), 20);
+						weaponArt.scaleX = 0.5;
+						weaponArt.scaleY = 0.5;
+						weaponArt.pivotX = (weaponArt.width / 2) -30;
+						weaponArt.pivotY = weaponArt.height / 2;
+						Starling.juggler.add(weaponArt);
+						weaponArt.loop = false;
+						this.addChild(weaponArt);
+					}*/
+					
+				case "attack":
+					if (attacking && playerObject.x > stage.stageWidth /2) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DAttackR__"), 50);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						playerArt.loop = false;
+						this.addChild(playerArt);
+					}
+					
+					if (attacking && playerObject.x < stage.stageWidth /2) 
+					{
+						this.removeChild(playerArt);
+						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DAttackL__"), 50);
+						playerArt.scaleX = 0.5;
+						playerArt.scaleY = 0.5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
+						playerArt.pivotY = playerArt.height / 2;
+						Starling.juggler.add(playerArt);
+						playerArt.loop = false;
+						this.addChild(playerArt);
+					}
+					
+				break;
+				default:
+			}
 		}
 
 		private function playerTouch(event:TouchEvent):void
@@ -199,6 +376,7 @@ package characters
 						slideAllowed = false;
 						sliding = true;
 						this.addEventListener(Event.ENTER_FRAME, slideDown);
+						changeAnimation("slide");
 					}
 				}
 			}
@@ -250,6 +428,7 @@ package characters
 			else playerObject.x = stage.stageWidth-Stage1.OFFSET-playerImage.width/2;
 			
 			jumpTimer.reset();
+			changeAnimation("stand");
 		}
 
 		private function enemyContact(player:PhysicsObject, enemy:PhysicsObject, contact:b2Contact):void
@@ -278,6 +457,7 @@ package characters
 			playerObject.body.ApplyForce(force, playerObject.body.GetWorldCenter()); // Aplicamos la fuerza al jugador para que salte.
 			
 			jumpTimer.start();
+			changeAnimation("jump");
 		}
 
 		private function shoot(touchPos:Touch):void
@@ -315,6 +495,7 @@ package characters
 				coolDown = false;
 				shotsFired = 0;
 				shoot(touchPos);
+				changeAnimation("shoot");
 			}
 		}
 
@@ -332,6 +513,7 @@ package characters
 			{
 				sliding = false;
 				this.removeEventListener(Event.ENTER_FRAME, slideDown);
+				changeAnimation("stand");
 			}
 		}
 
@@ -362,6 +544,9 @@ package characters
 			this.addEventListener(Event.ENTER_FRAME, particleFade);
 			particleTimer.reset();
 			particleTimer.start();
+			
+			this.removeChild(playerArt);
+			this.removeChild(weaponArt);
 		}
 
 		private function particleFade(event:Event):void
@@ -381,6 +566,7 @@ package characters
 		{
 			playerImage.blendMode = BlendMode.SCREEN;
 			attacking = true;
+			changeAnimation("attack");
 		}
 	}
 }
