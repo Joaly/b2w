@@ -222,6 +222,11 @@ package enemies
 			timer.start();
 		}
 		
+		override protected function enemyDeath():void
+		{
+			this.removeChild(roboArt);
+		}
+		
 	}
 
 }

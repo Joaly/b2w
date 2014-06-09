@@ -3,6 +3,7 @@ package obstacles
 	
 	import Box2D.Common.Math.b2Vec2;
 	import Box2D.Dynamics.Contacts.b2Contact;
+	import starling.display.MovieClip;
 	
 	import characters.Player;
 	
@@ -57,6 +58,8 @@ package obstacles
 		private var particle:Texture;
 		private var particleSystem:PDParticleSystem;
 		
+		private var mineArt:MovieClip;
+		
 		public function Mine(physics:PhysInjector, player:Player, startX:Number, startY:Number) 
 		{
 			super();
@@ -73,7 +76,7 @@ package obstacles
 		private function createMine(event:Event):void
 		{
 			
-			mineImage = new Image(Media.getTexture("Mine"));
+			mineImage = new Image(Media.getTexture("Mina1"));
 			mineBoxImage = new Image(Media.getTexture("MineBox"));
 			
 			mineImage.pivotX = mineImage.width/2; // Centramos el punto de ancla de la imagen.
@@ -112,12 +115,30 @@ package obstacles
 			mineBoxImage.y = mineBoxObject.y = mineImage.y = mineObject.y = mineStartY;
 			
 			mineBoxImage.visible = false;
+			mineImage.visible = false;
 			
 			timer = new Timer(10, 0);
 			
 			alreadyContact = new Boolean(false);
 			
 			this.addEventListener(Event.ENTER_FRAME, mineLoop);
+			createMineArt();
+		}
+		
+		private function createMineArt():void
+		{
+			mineArt = new MovieClip(Media.getObsAtlas().getTextures("Mina__"), 10);
+			mineArt.pivotX = mineArt.width / 2;
+			mineArt.pivotY = mineArt.height / 2;
+			mineArt.scaleY = 0.5;
+			mineArt.scaleX = 0.5;
+			Starling.juggler.add(mineArt);
+			this.addChild(mineArt);
+			
+			if (mineObject.x > stage.stageWidth/2) 
+			{
+				mineArt.scaleX *= -1;
+			}
 		}
 		
 		private function mineLoop(event:Event):void
@@ -130,6 +151,9 @@ package obstacles
 			
 			mineImage.y = mineObject.y;
 			mineBoxImage.y = mineBoxObject.y;
+			
+			mineArt.x = mineObject.x;
+			mineArt.y = mineObject.y;
 			
 			if (alreadyContact || mineBoxObject.name == "explosion") mineDeath();
 			
@@ -193,6 +217,7 @@ package obstacles
 			timer.start();
 			
 			this.addEventListener(Event.ENTER_FRAME, particleDeath);
+			this.removeChild(mineArt);
 			
 		}
 		

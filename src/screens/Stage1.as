@@ -45,6 +45,9 @@ package screens
 		
 		// Fondo del escenario.
 		private var stageBg:Image;
+		private var cityFront:Image;
+		private var cityMed:Image;
+		private var cityBack:Image;
 		
 		// Rectángulo (área de la pantalla)
 		//private var stageArea:Image;
@@ -106,6 +109,14 @@ package screens
 			stageBg = new Image(Media.getTexture("BG"));
 			this.addChild(stageBg);
 			
+			cityBack = new Image(Media.getTexture("CityBack"));
+			this.addChild(cityBack);
+			cityMed = new Image(Media.getTexture("CityMed"));
+			this.addChild(cityMed);
+			cityFront = new Image(Media.getTexture("CityFront"));
+			cityFront.y = -60;
+			this.addChild(cityFront);
+			
 			/*stageArea = new Image(Media.getTexture("Rect"));
 			stageArea.y = 640;
 			this.addChild(stageArea);*/
@@ -157,6 +168,9 @@ package screens
 				wallLeft.wallImage3.y += coord;
 				wallRight.wallImage2.y += coord;
 				wallRight.wallImage3.y += coord;
+				cityFront.y += coord * 0.04;
+				cityMed.y += coord * 0.08;
+				cityBack.y += coord *0.12;
 			}
 			
 			if (player.sliding)
@@ -173,6 +187,9 @@ package screens
 				wallLeft.wallImage3.y -= player.slideSpeed;
 				wallRight.wallImage2.y -= player.slideSpeed;
 				wallRight.wallImage3.y -= player.slideSpeed;
+				cityFront.y -= player.slideSpeed * 0.04;
+				cityMed.y -= player.slideSpeed * 0.08;
+				cityBack.y -= player.slideSpeed *0.12;
 			}
 			
 			if (spawnObstacleY >= 80) //Si pasa de 60 entonces...

@@ -127,5 +127,10 @@ package enemies
 			var shotBounced:PlayerShot = new PlayerShot(enemyPhysics, shot.x, shot.y, 3, new Point(playerObjective.playerObject.x, playerObjective.playerObject.y), true);
 			shotsToBounce.push(shotBounced);
 		}
+		
+		override protected function enemyDeath():void
+		{
+			this.removeChild(buttArt);
+		}
 	}
 }

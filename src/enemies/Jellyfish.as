@@ -89,8 +89,6 @@ package enemies
 			jellyArt.y = enemyObject.y;
 		}
 		
-		override protected function enemyDeath():void{}
-		
 		override protected function attack():void //Función dedicada a disparar hacia el jugador.
 		{
 			timer.start(); //El temporizador empieza.
@@ -101,6 +99,25 @@ package enemies
 				this.addChild(bullet);
 				timer.reset();
 			}			
+		}
+		
+		override protected function checkDead():void
+		{
+			if (enemyObject.physicsProperties.name == "dead")
+			{
+				this.removeEventListener(Event.ENTER_FRAME, enemyLoop);
+				enemyObject.physicsProperties.isDynamic = false;
+				enemyObject.body.GetWorld().DestroyBody(enemyObject.body);
+				timer.reset();
+				timer.start();
+				this.addEventListener(Event.ENTER_FRAME, enemyDeath);
+				playerObjective.score += enemyPoints;
+			}
+		}
+		
+		override protected function enemyDeath():void
+		{
+			this.removeChild(jellyArt);
 		}
 	}
 }

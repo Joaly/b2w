@@ -124,7 +124,13 @@ package
 		private static const SheetPNG:Class;
 		
 		[Embed(source = "../media/graphics/SpriteSheetB2W.xml", mimeType="application/octet-stream")]
-		private static const SheetXML:Class;		
+		private static const SheetXML:Class;	
+		
+		[Embed(source = "../media/graphics/obstaculosSpriteSheet.png")]
+		private static const obsSheetPNG:Class;
+		
+		[Embed(source = "../media/graphics/obstaculosSpriteSheet.xml", mimeType="application/octet-stream")]
+		private static const obsSheetXML:Class;
 		
 		//Interfaz.
 		[Embed(source = "../media/graphics/interface/bullet.png")]
@@ -153,9 +159,21 @@ package
 		
 		[Embed(source = "../media/graphics/interface/backButton.png")]
 		private static const Back:Class;
-		
+				
 		[Embed(source = "../media/graphics/controls.png")]
 		private static const ControlsInst:Class;
+		
+		[Embed(source = "../media/graphics/CityFront.png")]
+		private static const CityFront:Class;
+		
+		[Embed(source = "../media/graphics/CityMed.png")]
+		private static const CityMed:Class;
+		
+		[Embed(source = "../media/graphics/cityBack.png")]
+		private static const CityBack:Class;
+		
+		[Embed(source = "../media/graphics/Mina1.png")]
+		private static const Mina1:Class;
 		
 		//Fuentes.		
 		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]
@@ -169,6 +187,7 @@ package
 		private static var _xmlFiles:Dictionary = new Dictionary();
 		private static var _titleAtlas:TextureAtlas;
 		private static var _charAtlas:TextureAtlas;
+		private static var _obsAtlas:TextureAtlas;
 		
 		public function Media()
 		{
@@ -216,6 +235,17 @@ package
 				_charAtlas = new TextureAtlas(texture, xml);
 			}
 			return _charAtlas;	
+		}
+		
+		public static function getObsAtlas():TextureAtlas
+		{	
+			if (_obsAtlas == null) {
+				
+				var texture:Texture = getTexture("obsSheetPNG");
+				var xml:XML= XML(new obsSheetXML());
+				_obsAtlas = new TextureAtlas(texture, xml);
+			}
+			return _obsAtlas;	
 		}
 	}
 }
