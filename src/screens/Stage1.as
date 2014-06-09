@@ -30,6 +30,7 @@ package screens
 	
 	import starling.animation.IAnimatable;
 	import starling.core.Starling;
+	import starling.display.BlendMode;
 	import starling.display.Button;
 	import starling.display.Image;
 	import starling.display.Sprite;
@@ -76,6 +77,7 @@ package screens
 		public static var cameraOn:Boolean;
 		public static var physicsObjects:Vector.<PhysicsObject>;
 		public static var imagesToMove:Vector.<Image>;
+		public static var shotsToMove:Vector.<PhysicsObject>;
 		
 		private var retryButton:Button;
 		private var menuButton:Button;
@@ -117,6 +119,7 @@ package screens
 			
 			physicsObjects = new Vector.<PhysicsObject>;
 			imagesToMove = new Vector.<Image>;
+			shotsToMove = new Vector.<PhysicsObject>;
 			
 			// Creamos las paredes.
 			wallLeft = new Wall(physics, "Left");
@@ -159,7 +162,6 @@ package screens
 			
 			if (player.sliding)
 			{
-				//player.playerObject.y -= 5;
 				for (var i:int; i < physicsObjects.length; i++)	
 				{
 					if (physicsObjects[i].physicsProperties.active) physicsObjects[i].y -= player.slideSpeed;
@@ -223,7 +225,13 @@ package screens
 			coord = coordPrev - player.playerObject.y;
 			if (player.isDead) 
 			{
+				this.removeEventListener(Event.ENTER_FRAME, loop);
 				cameraOn = false;
+				
+				var semiBg:Image = new Image(Media.getTexture("Floor"));
+				semiBg.width = stage.stageWidth;
+				semiBg.height = stage.stageHeight;
+				this.addChild(semiBg);
 				
 				retryButton = new Button(Media.getTexture("Retry"));
 				retryButton.scaleX = 0.4;
@@ -241,10 +249,26 @@ package screens
 				this.addChild(menuButton);
 				menuButton.addEventListener(Event.TRIGGERED, menu);
 				
-				var score:TextField = new TextField(stage.stageWidth, 100, "SCORE: " + player.score, "Square", 30, 0xffffff);
+				var score:TextField = new TextField(stage.stageWidth, 50, "SCORE: " + player.score, "Square", 30, 0xffffff);
 				this.addChild(score);
 				score.hAlign = "center";
 				score.y = retryButton.y - retryButton.height - 40;
+			}
+			
+			if (coord != 0 && cameraOn)
+			{
+				for (var a:int; a < shotsToMove.length; a++)
+				{
+					if (shotsToMove[a]) shotsToMove[a].y += coord;
+				}	
+			}
+			
+			if (player.sliding)
+			{
+				for (var b:int; b < shotsToMove.length; b++)
+				{
+					if (shotsToMove[b]) shotsToMove[b].y -= player.slideSpeed;
+				}	
 			}
 		}
 		

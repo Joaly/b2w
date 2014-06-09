@@ -90,10 +90,10 @@ package objects
 		
 		private function update(event:Event):void
 		{
-			if (wallImage2.y >= stage.stageHeight + wallImage2.height/2) wallImage2.y = -stage.stageHeight/2;
-			if (wallImage3.y >= stage.stageHeight + wallImage3.height/2) wallImage3.y = -stage.stageHeight/2;
-			if (wallImage2.y < -stage.stageHeight/2) wallImage2.y = stage.stageHeight * 1.5;			
-			if (wallImage3.y < -stage.stageHeight/2) wallImage3.y = stage.stageHeight * 1.5;
+			if (wallImage2.y > stage.stageHeight + wallImage2.height/2) wallImage2.y = wallImage3.y - wallImage2.height;
+			if (wallImage3.y > stage.stageHeight + wallImage3.height/2) wallImage3.y = wallImage2.y - wallImage3.height;
+			if (wallImage2.y < -stage.stageHeight/2) wallImage2.y = wallImage3.y + wallImage2.height;			
+			if (wallImage3.y < -stage.stageHeight/2) wallImage3.y = wallImage2.y + wallImage3.height;
 		}
 	}
 }

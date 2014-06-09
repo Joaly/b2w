@@ -79,7 +79,7 @@ package projectiles
 			shotObject.x = startX;
 			shotObject.y = startY;
 			
-			//Stage1.physicsObjects.push(shotObject);
+			Stage1.shotsToMove.push(shotObject);
 			
 			// Calculamos la velocidad y dirección del disparo.
 			var speedModule:Number = new Number(Math.sqrt(Math.pow(target.x-startX,2)+Math.pow(target.y-startY,2)));
@@ -106,6 +106,7 @@ package projectiles
 			// Movemos las partículas junto con el disparo.
 			shotParticleSystem.x = shotObject.x;				
 			shotParticleSystem.y = shotObject.y;
+			shotImage.y = shotObject.y;
 			
 			// Controlamos cuando eliminamos el disparo.
 			if (shotObject.x < -100 || shotObject.x > stage.stageWidth+100 || shotObject.y < -100 || shotObject.y > stage.stageHeight+100 || shotObject.physicsProperties.name == "bounced") // Eliminamos el disparo cuando salga de pantalla.
@@ -116,6 +117,7 @@ package projectiles
 				shotObject.dispose();
 				shotParticleSystem.stop(true);
 				this.removeChild(shotImage);
+				Stage1.shotsToMove.splice(0,1);
 			}
 
 			ContactManager.onContactBegin("shot", "shotWeak", shotWeakContact, true); // Comprobamos colisiones con enemigos débiles a disparos.
@@ -149,6 +151,7 @@ package projectiles
 
 		private function shotRemoval():void
 		{
+			Stage1.shotsToMove.splice(0,1);
 			this.removeEventListener(Event.ENTER_FRAME, movement);
 			shotObject.physicsProperties.isDynamic = false;
 			shotObject.body.GetWorld().DestroyBody(shotObject.body);

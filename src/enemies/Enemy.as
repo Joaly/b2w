@@ -135,6 +135,13 @@ package enemies
 				enemyObject.body.GetWorld().DestroyBody(enemyObject.body);
 				this.removeChild(enemyImage);
 				playerObjective.score += enemyPoints;
+				for (var i:int; i < Stage1.physicsObjects.length; i++)
+				{
+					if (Stage1.physicsObjects[i] == enemyObject) 
+					{
+						Stage1.physicsObjects.splice(i,1);
+					}
+				}
 			}
 			
 			if (enemyObject.physicsProperties.name == "slashed")
@@ -146,6 +153,13 @@ package enemies
 				timer.start();
 				this.addEventListener(Event.ENTER_FRAME, enemyDeath);
 				playerObjective.score += enemyPoints;
+				for (var j:int; j < Stage1.physicsObjects.length; j++)
+				{
+					if (Stage1.physicsObjects[j] == enemyObject) 
+					{
+						Stage1.physicsObjects.splice(j,1);
+					}
+				}
 			}
 		}
 		
