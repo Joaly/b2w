@@ -154,6 +154,9 @@ package
 		[Embed(source = "../media/graphics/interface/backButton.png")]
 		private static const Back:Class;
 		
+		[Embed(source = "../media/graphics/controls.png")]
+		private static const ControlsInst:Class;
+		
 		//Fuentes.		
 		[Embed(source = "../media/fonts/square.ttf", embedAsCFF="false", fontFamily="Square")]
 		private static const Square:Class;

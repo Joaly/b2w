@@ -92,7 +92,7 @@ package enemies
 		{
 			movementPatternX(); // Movimiento en x del enemigo.
 			movementPatternY(); // Movimiento en y del enemigo.
-			//attack(); // Ataque del enemigo.
+			attack(); // Ataque del enemigo.
 			checkDead(); // Comprobamos si el enemigo muere.
 		}
 		

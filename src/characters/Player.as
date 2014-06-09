@@ -8,6 +8,7 @@ package characters
 	import com.reyco1.physinjector.contact.ContactManager;
 	import com.reyco1.physinjector.data.PhysicsObject;
 	import com.reyco1.physinjector.data.PhysicsProperties;
+	import com.reyco1.physinjector.manager.Utils;
 	
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -32,6 +33,7 @@ package characters
 	import starling.extensions.ColorArgb;
 	import starling.extensions.PDParticleSystem;
 	import starling.textures.Texture;
+	import starling.utils.deg2rad;
 
 	public class Player extends Sprite
 	{
@@ -67,6 +69,7 @@ package characters
 		private var restored:Boolean;
 		public var score:Number;
 		private var jumpTimer:Timer;
+		private var target:Point;
 
 		public var isDead:Boolean;
 
@@ -113,6 +116,7 @@ package characters
 			jumpTimer = new Timer(100, 0);
 			jumpForce = new b2Vec2(0,0);
 			attacking = false;
+			target = new Point;
 
 			playerObject.body.ApplyForce(new b2Vec2(forceLimit/2, -forceLimit), playerObject.body.GetWorldCenter());
 			
@@ -185,6 +189,7 @@ package characters
 						Starling.juggler.add(playerArt);
 						this.addChild(playerArt);
 					}
+					break;
 					
 				case "jump":
 					if (onJump && playerObject.x > stage.stageWidth /2) 
@@ -212,6 +217,7 @@ package characters
 						playerArt.loop = false;
 						this.addChild(playerArt);
 					}
+					break;
 					
 				case "slide":
 					if (sliding && playerObject.x == 318.1) 
@@ -237,10 +243,25 @@ package characters
 						Starling.juggler.add(playerArt);
 						this.addChild(playerArt);
 					}
+					break;
 					
-				/*case "shoot":
+				case "shoot":
 					if (playerObject.x > stage.stageWidth/2) 
 					{
+						this.removeChild(weaponArt);
+						weaponArt = new MovieClip(Media.getCharAtlas().getTextures("DShotR__"), 20);
+						weaponArt.pivotX = weaponArt.width;
+						weaponArt.pivotY = weaponArt.height;
+						weaponArt.scaleX = 0.5;
+						weaponArt.scaleY = 0.5;
+						weaponArt.x = playerObject.x;
+						weaponArt.y = playerObject.y+30;
+						weaponArt.rotation = Math.atan((playerObject.y-target.y)/(playerObject.x-target.x));
+						if (weaponArt.rotation < 0) weaponArt.x += target.x / 25;
+						Starling.juggler.add(weaponArt);
+						weaponArt.loop = false;
+						this.addChild(weaponArt);
+						
 						this.removeChild(playerArt);
 						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DWhileSR__"), 20);
 						playerArt.scaleX = 0.5;
@@ -257,37 +278,26 @@ package characters
 						playerArt = new MovieClip(Media.getCharAtlas().getTextures("DWhileSL__"), 20);
 						playerArt.scaleX = 0.5;
 						playerArt.scaleY = 0.5;
-						playerArt.pivotX = (playerArt.width / 2) + 5;
+						playerArt.pivotX = (playerArt.width / 2) + 20;
 						playerArt.pivotY = playerArt.height / 2;
 						Starling.juggler.add(playerArt);
 						this.addChild(playerArt);
-					}
-					
-					if (playerObject.x > stage.stageWidth/2)
-					{
-						this.removeChild(weaponArt);
-						weaponArt = new MovieClip(Media.getCharAtlas().getTextures("DShotR__"), 20);
-						weaponArt.scaleX = 0.5;
-						weaponArt.scaleY = 0.5;
-						weaponArt.pivotX = (weaponArt.width / 2) + 65;
-						weaponArt.pivotY = weaponArt.height / 2;
-						Starling.juggler.add(weaponArt);
-						weaponArt.loop = false;
-						this.addChild(weaponArt);
-					}
-					
-					if (playerObject.x < stage.stageWidth/2)
-					{
+						
 						this.removeChild(weaponArt);
 						weaponArt = new MovieClip(Media.getCharAtlas().getTextures("DShotL__"), 20);
+						weaponArt.pivotX = 0;
+						weaponArt.pivotY = weaponArt.height;
 						weaponArt.scaleX = 0.5;
 						weaponArt.scaleY = 0.5;
-						weaponArt.pivotX = (weaponArt.width / 2) -30;
-						weaponArt.pivotY = weaponArt.height / 2;
+						weaponArt.x = playerObject.x;
+						weaponArt.y = playerObject.y+30;
+						weaponArt.rotation = Math.atan((playerObject.y-target.y)/(playerObject.x-target.x));
+						if (weaponArt.rotation < 0) weaponArt.x += target.x / 25;
 						Starling.juggler.add(weaponArt);
 						weaponArt.loop = false;
 						this.addChild(weaponArt);
-					}*/
+					}
+					break;
 					
 				case "attack":
 					if (attacking && playerObject.x > stage.stageWidth /2) 
@@ -315,8 +325,7 @@ package characters
 						playerArt.loop = false;
 						this.addChild(playerArt);
 					}
-					
-				break;
+					break;				
 				default:
 			}
 		}
@@ -341,8 +350,12 @@ package characters
 				// En caso contario, realizamos un disparo.
 				else if (!onJump) 
 				{
-					shoot(event.getTouch(stage, TouchPhase.BEGAN));
-					touchBegin = null;
+					if ((playerObject.x < stage.stageWidth/2 && event.getTouch(stage, TouchPhase.BEGAN).globalX > playerObject.x+30) 
+						|| (playerObject.x > stage.stageWidth/2 && event.getTouch(stage, TouchPhase.BEGAN).globalX < playerObject.x-30))
+					{
+						shoot(event.getTouch(stage, TouchPhase.BEGAN));
+						touchBegin = null;
+					}
 				}
 				else attack();
 			}
@@ -407,6 +420,12 @@ package characters
 			}
 			
 			if (onJump && jumpTimer.currentCount > 10) Stage1.cameraOn = false;
+			
+			if (this.contains(weaponArt) && weaponArt.currentFrame == 12)
+			{
+				this.removeChild(weaponArt);
+				changeAnimation("stand");
+			}
 		}
 
 		private function wallContact(player:PhysicsObject, wall:PhysicsObject, contact:b2Contact):void
@@ -467,6 +486,9 @@ package characters
 				var shot:PlayerShot = new PlayerShot(playerPhysics, playerObject.x, playerObject.y, 15, new Point(touchPos.globalX, touchPos.globalY), false);
 				this.addChild(shot);
 				restored = false;
+				target.x = touchPos.globalX;
+				target.y = touchPos.globalY;					
+				changeAnimation("shoot");
 
 				if (timer.currentCount < 5) 
 				{
@@ -495,7 +517,6 @@ package characters
 				coolDown = false;
 				shotsFired = 0;
 				shoot(touchPos);
-				changeAnimation("shoot");
 			}
 		}
 

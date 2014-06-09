@@ -24,6 +24,7 @@ package screens
 		private var about:TextField;
 		private var back:Button;
 		private var bg:Image;
+		private var controls:Image;
 		
 		public function WelcomeScreen()
 		{
@@ -124,6 +125,7 @@ package screens
 			
 			playButton.addEventListener(Event.TRIGGERED, playClick);
 			storyButton.addEventListener(Event.TRIGGERED, storyClick);
+			controlsButton.addEventListener(Event.TRIGGERED, controlsClick);
 			aboutButton.addEventListener(Event.TRIGGERED, aboutClick);
 		}
 		
@@ -170,6 +172,30 @@ package screens
 			this.addEventListener(Event.ENTER_FRAME, scroll);
 		}
 		
+		private function controlsClick(event:Event):void
+		{
+			bg = new Image(Media.getTexture("WelcomeScreen"));
+			bg.scaleX = 0.5;
+			bg.scaleY = 0.5;
+			this.addChild(bg);
+			
+			controls = new Image(Media.getTexture("ControlsInst"));
+			controls.pivotX = controls.width/2;
+			controls.pivotY = controls.height/2;
+			controls.x = stage.stageWidth/2;
+			controls.y = stage.stageHeight/2;
+			this.addChild(controls);
+			
+			back = new Button(Media.getTexture("Back"));
+			back.scaleX = 0.4;
+			back.scaleY = 0.4;
+			back.alpha = 0.5;
+			back.x = stage.stageWidth - back.width - 10;
+			back.y = stage.stageHeight - back.height - 10;
+			back.addEventListener(Event.TRIGGERED, backControlsClick);
+			this.addChild(back);
+		}
+		
 		private function aboutClick(event:Event):void
 		{
 			bg = new Image(Media.getTexture("WelcomeScreen"));
@@ -212,6 +238,13 @@ package screens
 			back.removeFromParent(true);
 			story.removeFromParent(true);
 			this.removeEventListener(Event.ENTER_FRAME, scroll);			
+		}
+		
+		private function backControlsClick(event:Event):void
+		{
+			bg.removeFromParent(true);
+			back.removeFromParent(true);
+			controls.removeFromParent(true);			
 		}
 		
 		private function backAboutClick(event:Event):void
