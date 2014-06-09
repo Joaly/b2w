@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://www.codeandweb.com/texturepacker-->
+<!-- $TexturePacker:SmartUpdate:d329d550925e9c3ca6d3c42b1dcde0af:2ccb87ad535b88bc9a22401a46bf50aa:58cc98b4273105138bcad5a51088a537$ -->
+<TextureAtlas imagePath="Mina.png">
+    <SubTexture name="Mine" x="77" y="2" width="19" height="45" frameX="0" frameY="-2" frameWidth="23" frameHeight="47"/>
+    <SubTexture name="Mina__000" x="27" y="2" width="23" height="53"/>
+    <SubTexture name="Mina__001" x="2" y="2" width="23" height="53"/>
+    <SubTexture name="MineExterior" x="52" y="2" width="23" height="45" frameX="-26" frameY="-60" frameWidth="75" frameHeight="165"/>
+    <SubTexture name="ObstaculoBarreraApagado" x="56" y="76" width="25" height="25"/>
+    <SubTexture name="ObstaculoBarreraEncendido" x="56" y="49" width="25" height="25"/>
+    <SubTexture name="asdfa" x="29" y="57" width="25" height="25"/>
+    <SubTexture name="asdfb" x="2" y="57" width="25" height="25"/>
+</TextureAtlas>
